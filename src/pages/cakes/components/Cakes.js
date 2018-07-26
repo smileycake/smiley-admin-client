@@ -1,5 +1,5 @@
 import { connect } from 'dva';
-import { Table, Pagination, Popconfirm } from 'antd';
+import { Divider, Table, Pagination, Popconfirm } from 'antd';
 import { routerRedux } from 'dva/router';
 import styles from './Cakes.css';
 import * as constants from '../constants';
@@ -15,6 +15,12 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
             pathname: '/cakes',
             query: { page }
         }))
+    }
+
+    function expandedRowRender(record) {
+        return (
+            <p style={{ margin: 0 }}>1</p> 
+        );
     }
 
     const colums = [
@@ -35,13 +41,13 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
             title: constants.CAKE_COST,
             dataIndex: 'website',
             key: 'website',
-            width: '10%',
+            width: '20%',
         },
         {
             title: constants.CAKE_PRICE,
             dataIndex: 'website',
             key: 'website',
-            width: '10%',
+            width: '20%',
         },
         {
             title: constants.CAKE_GROUP_PURCHASE,
@@ -55,9 +61,12 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
             width: '20%',
             render: (text, { id }) => (
                 <span className={styles.operation}>
-                    <a href=''>Edit</a>
-                    <Popconfirm title='Confirm to delete?' onConfirm={deleteHandler.bind(null, id)}>
-                        <a href=''>Delete</a>
+                    <a href=''>{commonConstants.OPERATION_CHECK}</a>
+                    <Divider type="vertical" />
+                    <a href=''>{commonConstants.OPERATION_EDIT}</a>
+                    <Divider type="vertical" />
+                    <Popconfirm title={commonConstants.ALERT_DELETE} onConfirm={deleteHandler.bind(null, id)}>
+                        <a href=''>{commonConstants.OPERATION_DELETE}</a>
                     </Popconfirm>
                 </span>
             )
@@ -71,6 +80,7 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
                     loading={loading}
                     columns={colums}
                     dataSource={dataSource}
+                    expandedRowRender={expandedRowRender}
                     rowKey={record => record.id}
                     pagination={false}
                 />

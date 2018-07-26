@@ -1,0 +1,28 @@
+.container {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+}
+
+.header {
+    flex: 1;
+}
+
+.body {
+    flex: 14;
+    display: flex;
+}
+
+.sideBar {
+    flex: 1;
+}
+
+.content {
+    flex: 6;
+    display: flex;
+}
+
+.main {
+    padding: 0 8px;
+    flex: 1;
+}

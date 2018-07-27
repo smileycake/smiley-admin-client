@@ -5,12 +5,16 @@ export default {
     state: {
         list: [],
         total: null,
-        page: null
+        page: null,
+        cakeInfoVisible: false,
     },
     reducers: {
-        save(state, { payload: { data: list, total, page }}) {
-            return { ...state, list, total, page };
+        save(state, { payload: { data: list, total, page, cakeInfoVisible }}) {
+            return { ...state, list, total, page, cakeInfoVisible };
         },
+        openCakeInfo(state, { payload: { cakeInfoVisible } }) {
+            return { ...state, cakeInfoVisible };
+        }
     },
     effects: {
         *fetch({ payload: { page = 1 } }, { call, put }) {
@@ -25,7 +29,8 @@ export default {
                 payload: {
                     data,
                     total: parseInt(headers['x-total-count'], 10),
-                    page: parseInt(page, 10)
+                    page: parseInt(page, 10),
+                    cakeInfoVisible: false
                 }
             });
         },
@@ -33,7 +38,7 @@ export default {
     subscriptions: {
         setup({ dispatch, history }) {
             return history.listen(({ pathname, query }) => {
-                if (pathname === '/cakes') {
+                if (pathname === '/cakes/cakeList') {
                     dispatch({ type: 'fetch', payload: query});
                 }
             })

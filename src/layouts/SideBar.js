@@ -13,9 +13,18 @@ function SideBar({ className, location }) {
             <Menu.Item key='/'>
                 <Link to='/'><Icon type='home' />{category.HOME}</Link>
             </Menu.Item>
-            <Menu.Item key='/cakes'>
-                <Link to='/cakes'><Icon type='bars' />{category.CAKE_MANAGE}</Link>
-            </Menu.Item>
+            <Menu.SubMenu
+                title={
+                    <span><Icon type="mail" /><span>{category.CAKE_MANAGE}</span></span>
+                }
+            >
+                <Menu.Item key="/cakes/cakeList">
+                    <Link to='/cakes/cakeList'>{category.CAKE_LIST}</Link>
+                </Menu.Item>
+                <Menu.Item key="/cakes/recipes">
+                    <Link to='/cakes/recipes'>{category.CAKE_COMMON_RECIPE}</Link>
+                </Menu.Item>
+            </Menu.SubMenu>
             <Menu.Item key='/members'>
                 <Link to='/members'><Icon type='bars' />{category.MEMBER_MANAGE}</Link>
             </Menu.Item>

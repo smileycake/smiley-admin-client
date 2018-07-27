@@ -1,0 +1,31 @@
+
+.normal {
+
+}
+
+.operation a {
+}
+
+.create {
+    margin: 1.5em 0;
+}
+
+.search {
+    display: flex;
+    flex-direction: row;
+    margin: 1.5em 0;
+}
+
+.search button {
+    margin-left: 2em
+}
+
+.operationPanel {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.subRow {
+    background-color: #fafafa
+}

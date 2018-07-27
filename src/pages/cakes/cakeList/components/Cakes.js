@@ -1,24 +1,30 @@
 import { connect } from 'dva';
-import { Divider, Table, Pagination, Popconfirm } from 'antd';
+import { Divider, Input, Table, Pagination, Popconfirm, Button} from 'antd';
 import { routerRedux } from 'dva/router';
+import CakeInfo from './CakeInfo';
 import styles from './Cakes.css';
 import * as constants from '../constants';
-import * as commonConstants from '../../../utils/commonConstants';
+import * as commonConstants from '../../../../utils/commonConstants';
 
-function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
+function Cakes({ dispatch, list: dataSource, loading, total, page: current, cakeInfoVisible }) {
     function deleteHandler(id) {
         console.warn(`TODO: ${id}`);
     }
 
-    function pageChangeHandler(page) {
-        dispatch(routerRedux.push({
-            pathname: '/cakes',
-            query: { page }
-        }))
+    function cakeInfoVisibleHandler(visible) {
+        dispatch({
+            type: 'cakes/openCakeInfo',
+            payload: {
+                cakeInfoVisible: visible 
+            }
+        });
     }
 
-    function expandedRowRender(record) {
-        return null;
+    function pageChangeHandler(page) {
+        dispatch(routerRedux.push({
+            pathname: '/cakes/cakeList',
+            query: { page }
+        }))
     }
 
     const colums = [
@@ -73,8 +79,6 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
             render: (text, { id }) => {
                 return text.type === undefined ? null : (
                     <span className={styles.operation}>
-                        <a href=''>{commonConstants.OPERATION_CHECK}</a>
-                        <Divider type="vertical" />
                         <a href=''>{commonConstants.OPERATION_EDIT}</a>
                         <Divider type="vertical" />
                         <Popconfirm title={commonConstants.ALERT_DELETE} onConfirm={deleteHandler.bind(null, id)}>
@@ -87,13 +91,35 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
     ];
 
     return (
-        <div className={styles.normal}>
+        <div className={styles.normal} onClick={event => {
+        }}>
             <div>
+                <div className={styles.operationPanel}>
+                    <div className={styles.create}>
+                        <Button type="primary">{constants.CAKE_CREATE}</Button>
+                    </div>
+                    <div className={styles.search}>
+                        <Input placeholder={constants.CAKE_SEARCH_PLACEHOLDER} />
+                        <Button type="primary">{constants.CAKE_SEARCH}</Button>
+                    </div>
+                </div>
                 <Table
                     loading={loading}
                     columns={colums}
                     dataSource={dataSource}
                     rowKey={record => record.id}
+                    rowClassName={(record, index) => {
+                        if (record.type === undefined) {
+                            return styles.subRow
+                        }
+                    }}
+                    onRow={(record, index) => {
+                        return {
+                            onClick: () => {
+                                cakeInfoVisibleHandler(true)
+                            }
+                        }
+                    }}
                     expandIconAsCell={true}
                     expandIconColumnIndex={0}
                     pagination={false}
@@ -105,18 +131,20 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
                     pageSize={commonConstants.PAGE_SIZE}
                     onChange={pageChangeHandler}
                 />
+            <CakeInfo visible={cakeInfoVisible}/>
             </div>
         </div>
     );
 }
 
 function mapStateToPrpos(state) {
-    const { list, total, page } = state.cakes;
+    const { list, total, page, cakeInfoVisible } = state.cakes;
     return {
         list,
         total,
         page,
-        loading: state.loading.models.cakes
+        loading: state.loading.models.cakes,
+        cakeInfoVisible
     };
 }
 

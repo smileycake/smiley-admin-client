@@ -1,8 +1,9 @@
 export default {
     'GET /api/cakes': (req, res) => {
+        res.set('x-total-count', 4);
         if (req.query._page === '1') {
-            res.json({
-                result: [
+            res.json(
+                [
                     {
                         id: 1,
                         name: '蓝朋友的心',
@@ -38,10 +39,10 @@ export default {
                         ],
                     }
                 ]
-            })
+            )
         } else {
-            res.json({
-                result: [
+            res.json(
+                [
                     {
                         id: 1,
                         name: '蓝朋友的心1',
@@ -77,7 +78,7 @@ export default {
                         ],
                     }
                 ]
-            })
+            )
         }
     }
 }

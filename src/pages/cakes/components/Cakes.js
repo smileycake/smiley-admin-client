@@ -18,17 +18,19 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
     }
 
     function expandedRowRender(record) {
-        return (
-            <p style={{ margin: 0 }}>1</p> 
-        );
+        return null;
     }
 
     const colums = [
         {
+            key: 'expand',
+            width: '5%',
+        },
+        {
             title: constants.CAKE_NAME,
             dataIndex: 'name',
             key: 'name',
-            width: '20%',
+            width: '15%',
             render: text => <a href=''>{text}</a>
         },
         {
@@ -41,35 +43,46 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
             title: constants.CAKE_COST,
             dataIndex: 'cost',
             key: 'cost',
-            width: '20%',
+            width: '15%',
         },
         {
             title: constants.CAKE_PRICE,
             dataIndex: 'price',
             key: 'price',
-            width: '20%',
+            width: '15%',
         },
         {
             title: constants.CAKE_GROUP_PURCHASE,
             dataIndex: 'isGroupPurchase',
             key: 'isGroupPurchase',
             width: '10%',
+            render: isGroupPurchase => {
+                let text = '';
+                if (isGroupPurchase !== undefined) {
+                    text = isGroupPurchase ? '是' : '否'
+                }
+                return (
+                    <span>{text}</span>
+                );
+            }
         },
         {
             title: commonConstants.TABLE_OPERATION,
             key: 'operation',
             width: '20%',
-            render: (text, { id }) => (
-                <span className={styles.operation}>
-                    <a href=''>{commonConstants.OPERATION_CHECK}</a>
-                    <Divider type="vertical" />
-                    <a href=''>{commonConstants.OPERATION_EDIT}</a>
-                    <Divider type="vertical" />
-                    <Popconfirm title={commonConstants.ALERT_DELETE} onConfirm={deleteHandler.bind(null, id)}>
-                        <a href=''>{commonConstants.OPERATION_DELETE}</a>
-                    </Popconfirm>
-                </span>
-            )
+            render: (text, { id }) => {
+                return text.type === undefined ? null : (
+                    <span className={styles.operation}>
+                        <a href=''>{commonConstants.OPERATION_CHECK}</a>
+                        <Divider type="vertical" />
+                        <a href=''>{commonConstants.OPERATION_EDIT}</a>
+                        <Divider type="vertical" />
+                        <Popconfirm title={commonConstants.ALERT_DELETE} onConfirm={deleteHandler.bind(null, id)}>
+                            <a href=''>{commonConstants.OPERATION_DELETE}</a>
+                        </Popconfirm>
+                    </span>
+                )
+            }
         }
     ];
 
@@ -80,8 +93,9 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
                     loading={loading}
                     columns={colums}
                     dataSource={dataSource}
-                    expandedRowRender={expandedRowRender}
                     rowKey={record => record.id}
+                    expandIconAsCell={true}
+                    expandIconColumnIndex={0}
                     pagination={false}
                 />
                 <Pagination

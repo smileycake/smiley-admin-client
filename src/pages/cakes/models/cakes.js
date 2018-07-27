@@ -15,6 +15,11 @@ export default {
     effects: {
         *fetch({ payload: { page = 1 } }, { call, put }) {
             const { data, headers } = yield call(cakesService.fetch, { page });
+            data.forEach(element => {
+                if (element.children.length === 0) {
+                    delete element.children;
+                }
+            });
             yield put({
                 type: 'save',
                 payload: {

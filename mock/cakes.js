@@ -11,7 +11,7 @@ export default {
                         cost: '15.00',
                         price: '45.00',
                         isGroupPurchase: false,
-                        sepicification: [],
+                        children: []
                     },
                     {
                         id: 2,
@@ -19,22 +19,27 @@ export default {
                         type: '奶油蛋糕',
                         cost: '30.00 - 35.00',
                         price: '98.00 - 98.00',
-                        isGroupPurchase: false,
-                        sepicification: [
+                        children: [
                             {
+                                id: '2-1',
                                 name: '巧克力',
                                 cost: '30.00',
-                                price: '98.00'
+                                price: '98.00',
+                                isGroupPurchase: true,
                             },
                             {
+                                id: '2-2',
                                 name: '抹茶',
                                 cost: '30.00',
-                                price: '98.00'
+                                price: '98.00',
+                                isGroupPurchase: true,
                             },
                             {
+                                id: '2-3',
                                 name: '酸奶奶油',
                                 cost: '35.00',
-                                price: '98.00'
+                                price: '98.00',
+                                isGroupPurchase: false,
                             },
                         ],
                     }
@@ -44,36 +49,41 @@ export default {
             res.json(
                 [
                     {
-                        id: 1,
+                        id: 3,
                         name: '蓝朋友的心1',
                         type: '慕斯',
                         cost: '15.00',
                         price: '45.00',
                         isGroupPurchase: false,
-                        sepicification: [],
+                        children: []
                     },
                     {
-                        id: 2,
+                        id: 4,
                         name: '爆浆海盐奶盖1',
                         type: '奶油蛋糕',
                         cost: '30.00 - 35.00',
                         price: '98.00 - 98.00',
-                        isGroupPurchase: false,
-                        sepicification: [
+                        children: [
                             {
+                                id: '2-1',
                                 name: '巧克力',
                                 cost: '30.00',
-                                price: '98.00'
+                                price: '98.00',
+                                isGroupPurchase: true,
                             },
                             {
+                                id: '2-2',
                                 name: '抹茶',
                                 cost: '30.00',
-                                price: '98.00'
+                                price: '98.00',
+                                isGroupPurchase: true,
                             },
                             {
+                                id: '2-3',
                                 name: '酸奶奶油',
                                 cost: '35.00',
-                                price: '98.00'
+                                price: '98.00',
+                                isGroupPurchase: false,
                             },
                         ],
                     }

@@ -1,7 +1,3 @@
 export default () => {
-    return (
-        <div>
-            ordersList
-        </div>
-    )
-}
+  return <div>ordersList</div>;
+};

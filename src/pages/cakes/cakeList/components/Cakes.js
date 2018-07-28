@@ -1,7 +1,7 @@
 import { connect } from 'dva';
 import { Divider, Input, Table, Pagination, Popconfirm, Button} from 'antd';
 import { routerRedux } from 'dva/router';
-import CakeInfo from './CakeInfo';
+import CakeEditDrawer from './CakeEditDrawer';
 import styles from './Cakes.css';
 import * as constants from '../constants';
 import * as commonConstants from '../../../../utils/commonConstants';
@@ -9,15 +9,6 @@ import * as commonConstants from '../../../../utils/commonConstants';
 function Cakes({ dispatch, list: dataSource, loading, total, page: current, cakeInfoVisible }) {
     function deleteHandler(id) {
         console.warn(`TODO: ${id}`);
-    }
-
-    function cakeInfoVisibleHandler(visible) {
-        dispatch({
-            type: 'cakes/openCakeInfo',
-            payload: {
-                cakeInfoVisible: visible 
-            }
-        });
     }
 
     function pageChangeHandler(page) {
@@ -37,13 +28,19 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current, cake
             dataIndex: 'name',
             key: 'name',
             width: '15%',
-            render: text => <a href=''>{text}</a>
+            render: text => {
+                return (
+                    <CakeEditDrawer>
+                        <a>{text}</a>
+                    </CakeEditDrawer>
+                );
+            }
         },
         {
             title: constants.CAKE_TYPE,
             dataIndex: 'type',
             key: 'type',
-            width: '10%',
+            width: '15%',
         },
         {
             title: constants.CAKE_COST,
@@ -61,7 +58,7 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current, cake
             title: constants.CAKE_GROUP_PURCHASE,
             dataIndex: 'isGroupPurchase',
             key: 'isGroupPurchase',
-            width: '10%',
+            width: '15%',
             render: isGroupPurchase => {
                 let text = '';
                 if (isGroupPurchase !== undefined) {
@@ -91,48 +88,39 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current, cake
     ];
 
     return (
-        <div className={styles.normal} onClick={event => {
-        }}>
-            <div>
-                <div className={styles.operationPanel}>
-                    <div className={styles.create}>
-                        <Button type="primary">{constants.CAKE_CREATE}</Button>
-                    </div>
-                    <div className={styles.search}>
-                        <Input placeholder={constants.CAKE_SEARCH_PLACEHOLDER} />
-                        <Button type="primary">{constants.CAKE_SEARCH}</Button>
-                    </div>
+        <div className={styles.normal}>
+            <div className={styles.operationPanel}>
+                <div className={styles.create}>
+                    <CakeEditDrawer>
+                        <Button type="primary" >{constants.CAKE_CREATE}</Button>
+                    </CakeEditDrawer>
                 </div>
-                <Table
-                    loading={loading}
-                    columns={colums}
-                    dataSource={dataSource}
-                    rowKey={record => record.id}
-                    rowClassName={(record, index) => {
-                        if (record.type === undefined) {
-                            return styles.subRow
-                        }
-                    }}
-                    onRow={(record, index) => {
-                        return {
-                            onClick: () => {
-                                cakeInfoVisibleHandler(true)
-                            }
-                        }
-                    }}
-                    expandIconAsCell={true}
-                    expandIconColumnIndex={0}
-                    pagination={false}
-                />
-                <Pagination
-                    className='ant-table-pagination'
-                    total={total}
-                    current={current}
-                    pageSize={commonConstants.PAGE_SIZE}
-                    onChange={pageChangeHandler}
-                />
-            <CakeInfo visible={cakeInfoVisible}/>
+                <div className={styles.search}>
+                    <Input placeholder={constants.CAKE_SEARCH_PLACEHOLDER} />
+                    <Button type="primary">{constants.CAKE_SEARCH}</Button>
+                </div>
             </div>
+            <Table
+                loading={loading}
+                columns={colums}
+                dataSource={dataSource}
+                rowKey={record => record.id}
+                rowClassName={(record, index) => {
+                    if (record.type === undefined) {
+                        return styles.subRow
+                    }
+                }}
+                expandIconAsCell={true}
+                expandIconColumnIndex={0}
+                pagination={false}
+            />
+            <Pagination
+                className='ant-table-pagination'
+                total={total}
+                current={current}
+                pageSize={commonConstants.PAGE_SIZE}
+                onChange={pageChangeHandler}
+            />
         </div>
     );
 }

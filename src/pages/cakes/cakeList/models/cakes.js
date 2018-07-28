@@ -12,9 +12,6 @@ export default {
         save(state, { payload: { data: list, total, page, cakeInfoVisible }}) {
             return { ...state, list, total, page, cakeInfoVisible };
         },
-        openCakeInfo(state, { payload: { cakeInfoVisible } }) {
-            return { ...state, cakeInfoVisible };
-        }
     },
     effects: {
         *fetch({ payload: { page = 1 } }, { call, put }) {

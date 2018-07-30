@@ -2,11 +2,19 @@ import React, { Component } from "react";
 import { Icon, Form, Tabs, Input, Switch } from "antd";
 import CakeMaterialTable from "./CakeMaterialTable";
 
+const EditableContext = React.createContext();
+
+const EditablePane = Form.create()(({ form, index, ...props }) => (
+  <EditableContext.Provider value={form}>
+    <TabPane {...props} />
+  </EditableContext.Provider>
+));
+
 class TabPane extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      editing: false
+      editing: true
     };
   }
 
@@ -19,7 +27,33 @@ class TabPane extends Component {
   render() {
     const { onPressEnter, title } = this.props;
     const { editing } = this.state;
-
+    return (
+      <EditableContext.Consumer>
+        {form => {
+          const { getFieldDecorator } = form;
+          return (
+            <>
+              {editing ? (
+                <Form.Item style={{ margin: 0 }}>
+                  {getFieldDecorator("title", {
+                    rules: [
+                      {
+                        required: true,
+                        message: `Please Input ${title}!`
+                      }
+                    ],
+                    initialValue: "aaa"
+                  })(<Input />)}
+                </Form.Item>
+              ) : (
+                title
+              )}
+            </>
+          );
+        }}
+      </EditableContext.Consumer>
+    );
+    /*
     return (
       <>
         {editing ? null : <label>{title}</label>}
@@ -44,6 +78,7 @@ class TabPane extends Component {
         )}
       </>
     );
+    */
   }
 }
 
@@ -127,7 +162,7 @@ class CakeSpec extends Component {
       >
         {this.state.panes.map(pane => (
           <Tabs.TabPane
-            tab={<TabPane onPressEnter={() => {}} title={pane.title} />}
+            tab={<EditablePane onPressEnter={() => {}} title={pane.title} />}
             key={pane.key}
             closable={pane.closable}
           >

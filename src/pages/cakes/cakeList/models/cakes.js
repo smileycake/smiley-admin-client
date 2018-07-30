@@ -5,8 +5,7 @@ export default {
   state: {
     list: [],
     total: null,
-    page: null,
-    cakeInfoVisible: false
+    page: null
   },
   reducers: {
     save(

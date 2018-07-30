@@ -6,14 +6,7 @@ import styles from "./Cakes.css";
 import * as constants from "../constants";
 import * as commonConstants from "../../../../utils/commonConstants";
 
-function Cakes({
-  dispatch,
-  list: dataSource,
-  loading,
-  total,
-  page: current,
-  cakeInfoVisible
-}) {
+function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
   function deleteHandler(id) {
     console.warn(`TODO: ${id}`);
   }

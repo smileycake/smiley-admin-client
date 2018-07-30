@@ -210,6 +210,7 @@ class CakeMaterialTable extends React.Component {
       <div>
         <Table
           components={components}
+          size="small"
           bordered
           dataSource={this.state.materials}
           columns={columns}

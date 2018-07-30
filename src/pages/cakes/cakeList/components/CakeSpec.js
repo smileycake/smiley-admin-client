@@ -1,118 +1,33 @@
 import React, { Component } from "react";
-import { Icon, Form, Tabs, Input, Switch } from "antd";
+import { Form, Tabs, Input, Switch, Row, Col } from "antd";
 import CakeMaterialTable from "./CakeMaterialTable";
-
-const EditableContext = React.createContext();
-
-const EditablePane = Form.create()(({ form, index, ...props }) => (
-  <EditableContext.Provider value={form}>
-    <TabPane {...props} />
-  </EditableContext.Provider>
-));
-
-class TabPane extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      editing: true
-    };
-  }
-
-  editHandler = () => {
-    this.setState({
-      editing: !this.state.editing
-    });
-  };
-
-  render() {
-    const { onPressEnter, title } = this.props;
-    const { editing } = this.state;
-    return (
-      <EditableContext.Consumer>
-        {form => {
-          const { getFieldDecorator } = form;
-          return (
-            <>
-              {editing ? (
-                <Form.Item style={{ margin: 0 }}>
-                  {getFieldDecorator("title", {
-                    rules: [
-                      {
-                        required: true,
-                        message: `Please Input ${title}!`
-                      }
-                    ],
-                    initialValue: "aaa"
-                  })(<Input />)}
-                </Form.Item>
-              ) : (
-                title
-              )}
-            </>
-          );
-        }}
-      </EditableContext.Consumer>
-    );
-    /*
-    return (
-      <>
-        {editing ? null : <label>{title}</label>}
-        {editing ? (
-          <Input
-            style={{ width: 100 }}
-            onPressEnter={() => {
-              this.editHandler();
-              if (onPressEnter) {
-                onPressEnter();
-              }
-            }}
-            placeholder={title}
-          />
-        ) : null}
-        {editing ? null : (
-          <Icon
-            type="edit"
-            style={{ marginLeft: 10 }}
-            onClick={this.editHandler}
-          />
-        )}
-      </>
-    );
-    */
-  }
-}
 
 class CakeSpec extends Component {
   constructor(props) {
     super(props);
-    this.newTabIndex = 0;
-    const panes = [{ title: "新规格", key: "0", closable: false }];
-    const specs = [
-      {
-        name: "",
-        materials: [],
-        price: 0.0,
-        isGroupPuchase: false
-      }
-    ];
+    this.newTabIndex = 2;
+    const panes = [{ title: "新规格", key: "规格1", closable: false }];
+    const specs = {};
+    specs[panes[0].key] = this.getNewSpec();
     this.state = {
-      specs: specs,
-      activeKey: panes[0].key,
-      panes
+      specs,
+      panes,
+      activeKey: panes[0].key
     };
-    this.specsChangeHandler(specs);
   }
 
   specsChangeHandler = specs => {
-    this.props.onSpecChange(specs);
+    const { onSpecChange } = this.props;
+    if (onSpecChange) {
+      onSpecChange(specs);
+    }
   };
 
   onMaterialsChange = materials => {
-    const specs = this.state.specs;
-    specs[this.state.activeKey].materials = materials;
-    this.setState({
-      specs: specs
-    });
+    const { specs, activeKey } = this.state;
+    specs[activeKey].materials = materials;
+    this.setState({ specs });
+    this.specsChangeHandler(specs);
   };
 
   onPriceChange = () => {};
@@ -128,28 +43,36 @@ class CakeSpec extends Component {
   };
 
   add = () => {
-    const panes = this.state.panes;
-    const activeKey = ++this.newTabIndex;
+    const { panes, specs } = this.state;
+    const activeKey = `规格${this.newTabIndex++}`;
     panes.push({
       title: "新规格",
-      key: "" + activeKey
+      key: activeKey
     });
-    this.setState({ panes, activeKey: "" + activeKey });
+    specs[activeKey] = this.getNewSpec();
+    this.setState({ specs, panes, activeKey });
+    this.specsChangeHandler(specs);
   };
 
   remove = targetKey => {
+    let specs = this.state.specs;
     let activeKey = this.state.activeKey;
-    let lastIndex;
-    this.state.panes.forEach((pane, i) => {
-      if (pane.key === targetKey) {
-        lastIndex = i - 1;
-      }
-    });
+    delete specs[targetKey];
     const panes = this.state.panes.filter(pane => pane.key !== targetKey);
-    if (lastIndex >= 0 && activeKey === targetKey) {
-      activeKey = panes[lastIndex].key;
+    if (activeKey === targetKey) {
+      activeKey = panes[panes.length - 1].key;
     }
-    this.setState({ panes, activeKey });
+    this.setState({ specs, panes, activeKey });
+    this.specsChangeHandler(specs);
+  };
+
+  getNewSpec = () => {
+    return {
+      name: "新规格",
+      materials: [],
+      price: null,
+      isGroupPurchase: false
+    };
   };
 
   render() {
@@ -162,25 +85,41 @@ class CakeSpec extends Component {
       >
         {this.state.panes.map(pane => (
           <Tabs.TabPane
-            tab={<EditablePane onPressEnter={() => {}} title={pane.title} />}
+            tab={pane.title}
             key={pane.key}
             closable={pane.closable}
           >
+            <Row gutter={16}>
+              <Col span={10}>
+                <Form.Item label="规格名称">
+                  <Input
+                    onChange={this.onPriceChange}
+                    placeholder="please enter user name"
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col span={10}>
+                <Form.Item label="售价">
+                  <Input
+                    onChange={this.onPriceChange}
+                    placeholder="please enter user name"
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col span={4}>
+                <Form.Item label="团购否">
+                  <Switch
+                    onChange={this.onGroupPurchaseChange}
+                    checkedChildren="是"
+                    unCheckedChildren="否"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
             <Form.Item label="配方">
               <CakeMaterialTable onMaterialsChange={this.onMaterialsChange} />
-            </Form.Item>
-            <Form.Item label="售价">
-              <Input
-                onChange={this.onPriceChange}
-                placeholder="please enter user name"
-              />
-            </Form.Item>
-            <Form.Item label="团购否">
-              <Switch
-                onChange={this.onGroupPurchaseChange}
-                checkedChildren="是"
-                unCheckedChildren="否"
-              />
             </Form.Item>
           </Tabs.TabPane>
         ))}

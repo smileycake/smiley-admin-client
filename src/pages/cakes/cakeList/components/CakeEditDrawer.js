@@ -33,10 +33,6 @@ class CakeEditDrawer extends Component {
     });
   };
 
-  addMaterial = e => {
-    console.log(e);
-  };
-
   render() {
     const { getFieldDecorator } = this.props.form;
     const { children } = this.props;
@@ -102,8 +98,7 @@ class CakeEditDrawer extends Component {
             <Row gutter={16}>
               {getFieldDecorator("specs", {
                 valuePropName: "specs",
-                initialValue: [],
-                getValueFromEvent: this.addMaterial
+                initialValue: {}
               })(
                 <CakeSpec
                   onSpecChange={specs => {

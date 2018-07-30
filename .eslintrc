@@ -1,3 +1,3 @@
 {
-  "extends": "umi"
+  "extends": ["plugin:prettier/recommended", "umi"]
 }

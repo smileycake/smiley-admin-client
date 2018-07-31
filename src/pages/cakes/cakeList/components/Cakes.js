@@ -1,7 +1,6 @@
 import { connect } from "dva";
 import { Divider, Input, Table, Pagination, Popconfirm, Button } from "antd";
 import { routerRedux } from "dva/router";
-import CakeEditDrawer from "./CakeEditDrawer";
 import CakeDetail from "./CakeDetail";
 import styles from "./Cakes.css";
 import * as constants from "../constants";
@@ -19,11 +18,12 @@ function Cakes({
     console.warn(`TODO: ${id}`);
   }
 
-  function cakeDetailVisibleHandler() {
+  function createCakeHandler() {
     dispatch({
-      type: "cakes/create",
+      type: "cakeDetail/showCakeDetail",
       payload: {
-        cakeDetailVisible: true
+        visible: true,
+        editing: true
       }
     });
   }
@@ -35,6 +35,16 @@ function Cakes({
         query: { page }
       })
     );
+  }
+
+  function cakeClickHandler(record, index, event) {
+    dispatch({
+      type: "cakeDetail/showCakeDetail",
+      payload: {
+        visible: true,
+        editing: false
+      }
+    });
   }
 
   const colums = [
@@ -107,7 +117,7 @@ function Cakes({
     <div className={styles.normal}>
       <div className={styles.operationPanel}>
         <div className={styles.create}>
-          <Button type="primary" onClick={cakeDetailVisibleHandler}>
+          <Button type="primary" onClick={createCakeHandler}>
             {constants.CAKE_CREATE}
           </Button>
         </div>
@@ -126,6 +136,7 @@ function Cakes({
             return styles.subRow;
           }
         }}
+        onRowClick={cakeClickHandler}
         expandIconAsCell={true}
         expandIconColumnIndex={0}
         pagination={false}
@@ -137,7 +148,7 @@ function Cakes({
         pageSize={commonConstants.PAGE_SIZE}
         onChange={pageChangeHandler}
       />
-      <CakeDetail />
+      <CakeDetail visible={cakeDetailVisible} editing={true} />
     </div>
   );
 }

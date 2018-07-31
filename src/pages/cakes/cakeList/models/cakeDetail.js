@@ -3,19 +3,20 @@ import * as cakesService from "../services/cakes";
 export default {
   namespace: "cakeDetail",
   state: {
+    cakeId: null,
     cakeDetailInfo: null,
     cakeType: [],
     editing: false,
     visible: false
   },
   reducers: {
-    showCakeDetailInfo(
+    showCakeDetail(
       state,
       {
-        payload: { data }
+        payload: { cakeId, cakeDetailInfo, cakeType, editing, visible }
       }
     ) {
-      return { ...state, cakeDetailInfo: data };
+      return { ...state, cakeId, cakeDetailInfo, cakeType, editing, visible };
     }
   },
   effects: {

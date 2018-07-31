@@ -5,16 +5,25 @@ export default {
   state: {
     list: [],
     total: null,
-    page: null
+    page: null,
+    cakeDetailVisible: false
   },
   reducers: {
     save(
       state,
       {
-        payload: { data: list, total, page, cakeInfoVisible }
+        payload: { data: list, total, page }
       }
     ) {
-      return { ...state, list, total, page, cakeInfoVisible };
+      return { ...state, list, total, page };
+    },
+    create(
+      state,
+      {
+        payload: { cakeDetailVisible }
+      }
+    ) {
+      return { ...state, cakeDetailVisible };
     }
   },
   effects: {
@@ -36,7 +45,7 @@ export default {
           data,
           total: parseInt(headers["x-total-count"], 10),
           page: parseInt(page, 10),
-          cakeInfoVisible: false
+          cakeDetailVisible: false
         }
       });
     }

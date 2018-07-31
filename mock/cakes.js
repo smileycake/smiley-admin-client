@@ -86,5 +86,82 @@ export default {
         }
       ]);
     }
+  },
+  "GET /api/cakeDetail": (req, res) => {
+    if (req.query._cakeId === "1") {
+      res.json({
+        id: 2,
+        name: "爆浆海盐奶盖",
+        type: "奶油蛋糕",
+        specs: [
+          {
+            name: "巧克力",
+            price: "98.00",
+            materials: [
+              {
+                name: "面粉",
+                quantity: "50",
+                price: 10
+              },
+              {
+                name: "巧克力",
+                quantity: "20",
+                price: 10
+              },
+              {
+                name: "糖",
+                quantity: "20",
+                price: 10
+              }
+            ],
+            isGroupPurchase: true
+          },
+          {
+            name: "抹茶",
+            price: "98.00",
+            materials: [
+              {
+                name: "面粉",
+                quantity: "50",
+                price: 10
+              },
+              {
+                name: "抹茶",
+                quantity: "20",
+                price: 15
+              },
+              {
+                name: "糖",
+                quantity: "20",
+                price: 10
+              }
+            ],
+            isGroupPurchase: false
+          },
+          {
+            name: "酸奶奶油",
+            price: "98.00",
+            materials: [
+              {
+                name: "面粉",
+                quantity: "50",
+                price: 10
+              },
+              {
+                name: "酸奶",
+                quantity: "20",
+                price: 10
+              },
+              {
+                name: "糖",
+                quantity: "30",
+                price: 12
+              }
+            ],
+            isGroupPurchase: true
+          }
+        ]
+      });
+    }
   }
 };

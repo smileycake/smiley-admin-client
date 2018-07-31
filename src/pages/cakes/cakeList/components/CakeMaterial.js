@@ -23,7 +23,7 @@ const EditableFormRow = Form.create()(EditableRow);
 class EditableCell extends Component {
   getInput = () => {
     if (this.props.inputType === "number") {
-      return <InputNumber />;
+      return <InputNumber min={1} max={10} />;
     }
     return <Input />;
   };
@@ -92,7 +92,8 @@ class CakeMaterial extends React.Component {
       selectedMaterials: [],
       targetKeys: [],
       editingKey: "",
-      isTableShow: true
+      isTableShow: true,
+      isEditing: true
     };
     this.columns = [
       {
@@ -107,7 +108,7 @@ class CakeMaterial extends React.Component {
         editable: true
       },
       {
-        title: "价格",
+        title: "单价（元）",
         dataIndex: "price",
         width: "25%"
       },
@@ -229,10 +230,10 @@ class CakeMaterial extends React.Component {
         ...col,
         onCell: record => ({
           record,
-          inputType: col.dataIndex === "age" ? "number" : "text",
+          inputType: col.dataIndex === "quantity" ? "number" : "text",
           dataIndex: col.dataIndex,
           title: col.title,
-          editing: this.isEditing(record)
+          editing: this.state.isEditing
         })
       };
     });

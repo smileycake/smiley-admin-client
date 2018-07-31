@@ -2,13 +2,30 @@ import { connect } from "dva";
 import { Divider, Input, Table, Pagination, Popconfirm, Button } from "antd";
 import { routerRedux } from "dva/router";
 import CakeEditDrawer from "./CakeEditDrawer";
+import CakeDetail from "./CakeDetail";
 import styles from "./Cakes.css";
 import * as constants from "../constants";
 import * as commonConstants from "../../../../utils/commonConstants";
 
-function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
+function Cakes({
+  dispatch,
+  list: dataSource,
+  loading,
+  total,
+  page: current,
+  cakeDetailVisible
+}) {
   function deleteHandler(id) {
     console.warn(`TODO: ${id}`);
+  }
+
+  function cakeDetailVisibleHandler() {
+    dispatch({
+      type: "cakes/create",
+      payload: {
+        cakeDetailVisible: true
+      }
+    });
   }
 
   function pageChangeHandler(page) {
@@ -31,11 +48,7 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
       key: "name",
       width: "15%",
       render: text => {
-        return (
-          <CakeEditDrawer>
-            <a>{text}</a>
-          </CakeEditDrawer>
-        );
+        return <a>{text}</a>;
       }
     },
     {
@@ -94,9 +107,9 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
     <div className={styles.normal}>
       <div className={styles.operationPanel}>
         <div className={styles.create}>
-          <CakeEditDrawer>
-            <Button type="primary">{constants.CAKE_CREATE}</Button>
-          </CakeEditDrawer>
+          <Button type="primary" onClick={cakeDetailVisibleHandler}>
+            {constants.CAKE_CREATE}
+          </Button>
         </div>
         <div className={styles.search}>
           <Input placeholder={constants.CAKE_SEARCH_PLACEHOLDER} />
@@ -124,19 +137,20 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
         pageSize={commonConstants.PAGE_SIZE}
         onChange={pageChangeHandler}
       />
+      <CakeDetail />
     </div>
   );
 }
 
-function mapStateToPrpos(state) {
-  const { list, total, page, cakeInfoVisible } = state.cakes;
+function mapStateToProps(state) {
+  const { list, total, page, cakeDetailVisible } = state.cakes;
   return {
     list,
     total,
     page,
-    loading: state.loading.models.cakes,
-    cakeInfoVisible
+    cakeDetailVisible,
+    loading: state.loading.models.cakes
   };
 }
 
-export default connect(mapStateToPrpos)(Cakes);
+export default connect(mapStateToProps)(Cakes);

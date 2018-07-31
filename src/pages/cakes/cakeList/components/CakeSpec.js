@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Form, Tabs, Input, Switch, Row, Col } from "antd";
-import CakeMaterialTable from "./CakeMaterialTable";
+import CakeMaterial from "./CakeMaterial";
 
 class CakeSpec extends Component {
   constructor(props) {
@@ -119,7 +119,7 @@ class CakeSpec extends Component {
               </Col>
             </Row>
             <Form.Item label="配方">
-              <CakeMaterialTable onMaterialsChange={this.onMaterialsChange} />
+              <CakeMaterial onMaterialsChange={this.onMaterialsChange} />
             </Form.Item>
           </Tabs.TabPane>
         ))}

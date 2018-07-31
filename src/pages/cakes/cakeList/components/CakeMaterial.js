@@ -6,7 +6,8 @@ import {
   Input,
   Form,
   InputNumber,
-  Popconfirm
+  Popconfirm,
+  Transfer
 } from "antd";
 
 const EditableContext = React.createContext();
@@ -66,26 +67,48 @@ class EditableCell extends Component {
   }
 }
 
-class CakeMaterialTable extends React.Component {
+class CakeMaterial extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { materials: [], editingKey: "" };
+    const allMaterials = [
+      {
+        key: "m1",
+        name: "面粉",
+        price: 5
+      },
+      {
+        key: "m2",
+        name: "糖霜",
+        price: 6
+      },
+      {
+        key: "m3",
+        name: "果茸",
+        price: 10
+      }
+    ];
+    this.state = {
+      allMaterials,
+      selectedMaterials: [],
+      targetKeys: [],
+      editingKey: "",
+      isTableShow: true
+    };
     this.columns = [
       {
         title: "名称",
         dataIndex: "name",
-        width: "25%",
-        editable: true
+        width: "25%"
       },
       {
         title: "数量",
-        dataIndex: "age",
+        dataIndex: "quantity",
         width: "25%",
         editable: true
       },
       {
         title: "价格",
-        dataIndex: "address",
+        dataIndex: "price",
         width: "25%"
       },
       {
@@ -147,7 +170,7 @@ class CakeMaterialTable extends React.Component {
       if (error) {
         return;
       }
-      const newMaterials = [...this.state.materials];
+      const newMaterials = [...this.state.selectedMaterials];
       const index = newMaterials.findIndex(item => key === item.key);
       if (index > -1) {
         const item = newMaterials[index];
@@ -159,7 +182,7 @@ class CakeMaterialTable extends React.Component {
         this.props.onMaterialsChange(newMaterials);
       } else {
         newMaterials.push(row);
-        this.setState({ materials: newMaterials, editingKey: "" });
+        this.setState({ selectedMaterials: newMaterials, editingKey: "" });
         this.props.onMaterialsChange(newMaterials);
       }
     });
@@ -169,17 +192,25 @@ class CakeMaterialTable extends React.Component {
     this.setState({ editingKey: "" });
   };
 
-  addRow = () => {
-    const materials = [...this.state.materials];
-    let newMaterial = {
-      key: materials.length,
-      name: `Edrward ${materials.length}`,
-      age: 32,
-      address: `London Park no. ${materials.length}`
-    };
-    materials.push(newMaterial);
-    this.setState({ materials: materials, editingKey: newMaterial.key });
-    this.props.onMaterialsChange(materials);
+  filterOption = (inputValue, option) => {
+    return option.title.indexOf(inputValue) > -1;
+  };
+
+  handleChange = targetKeys => {
+    const { allMaterials } = this.state;
+    const selectedMaterials = allMaterials
+      .filter(material => {
+        return targetKeys.includes(material.key);
+      })
+      .map(material => {
+        material.quantity = 0;
+        return material;
+      });
+    this.setState({
+      targetKeys,
+      selectedMaterials
+    });
+    this.props.onMaterialsChange(selectedMaterials);
   };
 
   render() {
@@ -208,11 +239,23 @@ class CakeMaterialTable extends React.Component {
 
     return (
       <div>
+        <Transfer
+          dataSource={this.state.allMaterials}
+          listStyle={{
+            width: "46.5%",
+            height: 300
+          }}
+          showSearch
+          filterOption={this.filterOption}
+          targetKeys={this.state.targetKeys}
+          onChange={this.handleChange}
+          render={item => item.name}
+        />
         <Table
           components={components}
           size="small"
           bordered
-          dataSource={this.state.materials}
+          dataSource={this.state.selectedMaterials}
           columns={columns}
           rowClassName="editable-row"
           pagination={false}
@@ -224,13 +267,11 @@ class CakeMaterialTable extends React.Component {
           style={{ width: "100%", marginTop: 20 }}
           type="default"
           icon="plus"
-          onClick={e => {
-            this.addRow();
-          }}
+          onClick={e => {}}
         />
       </div>
     );
   }
 }
 
-export default CakeMaterialTable;
+export default CakeMaterial;

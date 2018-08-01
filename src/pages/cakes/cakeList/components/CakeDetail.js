@@ -1,5 +1,5 @@
 import { connect } from "dva";
-import { Button, Drawer, Form, Input, Select, Col, Row } from "antd";
+import { Button, Drawer, Form, Input, Select, Col, Row, Spin } from "antd";
 import CakeSpec from "./CakeSpec";
 import styles from "./CakeEditDrawer.css";
 
@@ -8,7 +8,7 @@ const CakeDetailForm = Form.create({
     return {
       name: Form.createFormField({
         ...props.name,
-        value: props.cakeDetailInfo.name.value
+        value: props.cakeDetailInfo.name
       })
     };
   }
@@ -83,85 +83,12 @@ function CakeDetail({
   dispatch,
   cakeId,
   cakeDetailInfo,
+  loading,
   editing,
   visible,
   cakeType
 }) {
-  cakeType = [{ id: 1, name: "奶油蛋糕" }, { id: 2, name: "慕斯" }];
-  cakeDetailInfo = {
-    id: 2,
-    name: "爆浆海盐奶盖",
-    type: "奶油蛋糕",
-    specs: [
-      {
-        name: "巧克力",
-        price: "98.00",
-        materials: [
-          {
-            name: "面粉",
-            quantity: "50",
-            price: 10
-          },
-          {
-            name: "巧克力",
-            quantity: "20",
-            price: 10
-          },
-          {
-            name: "糖",
-            quantity: "20",
-            price: 10
-          }
-        ],
-        isGroupPurchase: true
-      },
-      {
-        name: "抹茶",
-        price: "98.00",
-        materials: [
-          {
-            name: "面粉",
-            quantity: "50",
-            price: 10
-          },
-          {
-            name: "抹茶",
-            quantity: "20",
-            price: 15
-          },
-          {
-            name: "糖",
-            quantity: "20",
-            price: 10
-          }
-        ],
-        isGroupPurchase: false
-      },
-      {
-        name: "酸奶奶油",
-        price: "98.00",
-        materials: [
-          {
-            name: "面粉",
-            quantity: "50",
-            price: 10
-          },
-          {
-            name: "酸奶",
-            quantity: "20",
-            price: 10
-          },
-          {
-            name: "糖",
-            quantity: "30",
-            price: 12
-          }
-        ],
-        isGroupPurchase: true
-      }
-    ]
-  };
-  function visibleHandler() {
+  function visibleHandler(e) {
     dispatch({
       type: "cakeDetail/showCakeDetail",
       payload: {
@@ -183,6 +110,7 @@ function CakeDetail({
       maskClosable={false}
       visible={visible}
     >
+      {loading ? <Spin /> : null}
       <CakeDetailForm
         editing={editing}
         cakeType={cakeType}
@@ -200,11 +128,20 @@ function CakeDetail({
 }
 
 function mapStateToProps(state) {
-  const { cakeDetailInfo, editing, visible } = state.cakeDetail;
-  return {
+  const {
+    cakeId,
     cakeDetailInfo,
+    cakeType,
     editing,
     visible
+  } = state.cakeDetail;
+  return {
+    cakeId,
+    cakeDetailInfo,
+    cakeType,
+    editing,
+    visible,
+    loading: true
   };
 }
 

@@ -1,10 +1,16 @@
 import * as cakesService from "../services/cakes";
+import { stat } from "fs";
 
 export default {
   namespace: "cakeDetail",
   state: {
     cakeId: null,
-    cakeDetailInfo: null,
+    cakeDetailInfo: {
+      id: null,
+      name: null,
+      type: null,
+      specs: []
+    },
     cakeType: [],
     editing: false,
     visible: false
@@ -13,10 +19,13 @@ export default {
     showCakeDetail(
       state,
       {
-        payload: { cakeId, cakeDetailInfo, cakeType, editing, visible }
+        payload: { cakeDetailInfo, editing, visible }
       }
     ) {
-      return { ...state, cakeId, cakeDetailInfo, cakeType, editing, visible };
+      cakeDetailInfo = cakeDetailInfo ? cakeDetailInfo : state.cakeDetailInfo;
+      editing = editing === undefined ? state.editing : editing;
+      visible = visible === undefined ? state.visible : visible;
+      return { ...state, cakeDetailInfo, editing, visible };
     }
   },
   effects: {
@@ -26,11 +35,18 @@ export default {
       },
       { call, put }
     ) {
-      const { data, headers } = yield call(cakesService.fetchCakeDetail, {
+      yield put({
+        type: "showCakeDetail",
+        payload: {
+          visible: true,
+          editing: false
+        }
+      });
+      const { data } = yield call(cakesService.fetchCakeDetail, {
         cakeId
       });
       yield put({
-        type: "showCakeDetailInfo",
+        type: "showCakeDetail",
         payload: {
           cakeDetailInfo: data
         }

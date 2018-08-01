@@ -37,12 +37,11 @@ function Cakes({
     );
   }
 
-  function cakeClickHandler(record, index, event) {
+  function cakeClickHandler(record, index) {
     dispatch({
-      type: "cakeDetail/showCakeDetail",
+      type: "cakeDetail/fetchCakeDetail",
       payload: {
-        visible: true,
-        editing: false
+        cakeId: 2
       }
     });
   }
@@ -58,7 +57,7 @@ function Cakes({
       key: "name",
       width: "15%",
       render: text => {
-        return <a>{text}</a>;
+        return <a onClick={cakeClickHandler}>{text}</a>;
       }
     },
     {
@@ -136,7 +135,6 @@ function Cakes({
             return styles.subRow;
           }
         }}
-        onRowClick={cakeClickHandler}
         expandIconAsCell={true}
         expandIconColumnIndex={0}
         pagination={false}

@@ -88,7 +88,7 @@ export default {
     }
   },
   "GET /api/cakeDetail": (req, res) => {
-    if (req.query._cakeId === "1") {
+    if (req.query._cakeId === "2") {
       res.json({
         id: 2,
         name: "爆浆海盐奶盖",

@@ -59,7 +59,7 @@ const CakeDetailForm = Form.create({
             {editing
               ? getFieldDecorator("name", {
                   rules: [{ required: true, message: "please enter user name" }]
-                })(<Input placeholder="please enter user name" />)
+                })(<Input style={{ width: 200 }} />)
               : cakeDetailInfo.name}
           </Form.Item>
         </Col>
@@ -75,8 +75,8 @@ const CakeDetailForm = Form.create({
                   ]
                 })(
                   <Select
+                    style={{ width: 200 }}
                     showSearch
-                    placeholder="Select a person"
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       option.props.children
@@ -104,20 +104,12 @@ const CakeDetailForm = Form.create({
               <Row>
                 <Col span={10}>
                   <Form.Item label="规格名称">
-                    {editing ? (
-                      <Input placeholder="please enter user name" />
-                    ) : (
-                      spec.name
-                    )}
+                    {editing ? <Input /> : spec.name}
                   </Form.Item>
                 </Col>
                 <Col span={9}>
                   <Form.Item label="售价">
-                    {editing ? (
-                      <Input placeholder="please enter user name" />
-                    ) : (
-                      spec.price
-                    )}
+                    {editing ? <Input /> : spec.price}
                   </Form.Item>
                 </Col>
                 <Col span={5}>
@@ -133,7 +125,11 @@ const CakeDetailForm = Form.create({
                 </Col>
               </Row>
               <Row>
-                <Form.Item label="配方">
+                <Form.Item
+                  style={{ width: "100%" }}
+                  wrapperCol={{ span: 24 }}
+                  label="配方"
+                >
                   <Table
                     size="small"
                     bordered
@@ -210,12 +206,14 @@ function CakeDetail({
         />
       )}
 
-      <div className={styles.formFooter}>
-        <Button className={styles.cancelButton}>Cancel</Button>
-        <Button onClick={onSubmit} type="primary">
-          Submit
-        </Button>
-      </div>
+      {editing ? (
+        <div className={styles.formFooter}>
+          <Button className={styles.cancelButton}>Cancel</Button>
+          <Button onClick={onSubmit} type="primary">
+            Submit
+          </Button>
+        </div>
+      ) : null}
     </Drawer>
   );
 }

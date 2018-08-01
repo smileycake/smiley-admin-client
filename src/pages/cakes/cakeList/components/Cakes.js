@@ -12,7 +12,8 @@ function Cakes({
   loading,
   total,
   page: current,
-  cakeDetailVisible
+  cakeDetailVisible,
+  cakeType
 }) {
   function deleteHandler(id) {
     console.warn(`TODO: ${id}`);
@@ -20,7 +21,10 @@ function Cakes({
 
   function createCakeHandler() {
     dispatch({
-      type: "cakeDetail/createCake"
+      type: "cakeDetail/createCake",
+      payload: {
+        cakeType
+      }
     });
   }
 
@@ -33,11 +37,11 @@ function Cakes({
     );
   }
 
-  function cakeClickHandler() {
+  function cakeClickHandler(cakeId) {
     dispatch({
       type: "cakeDetail/fetchCakeDetail",
       payload: {
-        cakeId: 2
+        cakeId
       }
     });
   }
@@ -52,8 +56,12 @@ function Cakes({
       dataIndex: "name",
       key: "name",
       width: "15%",
-      render: text => {
-        return <a onClick={cakeClickHandler}>{text}</a>;
+      render: (text, { id }) => {
+        return (
+          <span>
+            <a onClick={cakeClickHandler.bind(null, id)}>{text}</a>
+          </span>
+        );
       }
     },
     {
@@ -126,7 +134,7 @@ function Cakes({
         columns={colums}
         dataSource={dataSource}
         rowKey={record => record.id}
-        rowClassName={(record, index) => {
+        rowClassName={record => {
           if (record.type === undefined) {
             return styles.subRow;
           }
@@ -148,12 +156,13 @@ function Cakes({
 }
 
 function mapStateToProps(state) {
-  const { list, total, page, cakeDetailVisible } = state.cakes;
+  const { list, total, page, cakeDetailVisible, cakeType } = state.cakes;
   return {
     list,
     total,
     page,
     cakeDetailVisible,
+    cakeType,
     loading: state.loading.models.cakes
   };
 }

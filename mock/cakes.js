@@ -88,7 +88,37 @@ export default {
     }
   },
   "GET /api/cakeDetail": (req, res) => {
-    if (req.query._cakeId === "2") {
+    if (req.query._cakeId === "1") {
+      res.json({
+        id: 1,
+        name: "蓝朋友的心",
+        type: "慕斯",
+        specs: [
+          {
+            name: "黑巧克力",
+            price: "39.00",
+            materials: [
+              {
+                name: "面粉",
+                quantity: "50",
+                price: 10
+              },
+              {
+                name: "酸奶",
+                quantity: "20",
+                price: 10
+              },
+              {
+                name: "糖",
+                quantity: "30",
+                price: 12
+              }
+            ],
+            isGroupPurchase: false
+          }
+        ]
+      });
+    } else if (req.query._cakeId === "2") {
       res.json({
         id: 2,
         name: "爆浆海盐奶盖",
@@ -163,5 +193,17 @@ export default {
         ]
       });
     }
+  },
+  "GET /api/cakeType": (req, res) => {
+    res.json([
+      {
+        id: 1,
+        name: "奶油蛋糕"
+      },
+      {
+        id: 2,
+        name: "慕斯"
+      }
+    ]);
   }
 };

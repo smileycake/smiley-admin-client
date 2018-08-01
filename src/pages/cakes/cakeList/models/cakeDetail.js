@@ -20,7 +20,12 @@ export default {
     ) {
       return { ...state, activeSpecTab };
     },
-    createCake(state) {
+    createCake(
+      state,
+      {
+        payload: { cakeType }
+      }
+    ) {
       const cakeDetailInfo = {
         name: "",
         type: "",
@@ -35,6 +40,7 @@ export default {
       };
       return {
         ...state,
+        cakeType,
         cakeDetailInfo,
         editing: true,
         visible: true,

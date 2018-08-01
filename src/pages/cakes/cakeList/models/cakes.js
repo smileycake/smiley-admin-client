@@ -6,7 +6,8 @@ export default {
     list: [],
     total: null,
     page: null,
-    cakeDetailVisible: false
+    cakeDetailVisible: false,
+    cakeType: []
   },
   reducers: {
     save(
@@ -24,6 +25,14 @@ export default {
       }
     ) {
       return { ...state, cakeDetailVisible };
+    },
+    cacheCakeType(
+      state,
+      {
+        payload: { cakeType }
+      }
+    ) {
+      return { ...state, cakeType };
     }
   },
   effects: {
@@ -48,6 +57,15 @@ export default {
           cakeDetailVisible: false
         }
       });
+    },
+    *fetchCakeType({}, { call, put }) {
+      const { data } = yield call(cakesService.fetchCakeType);
+      yield put({
+        type: "cacheCakeType",
+        payload: {
+          cakeType: data
+        }
+      });
     }
   },
   subscriptions: {
@@ -55,6 +73,7 @@ export default {
       return history.listen(({ pathname, query }) => {
         if (pathname === "/cakes/cakeList") {
           dispatch({ type: "fetch", payload: query });
+          dispatch({ type: "fetchCakeType" });
         }
       });
     }

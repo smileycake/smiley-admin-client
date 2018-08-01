@@ -5,27 +5,61 @@ export default {
   namespace: "cakeDetail",
   state: {
     cakeId: null,
-    cakeDetailInfo: {
-      id: null,
-      name: null,
-      type: null,
-      specs: []
-    },
+    cakeDetailInfo: {},
     cakeType: [],
     editing: false,
-    visible: false
+    visible: false,
+    activeSpecTab: null
   },
   reducers: {
+    changeCakeSpecTab(
+      state,
+      {
+        payload: { activeSpecTab }
+      }
+    ) {
+      return { ...state, activeSpecTab };
+    },
+    createCake(state) {
+      const cakeDetailInfo = {
+        name: "",
+        type: "",
+        specs: [
+          {
+            name: "新规格",
+            price: "0.00",
+            materials: [],
+            isGroupPurchase: false
+          }
+        ]
+      };
+      return {
+        ...state,
+        cakeDetailInfo,
+        editing: true,
+        visible: true,
+        activeSpecTab: "新规格"
+      };
+    },
     showCakeDetail(
       state,
       {
-        payload: { cakeDetailInfo, editing, visible }
+        payload: { cakeDetailInfo }
       }
     ) {
-      cakeDetailInfo = cakeDetailInfo ? cakeDetailInfo : state.cakeDetailInfo;
-      editing = editing === undefined ? state.editing : editing;
-      visible = visible === undefined ? state.visible : visible;
-      return { ...state, cakeDetailInfo, editing, visible };
+      return {
+        ...state,
+        cakeDetailInfo,
+        activeSpecTab: cakeDetailInfo.specs[0].name
+      };
+    },
+    showCakeDetailPanel(
+      state,
+      {
+        payload: { editing, visible }
+      }
+    ) {
+      return { ...state, editing, visible };
     }
   },
   effects: {
@@ -36,7 +70,7 @@ export default {
       { call, put }
     ) {
       yield put({
-        type: "showCakeDetail",
+        type: "showCakeDetailPanel",
         payload: {
           visible: true,
           editing: false
@@ -53,13 +87,5 @@ export default {
       });
     }
   },
-  subscriptions: {
-    setup({ dispatch, history }) {
-      return history.listen(({ pathname, query }) => {
-        if (pathname === "/cakes/cakeList") {
-          dispatch({ type: "fetch", payload: query });
-        }
-      });
-    }
-  }
+  subscriptions: {}
 };

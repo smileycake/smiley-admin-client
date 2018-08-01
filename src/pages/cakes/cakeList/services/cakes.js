@@ -8,3 +8,10 @@ export function fetch({ page = 1 }) {
 export function fetchCakeDetail({ cakeId }) {
   return request(`/api/cakeDetail?_cakeId=${cakeId}`);
 }
+
+export function createCakeDetail(cakeDetail) {
+  return request("/api/cakeDetail", {
+    method: "POST",
+    body: JSON.stringify(cakeDetail)
+  });
+}

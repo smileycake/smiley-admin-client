@@ -1,23 +1,59 @@
 import { connect } from "dva";
-import { Button, Drawer, Form, Input, Select, Col, Row, Spin } from "antd";
+import {
+  Button,
+  Drawer,
+  Form,
+  Input,
+  Select,
+  Col,
+  Row,
+  Spin,
+  Tabs,
+  Switch,
+  Table
+} from "antd";
 import CakeSpec from "./CakeSpec";
+import CakeMaterial from "./CakeMaterial";
 import styles from "./CakeEditDrawer.css";
 
 const CakeDetailForm = Form.create({
-  mapPropsToFields(props) {
-    return {
-      name: Form.createFormField({
-        ...props.name,
-        value: props.cakeDetailInfo.name
-      })
-    };
-  }
+  mapPropsToFields(props) {}
 })(props => {
   const { getFieldDecorator } = props.form;
-  const { cakeType, cakeDetailInfo, editing } = props;
+  const {
+    cakeType,
+    cakeDetailInfo,
+    editing,
+    activeSpecTab,
+    onChangeSpec
+  } = props;
+
+  function onChange(activeSpecTab) {
+    onChangeSpec(activeSpecTab);
+  }
+
+  function onEdit() {}
+  const columns = [
+    {
+      title: "名称",
+      dataIndex: "name",
+      width: "25%"
+    },
+    {
+      title: "数量",
+      dataIndex: "quantity",
+      width: "25%",
+      editable: true
+    },
+    {
+      title: "单价（元）",
+      dataIndex: "price",
+      width: "25%"
+    }
+  ];
   return (
-    <Form layout="vertical" hideRequiredMark>
-      <Row gutter={16}>
+    <Form layout="inline" hideRequiredMark>
+      <Row>
         <Col span={12}>
           <Form.Item label="甜品名称">
             {editing
@@ -62,18 +98,58 @@ const CakeDetailForm = Form.create({
         </Col>
       </Row>
       <Row gutter={16}>
-        {getFieldDecorator("specs", {
-          valuePropName: "specs",
-          initialValue: {}
-        })(
-          <CakeSpec
-            onSpecChange={specs => {
-              this.props.form.setFieldsValue({
-                specs: specs
-              });
-            }}
-          />
-        )}
+        <Tabs onChange={onChange} activeKey={activeSpecTab} onEdit={() => {}}>
+          {cakeDetailInfo.specs.map(spec => (
+            <Tabs.TabPane tab={spec.name} key={spec.name} closable={false}>
+              <Row>
+                <Col span={10}>
+                  <Form.Item label="规格名称">
+                    {editing ? (
+                      <Input placeholder="please enter user name" />
+                    ) : (
+                      spec.name
+                    )}
+                  </Form.Item>
+                </Col>
+                <Col span={9}>
+                  <Form.Item label="售价">
+                    {editing ? (
+                      <Input placeholder="please enter user name" />
+                    ) : (
+                      spec.price
+                    )}
+                  </Form.Item>
+                </Col>
+                <Col span={5}>
+                  <Form.Item label="团购否">
+                    {editing ? (
+                      <Switch checkedChildren="是" unCheckedChildren="否" />
+                    ) : spec.isGroupPurchase ? (
+                      "是"
+                    ) : (
+                      "否"
+                    )}
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row>
+                <Form.Item label="配方">
+                  <Table
+                    size="small"
+                    bordered
+                    dataSource={spec.materials}
+                    columns={columns}
+                    rowClassName="editable-row"
+                    pagination={false}
+                    footer={() => {
+                      return <span>aaaa</span>;
+                    }}
+                  />
+                </Form.Item>
+              </Row>
+            </Tabs.TabPane>
+          ))}
+        </Tabs>
       </Row>
     </Form>
   );
@@ -86,16 +162,27 @@ function CakeDetail({
   loading,
   editing,
   visible,
-  cakeType
+  cakeType,
+  activeSpecTab
 }) {
+  function onChangeSpec(activeSpecTab) {
+    dispatch({
+      type: "cakeDetail/changeCakeSpecTab",
+      payload: {
+        activeSpecTab: activeSpecTab
+      }
+    });
+  }
+
   function visibleHandler(e) {
     dispatch({
-      type: "cakeDetail/showCakeDetail",
+      type: "cakeDetail/showCakeDetailPanel",
       payload: {
         visible: false
       }
     });
   }
+
   function onSubmit() {
     this.props.form.validateFields((err, values) => {
       if (!err) {
@@ -103,6 +190,7 @@ function CakeDetail({
       }
     });
   }
+
   return (
     <Drawer
       onClose={visibleHandler}
@@ -110,12 +198,17 @@ function CakeDetail({
       maskClosable={false}
       visible={visible}
     >
-      {loading ? <Spin /> : null}
-      <CakeDetailForm
-        editing={editing}
-        cakeType={cakeType}
-        cakeDetailInfo={cakeDetailInfo}
-      />
+      {loading ? (
+        <Spin />
+      ) : (
+        <CakeDetailForm
+          editing={editing}
+          cakeType={cakeType}
+          cakeDetailInfo={cakeDetailInfo}
+          activeSpecTab={activeSpecTab}
+          onChangeSpec={onChangeSpec}
+        />
+      )}
 
       <div className={styles.formFooter}>
         <Button className={styles.cancelButton}>Cancel</Button>
@@ -133,7 +226,8 @@ function mapStateToProps(state) {
     cakeDetailInfo,
     cakeType,
     editing,
-    visible
+    visible,
+    activeSpecTab
   } = state.cakeDetail;
   return {
     cakeId,
@@ -141,7 +235,8 @@ function mapStateToProps(state) {
     cakeType,
     editing,
     visible,
-    loading: true
+    activeSpecTab,
+    loading: state.loading.models.cakeDetail
   };
 }
 

@@ -5,14 +5,13 @@ import CakeMaterial from "./CakeMaterial";
 class CakeSpec extends Component {
   constructor(props) {
     super(props);
-    this.newTabIndex = 2;
-    const panes = [{ title: "新规格", key: "规格1", closable: false }];
+    this.newTabIndex = 1;
+    const panes = [];
     const specs = {};
-    specs[panes[0].key] = this.getNewSpec();
     this.state = {
       specs,
       panes,
-      activeKey: panes[0].key
+      activeKey: null
     };
   }
 

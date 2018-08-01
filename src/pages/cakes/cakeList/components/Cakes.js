@@ -20,11 +20,7 @@ function Cakes({
 
   function createCakeHandler() {
     dispatch({
-      type: "cakeDetail/showCakeDetail",
-      payload: {
-        visible: true,
-        editing: true
-      }
+      type: "cakeDetail/createCake"
     });
   }
 
@@ -37,7 +33,7 @@ function Cakes({
     );
   }
 
-  function cakeClickHandler(record, index) {
+  function cakeClickHandler() {
     dispatch({
       type: "cakeDetail/fetchCakeDetail",
       payload: {

@@ -9,11 +9,11 @@ import * as commonConstants from "../../../../utils/commonConstants";
 function Cakes({
   dispatch,
   list: dataSource,
-  loading,
   total,
   page: current,
-  cakeDetailVisible,
-  cakeType
+  cakeType,
+  cakeMaterials,
+  loading
 }) {
   function deleteHandler(id) {
     console.warn(`TODO: ${id}`);
@@ -23,7 +23,8 @@ function Cakes({
     dispatch({
       type: "cakeDetail/createCake",
       payload: {
-        cakeType
+        cakeType,
+        cakeMaterials
       }
     });
   }
@@ -150,19 +151,19 @@ function Cakes({
         pageSize={commonConstants.PAGE_SIZE}
         onChange={pageChangeHandler}
       />
-      <CakeDetail visible={cakeDetailVisible} editing={true} />
+      <CakeDetail />
     </div>
   );
 }
 
 function mapStateToProps(state) {
-  const { list, total, page, cakeDetailVisible, cakeType } = state.cakes;
+  const { list, total, page, cakeType, cakeMaterials } = state.cakes;
   return {
     list,
     total,
     page,
-    cakeDetailVisible,
     cakeType,
+    cakeMaterials,
     loading: state.loading.models.cakes
   };
 }

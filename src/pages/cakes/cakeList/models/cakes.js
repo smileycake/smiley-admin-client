@@ -6,8 +6,8 @@ export default {
     list: [],
     total: null,
     page: null,
-    cakeDetailVisible: false,
-    cakeType: []
+    cakeType: [],
+    cakeMaterials: []
   },
   reducers: {
     save(
@@ -18,14 +18,6 @@ export default {
     ) {
       return { ...state, list, total, page };
     },
-    create(
-      state,
-      {
-        payload: { cakeDetailVisible }
-      }
-    ) {
-      return { ...state, cakeDetailVisible };
-    },
     cacheCakeType(
       state,
       {
@@ -33,10 +25,18 @@ export default {
       }
     ) {
       return { ...state, cakeType };
+    },
+    cacheCakeMaterials(
+      state,
+      {
+        payload: { cakeMaterials }
+      }
+    ) {
+      return { ...state, cakeMaterials };
     }
   },
   effects: {
-    *fetch(
+    *fetchCakeList(
       {
         payload: { page = 1 }
       },
@@ -53,8 +53,7 @@ export default {
         payload: {
           data,
           total: parseInt(headers["x-total-count"], 10),
-          page: parseInt(page, 10),
-          cakeDetailVisible: false
+          page: parseInt(page, 10)
         }
       });
     },
@@ -66,14 +65,28 @@ export default {
           cakeType: data
         }
       });
+    },
+    *fetchCakeMaterials({}, { call, put }) {
+      const { data } = yield call(cakesService.fetchCakeMaterials);
+      const materials = data.map(material => {
+        material.key = material.id;
+        return material;
+      });
+      yield put({
+        type: "cacheCakeMaterials",
+        payload: {
+          cakeMaterials: materials
+        }
+      });
     }
   },
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(({ pathname, query }) => {
         if (pathname === "/cakes/cakeList") {
-          dispatch({ type: "fetch", payload: query });
+          dispatch({ type: "fetchCakeList", payload: query });
           dispatch({ type: "fetchCakeType" });
+          dispatch({ type: "fetchCakeMaterials" });
         }
       });
     }

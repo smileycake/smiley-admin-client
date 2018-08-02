@@ -7,6 +7,7 @@ export default {
     cakeId: null,
     cakeDetailInfo: {},
     cakeType: [],
+    cakeMaterials: [],
     editing: false,
     visible: false,
     activeSpecTab: null
@@ -23,7 +24,7 @@ export default {
     createCake(
       state,
       {
-        payload: { cakeType }
+        payload: { cakeType, cakeMaterials }
       }
     ) {
       const cakeDetailInfo = {
@@ -42,6 +43,7 @@ export default {
         ...state,
         cakeType,
         cakeDetailInfo,
+        cakeMaterials,
         editing: true,
         visible: true,
         activeSpecTab: "新规格"

@@ -5,6 +5,10 @@ export function fetch({ page = 1 }) {
   return request(`/api/cakes?_page=${page}&_limit=${PAGE_SIZE}`);
 }
 
+export function fetchCakeMaterials() {
+  return request("/api/materials");
+}
+
 export function fetchCakeType() {
   return request("/api/cakeType");
 }

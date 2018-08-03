@@ -6,26 +6,14 @@ import styles from "./Cakes.css";
 import * as constants from "../constants";
 import * as commonConstants from "../../../../utils/commonConstants";
 
-function Cakes({
-  dispatch,
-  list: dataSource,
-  total,
-  page: current,
-  cakeType,
-  cakeMaterials,
-  loading
-}) {
+function Cakes({ dispatch, list: dataSource, total, page: current, loading }) {
   function deleteHandler(id) {
     console.warn(`TODO: ${id}`);
   }
 
   function createCakeHandler() {
     dispatch({
-      type: "cakeDetail/createCake",
-      payload: {
-        cakeType,
-        cakeMaterials
-      }
+      type: "cakeDetail/createCake"
     });
   }
 
@@ -157,13 +145,11 @@ function Cakes({
 }
 
 function mapStateToProps(state) {
-  const { list, total, page, cakeType, cakeMaterials } = state.cakes;
+  const { list, total, page } = state.cakes;
   return {
     list,
     total,
     page,
-    cakeType,
-    cakeMaterials,
     loading: state.loading.models.cakes
   };
 }

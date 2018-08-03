@@ -5,9 +5,7 @@ export default {
   state: {
     list: [],
     total: null,
-    page: null,
-    cakeType: [],
-    cakeMaterials: []
+    page: null
   },
   reducers: {
     save(
@@ -17,22 +15,6 @@ export default {
       }
     ) {
       return { ...state, list, total, page };
-    },
-    cacheCakeType(
-      state,
-      {
-        payload: { cakeType }
-      }
-    ) {
-      return { ...state, cakeType };
-    },
-    cacheCakeMaterials(
-      state,
-      {
-        payload: { cakeMaterials }
-      }
-    ) {
-      return { ...state, cakeMaterials };
     }
   },
   effects: {
@@ -60,7 +42,7 @@ export default {
     *fetchCakeType({}, { call, put }) {
       const { data } = yield call(cakesService.fetchCakeType);
       yield put({
-        type: "cacheCakeType",
+        type: "cakeDetail/cacheCakeType",
         payload: {
           cakeType: data
         }
@@ -68,14 +50,14 @@ export default {
     },
     *fetchCakeMaterials({}, { call, put }) {
       const { data } = yield call(cakesService.fetchCakeMaterials);
-      const materials = data.map(material => {
+      const cakeMaterials = data.map(material => {
         material.key = material.id;
         return material;
       });
       yield put({
-        type: "cacheCakeMaterials",
+        type: "cakeDetail/cacheCakeMaterials",
         payload: {
-          cakeMaterials: materials
+          cakeMaterials
         }
       });
     }

@@ -9,24 +9,19 @@ export default {
     cakeType: [],
     cakeMaterials: [],
     editing: false,
-    visible: false,
-    activeSpecTab: null
+    visible: false
   },
   reducers: {
-    changeCakeSpecTab(
+    addCakeSpec(
       state,
       {
-        payload: { activeSpecTab }
+        payload: { specs }
       }
     ) {
-      return { ...state, activeSpecTab };
+      const cakeDetailInfo = { ...cakeDetailInfo, specs };
+      return { ...state, cakeDetailInfo };
     },
-    createCake(
-      state,
-      {
-        payload: { cakeType, cakeMaterials }
-      }
-    ) {
+    createCake(state) {
       const cakeDetailInfo = {
         name: "",
         type: "",
@@ -41,12 +36,9 @@ export default {
       };
       return {
         ...state,
-        cakeType,
         cakeDetailInfo,
-        cakeMaterials,
         editing: true,
-        visible: true,
-        activeSpecTab: "新规格"
+        visible: true
       };
     },
     showCakeDetail(
@@ -57,8 +49,7 @@ export default {
     ) {
       return {
         ...state,
-        cakeDetailInfo,
-        activeSpecTab: cakeDetailInfo.specs[0].name
+        cakeDetailInfo
       };
     },
     showCakeDetailPanel(
@@ -68,6 +59,22 @@ export default {
       }
     ) {
       return { ...state, editing, visible };
+    },
+    cacheCakeMaterials(
+      state,
+      {
+        payload: { cakeMaterials }
+      }
+    ) {
+      return { ...state, cakeMaterials };
+    },
+    cacheCakeType(
+      state,
+      {
+        payload: { cakeType }
+      }
+    ) {
+      return { ...state, cakeType };
     }
   },
   effects: {

@@ -6,13 +6,17 @@ class CakeSpec extends Component {
   constructor(props) {
     super(props);
     this.newTabIndex = 1;
-    const panes = [];
-    const specs = {};
     this.state = {
-      specs,
-      panes,
-      activeKey: null
+      ...this.props,
+      activeKey: this.props.specs[0].name
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      ...nextProps,
+      activeKey: nextProps.specs[0].name
+    });
   }
 
   specsChangeHandler = specs => {
@@ -42,14 +46,15 @@ class CakeSpec extends Component {
   };
 
   add = () => {
-    const { panes, specs } = this.state;
+    const { specs } = this.state;
     const activeKey = `规格${this.newTabIndex++}`;
-    panes.push({
-      title: "新规格",
-      key: activeKey
+    specs.push({
+      name: "新规格",
+      price: "0.00",
+      materials: [],
+      isGroupPurchase: false
     });
-    specs[activeKey] = this.getNewSpec();
-    this.setState({ specs, panes, activeKey });
+    this.setState({ specs, activeKey });
     this.specsChangeHandler(specs);
   };
 
@@ -65,61 +70,61 @@ class CakeSpec extends Component {
     this.specsChangeHandler(specs);
   };
 
-  getNewSpec = () => {
-    return {
-      name: "新规格",
-      materials: [],
-      price: null,
-      isGroupPurchase: false
-    };
-  };
-
   render() {
+    const { editing, specs, cakeMaterials, activeKey } = this.state;
     return (
       <Tabs
+        type={editing ? "editable-card" : "line"}
         onChange={this.onChange}
-        activeKey={this.state.activeKey}
-        type="editable-card"
+        activeKey={activeKey}
         onEdit={this.onEdit}
       >
-        {this.state.panes.map(pane => (
-          <Tabs.TabPane
-            tab={pane.title}
-            key={pane.key}
-            closable={pane.closable}
-          >
-            <Row gutter={16}>
+        {specs.map(spec => (
+          <Tabs.TabPane tab={spec.name} key={spec.name} closable={false}>
+            <Row>
               <Col span={10}>
                 <Form.Item label="规格名称">
-                  <Input
-                    onChange={this.onPriceChange}
-                    placeholder="please enter user name"
-                  />
+                  {editing ? (
+                    <Input onChange={this.onPriceChange} />
+                  ) : (
+                    spec.name
+                  )}
                 </Form.Item>
               </Col>
-
-              <Col span={10}>
+              <Col span={9}>
                 <Form.Item label="售价">
-                  <Input
-                    onChange={this.onPriceChange}
-                    placeholder="please enter user name"
-                  />
+                  {editing ? (
+                    <Input onChange={this.onPriceChange} />
+                  ) : (
+                    spec.price
+                  )}
                 </Form.Item>
               </Col>
-
-              <Col span={4}>
+              <Col span={5}>
                 <Form.Item label="团购否">
-                  <Switch
-                    onChange={this.onGroupPurchaseChange}
-                    checkedChildren="是"
-                    unCheckedChildren="否"
-                  />
+                  {editing ? (
+                    <Switch
+                      onChange={this.onGroupPurchaseChange}
+                      checkedChildren="是"
+                      unCheckedChildren="否"
+                    />
+                  ) : spec.isGroupPurchase ? (
+                    "是"
+                  ) : (
+                    "否"
+                  )}
                 </Form.Item>
               </Col>
             </Row>
-            <Form.Item label="配方">
-              <CakeMaterial onMaterialsChange={this.onMaterialsChange} />
-            </Form.Item>
+            <Row>
+              <Form.Item
+                style={{ width: "100%" }}
+                wrapperCol={{ span: 24 }}
+                label="配方"
+              >
+                <CakeMaterial onMaterialsChange={this.onMaterialsChange} />
+              </Form.Item>
+            </Row>
           </Tabs.TabPane>
         ))}
       </Tabs>

@@ -27,6 +27,7 @@ export default {
         type: "",
         specs: [
           {
+            key: "规格1",
             name: "新规格",
             price: "0.00",
             materials: [],
@@ -93,6 +94,13 @@ export default {
       });
       const { data } = yield call(cakesService.fetchCakeDetail, {
         cakeId
+      });
+      let index = 1;
+      data.specs.forEach(spec => {
+        spec.key = "规格" + index++;
+        spec.materials.forEach(material => {
+          material.key = material.id;
+        });
       });
       yield put({
         type: "showCakeDetail",

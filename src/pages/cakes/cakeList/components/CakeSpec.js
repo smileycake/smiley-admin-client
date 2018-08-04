@@ -1,5 +1,15 @@
 import React, { Component } from "react";
-import { Form, Tabs, Input, Switch, Row, Col } from "antd";
+import {
+  Form,
+  Tabs,
+  Input,
+  Switch,
+  Row,
+  Col,
+  Transfer,
+  Table,
+  InputNumber
+} from "antd";
 import CakeMaterial from "./CakeMaterial";
 
 class CakeSpec extends Component {
@@ -8,14 +18,14 @@ class CakeSpec extends Component {
     this.newTabIndex = 1;
     this.state = {
       ...this.props,
-      activeKey: this.props.specs[0].name
+      activeKey: this.props.specs[0].key
     };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
       ...nextProps,
-      activeKey: nextProps.specs[0].name
+      activeKey: nextProps.specs[0].key
     });
   }
 
@@ -26,18 +36,32 @@ class CakeSpec extends Component {
     }
   };
 
-  onMaterialsChange = materials => {
-    const { specs, activeKey } = this.state;
-    specs[activeKey].materials = materials;
-    this.setState({ specs });
-    this.specsChangeHandler(specs);
+  onMaterialsChange = materialKeys => {
+    const { specs, cakeMaterials, activeKey } = this.state;
+    const materials = cakeMaterials.filter(material => {
+      return materialKeys.includes(material.key);
+    });
+    specs.forEach(spec => {
+      if (spec.key === activeKey) {
+        spec.materials = materials;
+      }
+    });
+    this.setState({ specs, selectedMaterialKeys: materialKeys });
   };
 
-  onPriceChange = () => {};
+  onPriceChange = price => {
+    const { specs, activeKey } = this.state;
+    specs.forEach(spec => {
+      if (spec.key === activeKey) {
+        spec.price = price;
+      }
+    });
+    this.setState({ specs });
+  };
 
   onGroupPurchaseChange = () => {};
 
-  onChange = activeKey => {
+  onSpecTabChange = activeKey => {
     this.setState({ activeKey });
   };
 
@@ -47,8 +71,9 @@ class CakeSpec extends Component {
 
   add = () => {
     const { specs } = this.state;
-    const activeKey = `规格${this.newTabIndex++}`;
+    const activeKey = `规格${++this.newTabIndex}`;
     specs.push({
+      key: "规格" + this.newTabIndex,
       name: "新规格",
       price: "0.00",
       materials: [],
@@ -59,14 +84,14 @@ class CakeSpec extends Component {
   };
 
   remove = targetKey => {
-    let specs = this.state.specs;
-    let activeKey = this.state.activeKey;
-    delete specs[targetKey];
-    const panes = this.state.panes.filter(pane => pane.key !== targetKey);
+    let { activeKey } = this.state;
+    const specs = this.state.specs.filter(spec => {
+      return spec.key !== targetKey;
+    });
     if (activeKey === targetKey) {
-      activeKey = panes[panes.length - 1].key;
+      activeKey = specs[specs.length - 1].key;
     }
-    this.setState({ specs, panes, activeKey });
+    this.setState({ specs, activeKey });
     this.specsChangeHandler(specs);
   };
 
@@ -75,17 +100,24 @@ class CakeSpec extends Component {
     return (
       <Tabs
         type={editing ? "editable-card" : "line"}
-        onChange={this.onChange}
+        onChange={this.onSpecTabChange}
         activeKey={activeKey}
         onEdit={this.onEdit}
       >
         {specs.map(spec => (
-          <Tabs.TabPane tab={spec.name} key={spec.name} closable={false}>
+          <Tabs.TabPane
+            tab={spec.name}
+            key={spec.key}
+            closable={spec.key === "规格1" ? false : true}
+          >
             <Row>
               <Col span={10}>
                 <Form.Item label="规格名称">
                   {editing ? (
-                    <Input onChange={this.onPriceChange} />
+                    <Input
+                      style={{ width: 200 }}
+                      onChange={this.onPriceChange}
+                    />
                   ) : (
                     spec.name
                   )}
@@ -94,7 +126,10 @@ class CakeSpec extends Component {
               <Col span={9}>
                 <Form.Item label="售价">
                   {editing ? (
-                    <Input onChange={this.onPriceChange} />
+                    <InputNumber
+                      style={{ width: 200 }}
+                      onChange={this.onPriceChange}
+                    />
                   ) : (
                     spec.price
                   )}
@@ -122,7 +157,11 @@ class CakeSpec extends Component {
                 wrapperCol={{ span: 24 }}
                 label="配方"
               >
-                <CakeMaterial onMaterialsChange={this.onMaterialsChange} />
+                <CakeMaterial
+                  selectedMaterials={spec.materials}
+                  editing={editing}
+                  cakeMaterials={cakeMaterials}
+                />
               </Form.Item>
             </Row>
           </Tabs.TabPane>

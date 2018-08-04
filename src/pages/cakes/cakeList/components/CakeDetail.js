@@ -1,5 +1,15 @@
 import { connect } from "dva";
-import { Button, Drawer, Form, Input, Select, Col, Row, Spin } from "antd";
+import {
+  Button,
+  Drawer,
+  Form,
+  Input,
+  Select,
+  Col,
+  Row,
+  Spin,
+  Divider
+} from "antd";
 import CakeSpec from "./CakeSpec";
 import styles from "./CakeEditDrawer.css";
 
@@ -22,11 +32,6 @@ const CakeDetailForm = Form.create({
     onChangeSpec
   } = props;
 
-  function onEditSpec(targetKey, action) {
-    if (action === "add") {
-    }
-  }
-
   function onSubmit() {
     props.form.validateFields((err, values) => {
       if (!err) {
@@ -45,46 +50,37 @@ const CakeDetailForm = Form.create({
         </Col>
         <Col span={12}>
           <Form.Item label="甜品类型">
-            {editing ? (
-              <Select
-                style={{ width: 200 }}
-                showSearch
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  option.props.children
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-              >
-                {cakeType.map(type => {
-                  return (
-                    <Select.Option key={type.id} value={type.id}>
-                      {type.name}
-                    </Select.Option>
-                  );
-                })}
-              </Select>
-            ) : (
-              cakeDetailInfo.type
-            )}
+            {editing
+              ? getFieldDecorator("type")(
+                  <Select
+                    style={{ width: 200 }}
+                    showSearch
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option.props.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {cakeType.map(type => {
+                      return (
+                        <Select.Option key={type.id} value={type.id}>
+                          {type.name}
+                        </Select.Option>
+                      );
+                    })}
+                  </Select>
+                )
+              : cakeDetailInfo.type}
           </Form.Item>
         </Col>
       </Row>
       <Row gutter={16}>
-        <CakeSpec
-          editing={editing}
-          cakeMaterials={cakeMaterials}
-          specs={cakeDetailInfo.specs}
-        />
+        {getFieldDecorator("specs", {
+          valuePropName: "specs",
+          initialValue: cakeDetailInfo.specs
+        })(<CakeSpec editing={editing} cakeMaterials={cakeMaterials} />)}
       </Row>
-      {editing ? (
-        <div className={styles.formFooter}>
-          <Button className={styles.cancelButton}>Cancel</Button>
-          <Button onClick={onSubmit} type="primary">
-            Submit
-          </Button>
-        </div>
-      ) : null}
     </Form>
   );
 });
@@ -114,6 +110,12 @@ function CakeDetail({
       width={720}
       maskClosable={false}
       visible={visible}
+      title={cakeDetailInfo.name === "" ? "添加甜品" : "甜品详情"}
+      style={{
+        height: "calc(100% - 55px)",
+        overflow: "auto",
+        paddingBottom: 53
+      }}
     >
       {loading ? (
         <Spin />
@@ -125,6 +127,12 @@ function CakeDetail({
           cakeMaterials={cakeMaterials}
         />
       )}
+      {editing ? (
+        <div className={styles.formFooter}>
+          <Button className={styles.cancelButton}>Cancel</Button>
+          <Button type="primary">Submit</Button>
+        </div>
+      ) : null}
     </Drawer>
   );
 }

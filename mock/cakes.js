@@ -99,19 +99,16 @@ export default {
             price: "39.00",
             materials: [
               {
-                name: "面粉",
-                quantity: "50",
-                price: 10
-              },
-              {
-                name: "酸奶",
+                id: 3,
+                name: "巧克力",
                 quantity: "20",
                 price: 10
               },
               {
+                id: 2,
                 name: "糖",
-                quantity: "30",
-                price: 12
+                quantity: "20",
+                price: 10
               }
             ],
             isGroupPurchase: false
@@ -129,16 +126,19 @@ export default {
             price: "98.00",
             materials: [
               {
+                id: 1,
                 name: "面粉",
                 quantity: "50",
                 price: 10
               },
               {
+                id: 3,
                 name: "巧克力",
                 quantity: "20",
                 price: 10
               },
               {
+                id: 2,
                 name: "糖",
                 quantity: "20",
                 price: 10
@@ -151,16 +151,19 @@ export default {
             price: "98.00",
             materials: [
               {
+                id: 1,
                 name: "面粉",
                 quantity: "50",
                 price: 10
               },
               {
+                id: 5,
                 name: "抹茶",
                 quantity: "20",
                 price: 15
               },
               {
+                id: 2,
                 name: "糖",
                 quantity: "20",
                 price: 10
@@ -173,16 +176,19 @@ export default {
             price: "98.00",
             materials: [
               {
+                id: 1,
                 name: "面粉",
                 quantity: "50",
                 price: 10
               },
               {
+                id: 6,
                 name: "酸奶",
                 quantity: "20",
                 price: 10
               },
               {
+                id: 2,
                 name: "糖",
                 quantity: "30",
                 price: 12

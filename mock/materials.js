@@ -24,6 +24,18 @@ export default {
         name: "草莓",
         price: "40",
         unit: "斤"
+      },
+      {
+        id: 5,
+        name: "抹茶",
+        price: "40",
+        unit: "斤"
+      },
+      {
+        id: 6,
+        name: "酸奶",
+        price: "40",
+        unit: "斤"
       }
     ]);
   }

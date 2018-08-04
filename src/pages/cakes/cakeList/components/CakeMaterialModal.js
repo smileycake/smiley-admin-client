@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Button, Transfer } from "antd";
+import { Modal, Transfer } from "antd";
 
 class CakeMaterialModal extends React.Component {
   constructor(props) {
@@ -35,7 +35,7 @@ class CakeMaterialModal extends React.Component {
     return option.name.indexOf(inputValue) > -1;
   };
 
-  handleChange = targetKeys => {
+  materialsChangeHandler = targetKeys => {
     const { cakeMaterials } = this.props;
     const selectedMaterials = cakeMaterials
       .filter(material => {
@@ -49,7 +49,6 @@ class CakeMaterialModal extends React.Component {
       targetKeys,
       selectedMaterials
     });
-    //this.props.onMaterialsChange(selectedMaterials);
   };
 
   render() {
@@ -74,7 +73,7 @@ class CakeMaterialModal extends React.Component {
             showSearch
             filterOption={this.filterOption}
             targetKeys={targetKeys}
-            onChange={this.handleChange}
+            onChange={this.materialsChangeHandler}
             render={item => item.name}
           />
         </Modal>

@@ -1,15 +1,5 @@
 import React, { Component } from "react";
-import {
-  Form,
-  Tabs,
-  Input,
-  Switch,
-  Row,
-  Col,
-  Transfer,
-  Table,
-  InputNumber
-} from "antd";
+import { Form, Tabs, Input, Switch, Row, Col, InputNumber } from "antd";
 import CakeMaterial from "./CakeMaterial";
 
 class CakeSpec extends Component {
@@ -24,48 +14,59 @@ class CakeSpec extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      ...nextProps,
-      activeKey: nextProps.specs[0].key
+      ...nextProps
     });
   }
 
-  specsChangeHandler = specs => {
-    const { onSpecChange } = this.props;
-    if (onSpecChange) {
-      onSpecChange(specs);
-    }
+  onChange = (specs, { name, price, isGroupPurchase, materials }) => {
+    this.props.onChange(specs);
   };
 
-  onMaterialsChange = materialKeys => {
-    const { specs, cakeMaterials, activeKey } = this.state;
-    const materials = cakeMaterials.filter(material => {
-      return materialKeys.includes(material.key);
-    });
+  materialsChangeHandler = selectedMaterials => {
+    const { specs, activeKey } = this.state;
     specs.forEach(spec => {
       if (spec.key === activeKey) {
-        spec.materials = materials;
+        spec.materials = selectedMaterials;
       }
     });
-    this.setState({ specs, selectedMaterialKeys: materialKeys });
+    this.onChange(specs);
   };
 
-  onPriceChange = price => {
+  specNameChangeHandler = event => {
+    const { specs, activeKey } = this.state;
+    specs.forEach(spec => {
+      if (spec.key === activeKey) {
+        spec.name = event.target.value;
+      }
+    });
+    this.onChange(specs);
+  };
+
+  priceChangeHandler = price => {
     const { specs, activeKey } = this.state;
     specs.forEach(spec => {
       if (spec.key === activeKey) {
         spec.price = price;
       }
     });
-    this.setState({ specs });
+    this.onChange(specs);
   };
 
-  onGroupPurchaseChange = () => {};
+  groupPurchaseChangeHandler = isGroupPurchase => {
+    const { specs, activeKey } = this.state;
+    specs.forEach(spec => {
+      if (spec.key === activeKey) {
+        spec.isGroupPurchase = isGroupPurchase;
+      }
+    });
+    this.onChange(specs);
+  };
 
-  onSpecTabChange = activeKey => {
+  specTabChangeHandler = activeKey => {
     this.setState({ activeKey });
   };
 
-  onEdit = (targetKey, action) => {
+  editSpecTabHandler = (targetKey, action) => {
     this[action](targetKey);
   };
 
@@ -79,8 +80,8 @@ class CakeSpec extends Component {
       materials: [],
       isGroupPurchase: false
     });
-    this.setState({ specs, activeKey });
-    this.specsChangeHandler(specs);
+    this.setState({ activeKey });
+    this.onChange(specs);
   };
 
   remove = targetKey => {
@@ -91,8 +92,8 @@ class CakeSpec extends Component {
     if (activeKey === targetKey) {
       activeKey = specs[specs.length - 1].key;
     }
-    this.setState({ specs, activeKey });
-    this.specsChangeHandler(specs);
+    this.setState({ activeKey });
+    this.onChange(specs);
   };
 
   render() {
@@ -100,9 +101,9 @@ class CakeSpec extends Component {
     return (
       <Tabs
         type={editing ? "editable-card" : "line"}
-        onChange={this.onSpecTabChange}
+        onChange={this.specTabChangeHandler}
         activeKey={activeKey}
-        onEdit={this.onEdit}
+        onEdit={this.editSpecTabHandler}
       >
         {specs.map(spec => (
           <Tabs.TabPane
@@ -116,7 +117,7 @@ class CakeSpec extends Component {
                   {editing ? (
                     <Input
                       style={{ width: 200 }}
-                      onChange={this.onPriceChange}
+                      onChange={this.specNameChangeHandler}
                     />
                   ) : (
                     spec.name
@@ -128,7 +129,7 @@ class CakeSpec extends Component {
                   {editing ? (
                     <InputNumber
                       style={{ width: 200 }}
-                      onChange={this.onPriceChange}
+                      onChange={this.priceChangeHandler}
                     />
                   ) : (
                     spec.price
@@ -139,7 +140,7 @@ class CakeSpec extends Component {
                 <Form.Item label="团购否">
                   {editing ? (
                     <Switch
-                      onChange={this.onGroupPurchaseChange}
+                      onChange={this.groupPurchaseChangeHandler}
                       checkedChildren="是"
                       unCheckedChildren="否"
                     />
@@ -161,6 +162,7 @@ class CakeSpec extends Component {
                   selectedMaterials={spec.materials}
                   editing={editing}
                   cakeMaterials={cakeMaterials}
+                  onMaterialsChange={this.materialsChangeHandler}
                 />
               </Form.Item>
             </Row>

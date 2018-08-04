@@ -1,15 +1,5 @@
 import { connect } from "dva";
-import {
-  Button,
-  Drawer,
-  Form,
-  Input,
-  Select,
-  Col,
-  Row,
-  Spin,
-  Divider
-} from "antd";
+import { Button, Drawer, Form, Input, Select, Col, Row, Spin } from "antd";
 import CakeSpec from "./CakeSpec";
 import styles from "./CakeEditDrawer.css";
 

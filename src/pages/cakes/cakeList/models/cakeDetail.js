@@ -1,5 +1,4 @@
 import * as cakesService from "../services/cakes";
-import { stat } from "fs";
 
 export default {
   namespace: "cakeDetail",

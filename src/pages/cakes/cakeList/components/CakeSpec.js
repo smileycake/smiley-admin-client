@@ -1,126 +1,171 @@
 import React, { Component } from "react";
-import { Form, Tabs, Input, Switch, Row, Col } from "antd";
-import CakeMaterialTable from "./CakeMaterialTable";
+import { Form, Tabs, Input, Switch, Row, Col, InputNumber } from "antd";
+import CakeMaterial from "./CakeMaterial";
 
 class CakeSpec extends Component {
   constructor(props) {
     super(props);
-    this.newTabIndex = 2;
-    const panes = [{ title: "新规格", key: "规格1", closable: false }];
-    const specs = {};
-    specs[panes[0].key] = this.getNewSpec();
+    this.newTabIndex = 1;
     this.state = {
-      specs,
-      panes,
-      activeKey: panes[0].key
+      ...this.props,
+      activeKey: this.props.specs[0].key
     };
   }
 
-  specsChangeHandler = specs => {
-    const { onSpecChange } = this.props;
-    if (onSpecChange) {
-      onSpecChange(specs);
-    }
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      ...nextProps
+    });
+  }
+
+  onChange = specs => {
+    this.props.onChange(specs);
   };
 
-  onMaterialsChange = materials => {
+  materialsChangeHandler = selectedMaterials => {
     const { specs, activeKey } = this.state;
-    specs[activeKey].materials = materials;
-    this.setState({ specs });
-    this.specsChangeHandler(specs);
+    specs.forEach(spec => {
+      if (spec.key === activeKey) {
+        spec.materials = selectedMaterials;
+      }
+    });
+    this.onChange(specs);
   };
 
-  onPriceChange = () => {};
+  specNameChangeHandler = event => {
+    const { specs, activeKey } = this.state;
+    specs.forEach(spec => {
+      if (spec.key === activeKey) {
+        spec.name = event.target.value;
+      }
+    });
+    this.onChange(specs);
+  };
 
-  onGroupPurchaseChange = () => {};
+  priceChangeHandler = price => {
+    const { specs, activeKey } = this.state;
+    specs.forEach(spec => {
+      if (spec.key === activeKey) {
+        spec.price = price;
+      }
+    });
+    this.onChange(specs);
+  };
 
-  onChange = activeKey => {
+  groupPurchaseChangeHandler = isGroupPurchase => {
+    const { specs, activeKey } = this.state;
+    specs.forEach(spec => {
+      if (spec.key === activeKey) {
+        spec.isGroupPurchase = isGroupPurchase;
+      }
+    });
+    this.onChange(specs);
+  };
+
+  specTabChangeHandler = activeKey => {
     this.setState({ activeKey });
   };
 
-  onEdit = (targetKey, action) => {
+  editSpecTabHandler = (targetKey, action) => {
     this[action](targetKey);
   };
 
   add = () => {
-    const { panes, specs } = this.state;
-    const activeKey = `规格${this.newTabIndex++}`;
-    panes.push({
-      title: "新规格",
-      key: activeKey
+    const { specs } = this.state;
+    const activeKey = `规格${++this.newTabIndex}`;
+    specs.push({
+      key: "规格" + this.newTabIndex,
+      name: "新规格",
+      price: "0.00",
+      materials: [],
+      isGroupPurchase: false
     });
-    specs[activeKey] = this.getNewSpec();
-    this.setState({ specs, panes, activeKey });
-    this.specsChangeHandler(specs);
+    this.setState({ activeKey });
+    this.onChange(specs);
   };
 
   remove = targetKey => {
-    let specs = this.state.specs;
-    let activeKey = this.state.activeKey;
-    delete specs[targetKey];
-    const panes = this.state.panes.filter(pane => pane.key !== targetKey);
+    let { activeKey } = this.state;
+    const specs = this.state.specs.filter(spec => {
+      return spec.key !== targetKey;
+    });
     if (activeKey === targetKey) {
-      activeKey = panes[panes.length - 1].key;
+      activeKey = specs[specs.length - 1].key;
     }
-    this.setState({ specs, panes, activeKey });
-    this.specsChangeHandler(specs);
-  };
-
-  getNewSpec = () => {
-    return {
-      name: "新规格",
-      materials: [],
-      price: null,
-      isGroupPurchase: false
-    };
+    this.setState({ activeKey });
+    this.onChange(specs);
   };
 
   render() {
+    const { editing, specs, cakeMaterials, activeKey } = this.state;
     return (
       <Tabs
-        onChange={this.onChange}
-        activeKey={this.state.activeKey}
-        type="editable-card"
-        onEdit={this.onEdit}
+        type={editing ? "editable-card" : "line"}
+        onChange={this.specTabChangeHandler}
+        activeKey={activeKey}
+        onEdit={this.editSpecTabHandler}
       >
-        {this.state.panes.map(pane => (
+        {specs.map(spec => (
           <Tabs.TabPane
-            tab={pane.title}
-            key={pane.key}
-            closable={pane.closable}
+            tab={spec.name || "新规格"}
+            key={spec.key}
+            closable={spec.key === "规格1" ? false : true}
           >
-            <Row gutter={16}>
+            <Row>
               <Col span={10}>
                 <Form.Item label="规格名称">
-                  <Input
-                    onChange={this.onPriceChange}
-                    placeholder="please enter user name"
-                  />
+                  {editing ? (
+                    <Input
+                      style={{ width: 200 }}
+                      onChange={this.specNameChangeHandler}
+                    />
+                  ) : (
+                    spec.name
+                  )}
                 </Form.Item>
               </Col>
-
-              <Col span={10}>
+              <Col span={9}>
                 <Form.Item label="售价">
-                  <Input
-                    onChange={this.onPriceChange}
-                    placeholder="please enter user name"
-                  />
+                  {editing ? (
+                    <InputNumber
+                      style={{ width: 200 }}
+                      onChange={this.priceChangeHandler}
+                    />
+                  ) : (
+                    spec.price
+                  )}
                 </Form.Item>
               </Col>
-
-              <Col span={4}>
+              <Col span={5}>
                 <Form.Item label="团购否">
-                  <Switch
-                    onChange={this.onGroupPurchaseChange}
-                    checkedChildren="是"
-                    unCheckedChildren="否"
-                  />
+                  {editing ? (
+                    <Switch
+                      onChange={this.groupPurchaseChangeHandler}
+                      checkedChildren="是"
+                      unCheckedChildren="否"
+                    />
+                  ) : spec.isGroupPurchase ? (
+                    "是"
+                  ) : (
+                    "否"
+                  )}
                 </Form.Item>
               </Col>
             </Row>
-            <Form.Item label="配方">
-              <CakeMaterialTable onMaterialsChange={this.onMaterialsChange} />
-            </Form.Item>
+            <Row>
+              <Form.Item
+                style={{ width: "100%" }}
+                wrapperCol={{ span: 24 }}
+                label="配方"
+              >
+                <CakeMaterial
+                  selectedMaterials={spec.materials}
+                  editing={editing}
+                  cakeMaterials={cakeMaterials}
+                  onMaterialsChange={this.materialsChangeHandler}
+                />
+              </Form.Item>
+            </Row>
           </Tabs.TabPane>
         ))}
       </Tabs>

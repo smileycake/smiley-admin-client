@@ -1,14 +1,20 @@
 import { connect } from "dva";
 import { Divider, Input, Table, Pagination, Popconfirm, Button } from "antd";
 import { routerRedux } from "dva/router";
-import CakeEditDrawer from "./CakeEditDrawer";
+import CakeDetail from "./CakeDetail";
 import styles from "./Cakes.css";
 import * as constants from "../constants";
 import * as commonConstants from "../../../../utils/commonConstants";
 
-function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
+function Cakes({ dispatch, list: dataSource, total, page: current, loading }) {
   function deleteHandler(id) {
     console.warn(`TODO: ${id}`);
+  }
+
+  function createCakeHandler() {
+    dispatch({
+      type: "cakeDetail/createCake"
+    });
   }
 
   function pageChangeHandler(page) {
@@ -18,6 +24,15 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
         query: { page }
       })
     );
+  }
+
+  function cakeClickHandler(cakeId) {
+    dispatch({
+      type: "cakeDetail/fetchCakeDetail",
+      payload: {
+        cakeId
+      }
+    });
   }
 
   const colums = [
@@ -30,11 +45,11 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
       dataIndex: "name",
       key: "name",
       width: "15%",
-      render: text => {
+      render: (text, { id }) => {
         return (
-          <CakeEditDrawer>
-            <a>{text}</a>
-          </CakeEditDrawer>
+          <span>
+            <a onClick={cakeClickHandler.bind(null, id)}>{text}</a>
+          </span>
         );
       }
     },
@@ -94,9 +109,9 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
     <div className={styles.normal}>
       <div className={styles.operationPanel}>
         <div className={styles.create}>
-          <CakeEditDrawer>
-            <Button type="primary">{constants.CAKE_CREATE}</Button>
-          </CakeEditDrawer>
+          <Button type="primary" onClick={createCakeHandler}>
+            {constants.CAKE_CREATE}
+          </Button>
         </div>
         <div className={styles.search}>
           <Input placeholder={constants.CAKE_SEARCH_PLACEHOLDER} />
@@ -108,7 +123,7 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
         columns={colums}
         dataSource={dataSource}
         rowKey={record => record.id}
-        rowClassName={(record, index) => {
+        rowClassName={record => {
           if (record.type === undefined) {
             return styles.subRow;
           }
@@ -124,19 +139,19 @@ function Cakes({ dispatch, list: dataSource, loading, total, page: current }) {
         pageSize={commonConstants.PAGE_SIZE}
         onChange={pageChangeHandler}
       />
+      <CakeDetail />
     </div>
   );
 }
 
-function mapStateToPrpos(state) {
-  const { list, total, page, cakeInfoVisible } = state.cakes;
+function mapStateToProps(state) {
+  const { list, total, page } = state.cakes;
   return {
     list,
     total,
     page,
-    loading: state.loading.models.cakes,
-    cakeInfoVisible
+    loading: state.loading.models.cakes
   };
 }
 
-export default connect(mapStateToPrpos)(Cakes);
+export default connect(mapStateToProps)(Cakes);

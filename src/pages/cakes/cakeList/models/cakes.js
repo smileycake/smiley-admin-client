@@ -11,14 +11,14 @@ export default {
     save(
       state,
       {
-        payload: { data: list, total, page, cakeInfoVisible }
+        payload: { data: list, total, page }
       }
     ) {
-      return { ...state, list, total, page, cakeInfoVisible };
+      return { ...state, list, total, page };
     }
   },
   effects: {
-    *fetch(
+    *fetchCakeList(
       {
         payload: { page = 1 }
       },
@@ -35,8 +35,29 @@ export default {
         payload: {
           data,
           total: parseInt(headers["x-total-count"], 10),
-          page: parseInt(page, 10),
-          cakeInfoVisible: false
+          page: parseInt(page, 10)
+        }
+      });
+    },
+    *fetchCakeType({}, { call, put }) {
+      const { data } = yield call(cakesService.fetchCakeType);
+      yield put({
+        type: "cakeDetail/cacheCakeType",
+        payload: {
+          cakeType: data
+        }
+      });
+    },
+    *fetchCakeMaterials({}, { call, put }) {
+      const { data } = yield call(cakesService.fetchCakeMaterials);
+      const cakeMaterials = data.map(material => {
+        material.key = material.id;
+        return material;
+      });
+      yield put({
+        type: "cakeDetail/cacheCakeMaterials",
+        payload: {
+          cakeMaterials
         }
       });
     }
@@ -45,7 +66,9 @@ export default {
     setup({ dispatch, history }) {
       return history.listen(({ pathname, query }) => {
         if (pathname === "/cakes/cakeList") {
-          dispatch({ type: "fetch", payload: query });
+          dispatch({ type: "fetchCakeList", payload: query });
+          dispatch({ type: "fetchCakeType" });
+          dispatch({ type: "fetchCakeMaterials" });
         }
       });
     }

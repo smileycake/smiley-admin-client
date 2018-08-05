@@ -6,9 +6,9 @@ import withRouter from "umi/withRouter";
 function Layout({ children, location }) {
   return (
     <div className={styles.container}>
-      <div className={styles.header} />
+      <SideBar className={styles.sideBar} location={location} />
       <div className={styles.body}>
-        <SideBar className={styles.sideBar} location={location} />
+        <div className={styles.header} />
         <div className={styles.content}>{children}</div>
       </div>
     </div>

@@ -86,5 +86,130 @@ export default {
         }
       ]);
     }
+  },
+  "GET /api/cakeDetail": (req, res) => {
+    if (req.query._cakeId === "1") {
+      res.json({
+        id: 1,
+        name: "蓝朋友的心",
+        type: "慕斯",
+        specs: [
+          {
+            name: "黑巧克力",
+            price: "39.00",
+            materials: [
+              {
+                id: 3,
+                name: "巧克力",
+                quantity: "20",
+                price: 10
+              },
+              {
+                id: 2,
+                name: "糖",
+                quantity: "20",
+                price: 10
+              }
+            ],
+            isGroupPurchase: false
+          }
+        ]
+      });
+    } else if (req.query._cakeId === "2") {
+      res.json({
+        id: 2,
+        name: "爆浆海盐奶盖",
+        type: "奶油蛋糕",
+        specs: [
+          {
+            name: "巧克力",
+            price: "98.00",
+            materials: [
+              {
+                id: 1,
+                name: "面粉",
+                quantity: "50",
+                price: 10
+              },
+              {
+                id: 3,
+                name: "巧克力",
+                quantity: "20",
+                price: 10
+              },
+              {
+                id: 2,
+                name: "糖",
+                quantity: "20",
+                price: 10
+              }
+            ],
+            isGroupPurchase: true
+          },
+          {
+            name: "抹茶",
+            price: "98.00",
+            materials: [
+              {
+                id: 1,
+                name: "面粉",
+                quantity: "50",
+                price: 10
+              },
+              {
+                id: 5,
+                name: "抹茶",
+                quantity: "20",
+                price: 15
+              },
+              {
+                id: 2,
+                name: "糖",
+                quantity: "20",
+                price: 10
+              }
+            ],
+            isGroupPurchase: false
+          },
+          {
+            name: "酸奶奶油",
+            price: "98.00",
+            materials: [
+              {
+                id: 1,
+                name: "面粉",
+                quantity: "50",
+                price: 10
+              },
+              {
+                id: 6,
+                name: "酸奶",
+                quantity: "20",
+                price: 10
+              },
+              {
+                id: 2,
+                name: "糖",
+                quantity: "30",
+                price: 12
+              }
+            ],
+            isGroupPurchase: true
+          }
+        ]
+      });
+    }
+  },
+  "GET /api/cakeType": (req, res) => {
+    res.json([
+      {
+        id: 1,
+        name: "奶油蛋糕"
+      },
+      {
+        id: 2,
+        name: "慕斯"
+      }
+    ]);
   }
 };

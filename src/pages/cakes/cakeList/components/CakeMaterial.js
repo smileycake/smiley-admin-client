@@ -24,15 +24,39 @@ class CakeMaterial extends React.Component {
     return <span>aaaa</span>;
   };
 
-  renderQuantityInput = text => {
-    return this.props.editing ? <InputNumber /> : text;
+  renderQuantityInput = (text, record, index) => {
+    return this.props.editing ? (
+      <InputNumber
+        defaultValue={0}
+        onChange={quantity => {
+          const { selectedMaterials } = this.state;
+          selectedMaterials.forEach(material => {
+            if (material.id === record.id) {
+              material.quantity = quantity;
+            }
+          });
+          this.props.onMaterialsChange(selectedMaterials);
+        }}
+      />
+    ) : (
+      text
+    );
   };
 
-  renderOperation = () => {
+  renderOperation = (text, record, index) => {
     return (
-      <Popconfirm title="Sure to cancel?" onConfirm={() => {}}>
+      <span
+        onClick={() => {
+          const selectedMaterials = this.state.selectedMaterials.filter(
+            material => {
+              return material.id !== record.id;
+            }
+          );
+          this.props.onMaterialsChange(selectedMaterials);
+        }}
+      >
         <a>Delete</a>
-      </Popconfirm>
+      </span>
     );
   };
 

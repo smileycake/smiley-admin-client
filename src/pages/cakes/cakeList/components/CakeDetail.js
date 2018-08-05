@@ -4,13 +4,16 @@ import CakeSpec from "./CakeSpec";
 import styles from "./CakeEditDrawer.css";
 
 const CakeDetailForm = Form.create({
-  onFieldsChange(props, changedFields) {
-    console.log(props);
-    console.log(changedFields);
-  },
-  mapStateToProps(props) {},
-  onValuesChange(props, changedValues, allValues) {
-    console.log(props);
+  mapPropsToFields(props) {
+    return {
+      name: Form.createFormField({
+        value: props.cakeDetailInfo.name
+      }),
+      type: Form.createFormField({
+        value: props.cakeDetailInfo.type
+      }),
+      specs: Form.createFormField(props.cakeDetailInfo.specs)
+    };
   }
 })(props => {
   const { getFieldDecorator } = props.form;
@@ -22,7 +25,7 @@ const CakeDetailForm = Form.create({
     onChangeSpec
   } = props;
 
-  function onSubmit() {
+  function subminHandler() {
     props.form.validateFields((err, values) => {
       if (!err) {
         console.log(values);
@@ -35,7 +38,9 @@ const CakeDetailForm = Form.create({
       <Row>
         <Col span={12}>
           <Form.Item label="甜品名称">
-            {editing ? <Input style={{ width: 200 }} /> : cakeDetailInfo.name}
+            {editing
+              ? getFieldDecorator("name")(<Input style={{ width: 200 }} />)
+              : cakeDetailInfo.name}
           </Form.Item>
         </Col>
         <Col span={12}>
@@ -65,12 +70,21 @@ const CakeDetailForm = Form.create({
           </Form.Item>
         </Col>
       </Row>
-      <Row gutter={16}>
+      <Row gutter={16} style={{ marginTop: 20, marginBottom: 20 }}>
         {getFieldDecorator("specs", {
           valuePropName: "specs",
           initialValue: cakeDetailInfo.specs
         })(<CakeSpec editing={editing} cakeMaterials={cakeMaterials} />)}
       </Row>
+
+      {editing ? (
+        <div className={styles.formFooter}>
+          <Button className={styles.cancelButton}>Cancel</Button>
+          <Button type="primary" onClick={subminHandler}>
+            Submit
+          </Button>
+        </div>
+      ) : null}
     </Form>
   );
 });
@@ -117,12 +131,6 @@ function CakeDetail({
           cakeMaterials={cakeMaterials}
         />
       )}
-      {editing ? (
-        <div className={styles.formFooter}>
-          <Button className={styles.cancelButton}>Cancel</Button>
-          <Button type="primary">Submit</Button>
-        </div>
-      ) : null}
     </Drawer>
   );
 }

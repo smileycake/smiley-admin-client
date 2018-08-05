@@ -18,7 +18,7 @@ class CakeSpec extends Component {
     });
   }
 
-  onChange = (specs, { name, price, isGroupPurchase, materials }) => {
+  onChange = specs => {
     this.props.onChange(specs);
   };
 
@@ -107,7 +107,7 @@ class CakeSpec extends Component {
       >
         {specs.map(spec => (
           <Tabs.TabPane
-            tab={spec.name}
+            tab={spec.name || "新规格"}
             key={spec.key}
             closable={spec.key === "规格1" ? false : true}
           >

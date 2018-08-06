@@ -80,7 +80,7 @@ export default {
   effects: {
     *fetchCakeDetail(
       {
-        payload: { cakeId }
+        payload: { cakeId, editing }
       },
       { call, put }
     ) {
@@ -88,7 +88,7 @@ export default {
         type: "showCakeDetailPanel",
         payload: {
           visible: true,
-          editing: false
+          editing
         }
       });
       const { data } = yield call(cakesService.fetchCakeDetail, {

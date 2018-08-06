@@ -37,6 +37,7 @@ class CakeMaterial extends React.Component {
           });
           this.props.onMaterialsChange(selectedMaterials);
         }}
+        value={record.quantity}
       />
     ) : (
       text

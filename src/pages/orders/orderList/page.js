@@ -1,3 +1,9 @@
+import OrderList from "./components/OrderList";
+
 export default () => {
-  return <div>ordersList</div>;
+  return (
+    <div>
+      <OrderList />
+    </div>
+  );
 };

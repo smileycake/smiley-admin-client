@@ -17,15 +17,9 @@ const CakeDetailForm = Form.create({
   }
 })(props => {
   const { getFieldDecorator } = props.form;
-  const {
-    cakeType,
-    cakeDetailInfo,
-    cakeMaterials,
-    editing,
-    onChangeSpec
-  } = props;
+  const { cakeType, cakeDetailInfo, cakeMaterials, editing } = props;
 
-  function subminHandler() {
+  function submitHandler() {
     props.form.validateFields((err, values) => {
       if (!err) {
         console.log(values);
@@ -39,14 +33,18 @@ const CakeDetailForm = Form.create({
         <Col span={12}>
           <Form.Item label="甜品名称">
             {editing
-              ? getFieldDecorator("name")(<Input style={{ width: 200 }} />)
+              ? getFieldDecorator("name", {
+                  rules: [{ required: true }]
+                })(<Input style={{ width: 200 }} />)
               : cakeDetailInfo.name}
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item label="甜品类型">
             {editing
-              ? getFieldDecorator("type")(
+              ? getFieldDecorator("type", {
+                  rules: [{ required: true }]
+                })(
                   <Select
                     style={{ width: 200 }}
                     showSearch
@@ -72,6 +70,7 @@ const CakeDetailForm = Form.create({
       </Row>
       <Row gutter={16} style={{ marginTop: 20, marginBottom: 20 }}>
         {getFieldDecorator("specs", {
+          rules: [{ required: true }],
           valuePropName: "specs",
           initialValue: cakeDetailInfo.specs
         })(<CakeSpec editing={editing} cakeMaterials={cakeMaterials} />)}
@@ -80,7 +79,7 @@ const CakeDetailForm = Form.create({
       {editing ? (
         <div className={styles.formFooter}>
           <Button className={styles.cancelButton}>Cancel</Button>
-          <Button type="primary" onClick={subminHandler}>
+          <Button type="primary" onClick={submitHandler}>
             Submit
           </Button>
         </div>

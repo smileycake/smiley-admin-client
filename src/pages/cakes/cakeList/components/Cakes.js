@@ -26,11 +26,12 @@ function Cakes({ dispatch, list: dataSource, total, page: current, loading }) {
     );
   }
 
-  function cakeClickHandler(cakeId) {
+  function cakeClickHandler(cakeId, editing) {
     dispatch({
       type: "cakeDetail/fetchCakeDetail",
       payload: {
-        cakeId
+        cakeId,
+        editing
       }
     });
   }
@@ -48,7 +49,7 @@ function Cakes({ dispatch, list: dataSource, total, page: current, loading }) {
       render: (text, { id }) => {
         return (
           <span>
-            <a onClick={cakeClickHandler.bind(null, id)}>{text}</a>
+            <a onClick={cakeClickHandler.bind(null, id, false)}>{text}</a>
           </span>
         );
       }
@@ -91,7 +92,11 @@ function Cakes({ dispatch, list: dataSource, total, page: current, loading }) {
       render: (text, { id }) => {
         return text.type === undefined ? null : (
           <span className={styles.operation}>
-            <a href="">{commonConstants.OPERATION_EDIT}</a>
+            <span>
+              <a onClick={cakeClickHandler.bind(null, id, true)}>
+                {commonConstants.OPERATION_EDIT}
+              </a>
+            </span>
             <Divider type="vertical" />
             <Popconfirm
               title={commonConstants.ALERT_DELETE}

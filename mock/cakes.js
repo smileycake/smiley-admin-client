@@ -128,19 +128,19 @@ export default {
               {
                 id: 1,
                 name: "面粉",
-                quantity: "50",
+                quantity: 50,
                 price: 10
               },
               {
                 id: 3,
                 name: "巧克力",
-                quantity: "20",
+                quantity: 20,
                 price: 10
               },
               {
                 id: 2,
                 name: "糖",
-                quantity: "20",
+                quantity: 20,
                 price: 10
               }
             ],
@@ -153,19 +153,19 @@ export default {
               {
                 id: 1,
                 name: "面粉",
-                quantity: "50",
+                quantity: 50,
                 price: 10
               },
               {
                 id: 5,
                 name: "抹茶",
-                quantity: "20",
+                quantity: 20,
                 price: 15
               },
               {
                 id: 2,
                 name: "糖",
-                quantity: "20",
+                quantity: 20,
                 price: 10
               }
             ],
@@ -178,19 +178,19 @@ export default {
               {
                 id: 1,
                 name: "面粉",
-                quantity: "50",
+                quantity: 50,
                 price: 10
               },
               {
                 id: 6,
                 name: "酸奶",
-                quantity: "20",
+                quantity: 20,
                 price: 10
               },
               {
                 id: 2,
                 name: "糖",
-                quantity: "30",
+                quantity: 30,
                 price: 12
               }
             ],

@@ -118,6 +118,7 @@ class CakeSpec extends Component {
                     <Input
                       style={{ width: 200 }}
                       onChange={this.specNameChangeHandler}
+                      value={spec.name}
                     />
                   ) : (
                     spec.name
@@ -130,6 +131,10 @@ class CakeSpec extends Component {
                     <InputNumber
                       style={{ width: 200 }}
                       onChange={this.priceChangeHandler}
+                      value={spec.price}
+                      formatter={value =>
+                        `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                      }
                     />
                   ) : (
                     spec.price
@@ -143,6 +148,7 @@ class CakeSpec extends Component {
                       onChange={this.groupPurchaseChangeHandler}
                       checkedChildren="是"
                       unCheckedChildren="否"
+                      checked={spec.isGroupPurchase}
                     />
                   ) : spec.isGroupPurchase ? (
                     "是"

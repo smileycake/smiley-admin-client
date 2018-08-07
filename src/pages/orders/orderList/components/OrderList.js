@@ -31,6 +31,22 @@ function OrderList({
       <Button type="primary" onClick={createOrderHandler}>
         添加订单
       </Button>
+      <Table
+        loading={loading}
+        dataSource={dataSource}
+        rowKey={record => record.id}
+        pagination={false}
+      >
+        <Table.Column title="订单编号" />
+        <Table.ColumnGroup title="订单内容" />
+        <Table.Column title="蛋糕" />
+        <Table.Column title="规格" />
+        <Table.Column title="数量" />
+        <Table.Column title="总价" />
+        <Table.Column title="取货时间" />
+        <Table.Column title="自提否" />
+        <Table.Column title="操作" />
+      </Table>
       <Pagination
         className="ant-table-pagination"
         total={total}

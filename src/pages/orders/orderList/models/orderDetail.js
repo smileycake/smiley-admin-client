@@ -1,3 +1,5 @@
+import * as ordersService from "../services/orders";
+
 export default {
   namespace: "orderDetail",
   state: {
@@ -6,6 +8,14 @@ export default {
     visible: false
   },
   reducers: {
+    showOrderDetail(
+      state,
+      {
+        payload: { cakeDetailInfo }
+      }
+    ) {
+      return { ...state, cakeDetailInfo };
+    },
     createOrder(state) {
       return {
         ...state,
@@ -25,15 +35,24 @@ export default {
   effects: {
     *fetchOrderDetail(
       {
-        payload: { editing }
+        payload: { orderId, editing }
       },
       { call, put }
     ) {
       yield put({
-        type: "showShowDetailPanel",
+        type: "showOrderDetailPanel",
         payload: {
           visible: true,
           editing
+        }
+      });
+      const { data } = yield call(ordersService.fetchOrderDetail, {
+        orderId
+      });
+      yield put({
+        type: "showOrderDetail",
+        payload: {
+          orderDetailInfo: data
         }
       });
     }

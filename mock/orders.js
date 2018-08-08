@@ -1,5 +1,6 @@
 /*
     isSelfPickUp: true: 自提 false: 配送
+    status: 1 已下单 2 已付款 3 已完成 4 已退款
  */
 export default {
   "GET /api/orders": (req, res) => {
@@ -11,6 +12,7 @@ export default {
           cakes: [
             {
               cakeId: 2,
+              cakeName: "爆浆海盐奶盖",
               specs: [
                 {
                   specId: "2-1",
@@ -20,43 +22,9 @@ export default {
               ]
             }
           ],
-
-          name: "蓝朋友的心",
-          type: "慕斯",
-          cost: "15.00",
-          price: "45.00",
-          isGroupPurchase: false,
-          children: []
-        },
-        {
-          id: 2,
-          name: "爆浆海盐奶盖",
-          type: "奶油蛋糕",
-          cost: "30.00 - 35.00",
-          price: "98.00 - 98.00",
-          children: [
-            {
-              id: "2-1",
-              name: "巧克力",
-              cost: "30.00",
-              price: "98.00",
-              isGroupPurchase: true
-            },
-            {
-              id: "2-2",
-              name: "抹茶",
-              cost: "30.00",
-              price: "98.00",
-              isGroupPurchase: true
-            },
-            {
-              id: "2-3",
-              name: "酸奶奶油",
-              cost: "35.00",
-              price: "98.00",
-              isGroupPurchase: false
-            }
-          ]
+          status: 1,
+          isSelfPickUp: false,
+          pickUpTime: "2018-08-08 12:30"
         }
       ]);
     } else {

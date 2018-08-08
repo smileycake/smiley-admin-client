@@ -46,7 +46,6 @@ const OrderDetailForm = Form.create()(props => {
             <Table.Column title="名称" />
             <Table.Column title="数量" />
             <Table.Column title="单价" />
-            <Table.Column title="总价" />
             <Table.Column title="操作" className={styles.borderRight} />
           </Table.ColumnGroup>
           <Table.Column title="总价" dataIndex="price" width="10%" />
@@ -58,21 +57,26 @@ const OrderDetailForm = Form.create()(props => {
       </Form.Item>
       <Divider />
       <Row>
-        <Col span={12}>
+        <Col span={7}>
           <Form.Item label="收货人">
             <Input style={{ width: 200 }} />
           </Form.Item>
         </Col>
-        <Col span={12}>
+        <Col span={8}>
           <Form.Item label="联系方式">
             <InputNumber style={{ width: 200 }} />
           </Form.Item>
         </Col>
+        <Col span={9}>
+          <Form.Item label="取货时间">
+            <DatePicker style={{ width: 120, marginRight: 10 }} />
+            <TimePicker style={{ width: 120 }} format="HH:mm" />
+          </Form.Item>
+        </Col>
       </Row>
       <Row>
-        <Form.Item label="取货时间">
-          <DatePicker style={{ width: 150 }} />
-          <TimePicker style={{ width: 150 }} />
+        <Form.Item label="备注">
+          <Input />
         </Form.Item>
       </Row>
       <Row>
@@ -84,16 +88,14 @@ const OrderDetailForm = Form.create()(props => {
         <Form.Item label="送货地址">
           <Input style={{ width: "100%" }} />
         </Form.Item>
+        <Form.Item label="配送费">
+          <InputNumber style={{ width: 150 }} />
+        </Form.Item>
       </Row>
       <Divider />
       <Row>
         <Col span={8}>
           <Form.Item label="应付">
-            <InputNumber style={{ width: 150 }} />
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item label="配送费">
             <InputNumber style={{ width: 150 }} />
           </Form.Item>
         </Col>

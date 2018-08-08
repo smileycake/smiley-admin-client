@@ -1,3 +1,5 @@
+import * as orderService from "../services/orders";
+
 export default {
   namespace: "orderList",
   state: {
@@ -22,12 +24,11 @@ export default {
       },
       { call, put }
     ) {
-      const list = [];
-      const total = 2;
+      const { data, total } = yield call(orderService.fetchOrderList, { page });
       yield put({
         type: "orderList",
         payload: {
-          list,
+          list: data,
           page,
           total
         }

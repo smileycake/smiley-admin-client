@@ -59,15 +59,12 @@ function OrderList({
         dataSource={dataSource}
         rowKey={record => record.id}
         pagination={false}
+        expandedRowRender={renderIsSelfPickUp}
       >
         <Table.Column dataIndex="orderId" title="订单编号" />
         <Table.Column dataIndex="status" title="状态" render={renderStatus} />
-        <Table.ColumnGroup title="订单内容">
-          <Table.Column title="蛋糕" />
-          <Table.Column title="规格" />
-          <Table.Column title="数量" />
-          <Table.Column title="总价" />
-        </Table.ColumnGroup>
+        <Table.Column dataIndex="cakes" title="订单内容" />
+        <Table.Column title="总价" />
         <Table.Column dataIndex="pickUpTime" title="取货时间" />
         <Table.Column
           dataIndex="isSelfPickUp"

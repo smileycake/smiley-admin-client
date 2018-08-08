@@ -1,7 +1,16 @@
 import React from "react";
 import { Modal, Transfer } from "antd";
 
-const CommonModal = () => {
+class CommonModal extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      visible: false,
+      targetKeys: [],
+      selectedDataSource: []
+    };
+  }
+
   showModelHandler = e => {
     if (e) e.stopPropagation();
     this.setState({
@@ -11,7 +20,7 @@ const CommonModal = () => {
 
   onOk = () => {
     if (this.props.onOk) {
-      this.props.onOk(this.state.selectedMaterials);
+      this.props.onOk(this.state.selectedDataSource);
     }
     this.hideModelHandler();
   };
@@ -27,47 +36,45 @@ const CommonModal = () => {
   };
 
   materialsChangeHandler = targetKeys => {
-    const { cakeMaterials } = this.props;
-    const selectedMaterials = cakeMaterials
-      .filter(material => {
-        return targetKeys.includes(material.key);
-      })
-      .map(material => {
-        material.quantity = 0;
-        return material;
-      });
+    const { dataSource } = this.props;
+    const selectedDataSource = dataSource.filter(data => {
+      return targetKeys.includes(data.key);
+    });
     this.setState({
       targetKeys,
-      selectedMaterials
+      selectedDataSource
     });
   };
-  return (
-    <span>
-      <span onClick={showModelHandler}>{children}</span>
-      <Modal
-        title="选择原料"
-        visible={visible}
-        width={720}
-        onOk={this.onOk}
-        onCancel={this.hideModelHandler}
-      >
-        <Transfer
-          dataSource={cakeMaterials}
-          listStyle={{
-            width: 300,
-            height: 300
-          }}
-          showSearch
-          filterOption={this.filterOption}
-          targetKeys={targetKeys}
-          onChange={this.materialsChangeHandler}
-          render={item => item.name}
-        />
-      </Modal>
-    </span>
-  );
-};
 
-CommonModal.propTypes = {};
+  render() {
+    const { children, title, dataSource } = this.props;
+    const { visible, targetKeys } = this.state;
+    return (
+      <span>
+        <span onClick={this.showModelHandler}>{children}</span>
+        <Modal
+          title={title}
+          visible={visible}
+          width={720}
+          onOk={this.onOk}
+          onCancel={this.hideModelHandler}
+        >
+          <Transfer
+            dataSource={dataSource}
+            listStyle={{
+              width: 300,
+              height: 300
+            }}
+            showSearch
+            filterOption={this.filterOption}
+            targetKeys={targetKeys}
+            onChange={this.materialsChangeHandler}
+            render={item => item.name}
+          />
+        </Modal>
+      </span>
+    );
+  }
+}
 
 export default CommonModal;

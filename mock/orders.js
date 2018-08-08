@@ -9,19 +9,15 @@ export default {
       res.json([
         {
           orderId: 1,
-          cakes: [
-            {
-              cakeId: 2,
-              cakeName: "爆浆海盐奶盖",
-              specs: [
-                {
-                  specId: "2-1",
-                  name: "巧克力",
-                  quantity: 1
-                }
-              ]
-            }
-          ],
+          cakes: "爆浆海盐奶盖 - 巧克力 x 1、爆浆海盐奶盖 - 抹茶 x 1",
+          status: 1,
+          isSelfPickUp: false,
+          pickUpTime: "2018-08-08 12:30"
+        },
+        {
+          orderId: 2,
+          cakes:
+            "爆浆海盐奶盖 - 巧克力 x 1、爆浆海盐奶盖 - 抹茶 x 1、蓝朋友的心 - 巧克力 x 2",
           status: 1,
           isSelfPickUp: false,
           pickUpTime: "2018-08-08 12:30"

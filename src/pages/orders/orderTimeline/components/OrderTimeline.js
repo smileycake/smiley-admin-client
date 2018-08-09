@@ -1,6 +1,7 @@
 import { connect } from "dva";
 import {
   Menu,
+  Collapse,
   Divider,
   Input,
   Table,
@@ -14,7 +15,7 @@ import {
   Row,
   Col,
   DatePicker,
-  Form,
+  Tabs,
   Tag
 } from "antd";
 import { routerRedux } from "dva/router";
@@ -81,50 +82,100 @@ function OrderTimeline({
       <Menu.Item key="3">3rd menu item</Menu.Item>
     </Menu>
   );
+  const gridStyle = {
+    flex: 1
+  };
+  const customPanelStyle = {
+    borderRadius: 4,
+    border: 1,
+    overflow: "hidden"
+  };
   return (
-    <div>
+    <>
       <DatePicker style={{ marginBottom: 20 }} />
       <Timeline mode="alternate">
         <Timeline.Item
           dot={<Icon type="clock-circle-o" style={{ fontSize: "16px" }} />}
         >
-          <div style={{ display: "flex" }}>
-            <Card
-              className={styles.orderCard}
-              bordered={false}
-              title={
+          <Card
+            className={styles.orderCard}
+            bordered={false}
+            title={
+              <div>
+                <h1 style={{ marginBottom: 0 }}>12:30</h1>
                 <div className={styles.orderCardTitle}>
-                  <div style={{ marginRight: "8px" }}>12:30</div>
+                  <div style={{ marginRight: "8px", fontSize: 14 }}>
+                    爆浆海盐奶盖 - 巧克力 x 1、爆浆海盐奶盖 - 巧克力 x 1
+                  </div>
                   <Tag color="#87d068">已完成</Tag>
                   <Tag color="#F5B041">有备注</Tag>
                   <Tag color="#F5B041">有自选</Tag>
                 </div>
-              }
-              bodyStyle={{ padding: "8px" }}
-              extra={
-                <Dropdown overlay={menu} placement="bottomRight">
-                  <Icon className={styles.orderCardMenu} type="ellipsis" />
-                </Dropdown>
-              }
-            >
-              <p>
-                <Icon type="shopping-cart" style={{ marginRight: 10 }} />爆浆海盐奶盖
-                - 巧克力 x 1、爆浆海盐奶盖 - 巧克力 x 1
-              </p>
-              <p>
-                <Icon type="user" style={{ marginRight: 10 }} />李
-              </p>
-              <p>
-                <Icon type="phone" style={{ marginRight: 10 }} />17717022621
-              </p>
-              <p>
-                <Icon type="environment-o" style={{ marginRight: 10 }} />17717022621
-              </p>
-            </Card>
-          </div>
+              </div>
+            }
+            bodyStyle={{ padding: "8px" }}
+            extra={
+              <>
+                <Button
+                  shape="circle"
+                  style={{ marginRight: 10 }}
+                  icon="down"
+                />
+                <Button
+                  shape="circle"
+                  style={{ marginRight: 10 }}
+                  icon="edit"
+                />
+                <Button shape="circle" icon="delete" />
+              </>
+            }
+          />
+        </Timeline.Item>
+        <Timeline.Item
+          dot={<Icon type="clock-circle-o" style={{ fontSize: "16px" }} />}
+        >
+          <Card
+            className={styles.orderCard}
+            bordered={false}
+            title={
+              <div>
+                <h1 style={{ marginBottom: 0 }}>12:30</h1>
+                <div className={styles.orderCardTitle}>
+                  <div style={{ marginRight: "8px", fontSize: 14 }}>
+                    爆浆海盐奶盖 - 巧克力 x 1、爆浆海盐奶盖 - 巧克力 x 1
+                  </div>
+                  <Tag color="#87d068">已完成</Tag>
+                  <Tag color="#F5B041">有备注</Tag>
+                  <Tag color="#F5B041">有自选</Tag>
+                </div>
+              </div>
+            }
+            bodyStyle={{ padding: "8px" }}
+            extra={
+              <>
+                <Button shape="circle" style={{ marginRight: 10 }} icon="up" />
+                <Button
+                  shape="circle"
+                  style={{ marginRight: 10 }}
+                  icon="edit"
+                />
+                <Button shape="circle" icon="delete" />
+              </>
+            }
+          >
+            <p>
+              <Icon type="user" style={{ marginRight: 10 }} />李
+            </p>
+            <p>
+              <Icon type="phone" style={{ marginRight: 10 }} />17729405831
+            </p>
+            <p>
+              <Icon type="environment-o" style={{ marginRight: 10 }} />上海市
+            </p>
+          </Card>
         </Timeline.Item>
       </Timeline>
-    </div>
+    </>
   );
 }
 

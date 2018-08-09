@@ -1,3 +1,9 @@
+import OrderTimeline from "./components/OrderTimeline";
+
 export default () => {
-  return <div>orderTimeline</div>;
+  return (
+    <div>
+      <OrderTimeline />
+    </div>
+  );
 };

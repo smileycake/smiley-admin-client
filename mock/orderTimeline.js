@@ -1,6 +1,6 @@
 /*
     isSelfPickUp: true: 自提 false: 配送
-    status: 1 已下单 2 已付款 3 已完成 4 已退款
+    status: 1 未付款 2 已付款 3 已完成 4 已退款
  */
 export default {
   "GET /api/orders/timeline": (req, res) => {
@@ -15,7 +15,8 @@ export default {
           phone: 12345678901,
           deliveryAddress: "天津市南开区天津大学",
           pickUpDate: "2018-08-10",
-          pickUpTime: "11:30"
+          pickUpTime: "11:30",
+          remark: ""
         },
         {
           orderId: 2,
@@ -26,7 +27,8 @@ export default {
           phone: 12345678901,
           deliveryAddress: "天津市南开区天大宿舍",
           pickUpDate: "2018-08-10",
-          pickUpTime: "12:00"
+          pickUpTime: "12:00",
+          remark: ""
         },
         {
           orderId: 3,
@@ -38,7 +40,8 @@ export default {
           phone: 12345678901,
           deliveryAddress: "天津市南开区大悦城",
           pickUpDate: "2018-08-10",
-          pickUpTime: "12:30"
+          pickUpTime: "12:30",
+          remark: "双份巧克力"
         }
       ]);
     } else {

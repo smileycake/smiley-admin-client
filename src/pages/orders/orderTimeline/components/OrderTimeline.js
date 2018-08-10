@@ -17,6 +17,17 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
 
   function orderDetailHandler(orderId) {}
 
+  function renderOrderStatus(status) {
+    switch (status) {
+      case 1:
+        return <Tag color="#EC7063">未付款</Tag>;
+      case 2:
+        return <Tag color="#3498DB">已付款</Tag>;
+      case 3:
+        return <Tag color="#52BE80">已完成</Tag>;
+    }
+  }
+
   return (
     <>
       <DatePicker
@@ -38,9 +49,8 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
                   <div>
                     <h2>{order.pickUpTime}</h2>
                     <div className={styles.orderCardTitle}>
-                      <Tag color="#87d068">已完成</Tag>
-                      <Tag color="#F5B041">有备注</Tag>
-                      <Tag color="#F5B041">有自选</Tag>
+                      {renderOrderStatus(order.status)}
+                      {order.remark ? <Tag color="#F5B041">有备注</Tag> : null}
                       <span className={styles.orderCardTitleCakes}>
                         {order.cakes}
                       </span>
@@ -72,6 +82,12 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
                     <Icon type="environment-o" />
                     {order.deliveryAddress}
                   </span>
+                  {order.remark ? (
+                    <span>
+                      <Icon type="info-circle-o" />
+                      {order.remark}
+                    </span>
+                  ) : null}
                 </div>
               </Card>
             </Timeline.Item>

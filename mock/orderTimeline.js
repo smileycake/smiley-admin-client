@@ -45,6 +45,7 @@ export default {
         }
       ]);
     } else {
+      res.json([]);
     }
   }
 };

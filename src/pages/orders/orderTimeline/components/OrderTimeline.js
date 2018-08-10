@@ -37,62 +37,72 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
         value={moment(date, "YYYY-MM-DD")}
       />
       <Timeline>
-        {orders.map(order => {
-          return (
-            <Timeline.Item
-              dot={<Icon type="clock-circle-o" style={{ fontSize: "16px" }} />}
-            >
-              <Card
-                className={styles.orderCard}
-                bordered={false}
-                title={
-                  <div>
-                    <h2>{order.pickUpTime}</h2>
-                    <div className={styles.orderCardTitle}>
-                      {renderOrderStatus(order.status)}
-                      {order.remark ? <Tag color="#F5B041">有备注</Tag> : null}
-                      <span className={styles.orderCardTitleCakes}>
-                        {order.cakes}
-                      </span>
-                    </div>
-                  </div>
-                }
-                bodyStyle={{ padding: "8px" }}
-                extra={
-                  <>
-                    <Button
-                      shape="circle"
-                      style={{ marginRight: 10 }}
-                      icon="edit"
-                    />
-                    <Button shape="circle" icon="delete" />
-                  </>
+        {orders.length === 0 ? (
+          <div className={styles.orderCardNoOrder}>
+            <Icon type="exclamation-circle-o" />暂无订单
+          </div>
+        ) : (
+          orders.map(order => {
+            return (
+              <Timeline.Item
+                dot={
+                  <Icon type="clock-circle-o" style={{ fontSize: "16px" }} />
                 }
               >
-                <div className={styles.orderCardContent}>
-                  <span>
-                    <Icon type="user" />
-                    {order.consignee}
-                  </span>
-                  <span>
-                    <Icon type="phone" />
-                    {order.phone}
-                  </span>
-                  <span>
-                    <Icon type="environment-o" />
-                    {order.deliveryAddress}
-                  </span>
-                  {order.remark ? (
+                <Card
+                  className={styles.orderCard}
+                  bordered={false}
+                  title={
+                    <div>
+                      <h2>{order.pickUpTime}</h2>
+                      <div className={styles.orderCardTitle}>
+                        {renderOrderStatus(order.status)}
+                        {order.remark ? (
+                          <Tag color="#F5B041">有备注</Tag>
+                        ) : null}
+                        <span className={styles.orderCardTitleCakes}>
+                          {order.cakes}
+                        </span>
+                      </div>
+                    </div>
+                  }
+                  bodyStyle={{ padding: "8px" }}
+                  extra={
+                    <>
+                      <Button
+                        shape="circle"
+                        style={{ marginRight: 10 }}
+                        icon="edit"
+                      />
+                      <Button shape="circle" icon="delete" />
+                    </>
+                  }
+                >
+                  <div className={styles.orderCardContent}>
                     <span>
-                      <Icon type="info-circle-o" />
-                      {order.remark}
+                      <Icon type="user" />
+                      {order.consignee}
                     </span>
-                  ) : null}
-                </div>
-              </Card>
-            </Timeline.Item>
-          );
-        })}
+                    <span>
+                      <Icon type="phone" />
+                      {order.phone}
+                    </span>
+                    <span>
+                      <Icon type="environment-o" />
+                      {order.deliveryAddress}
+                    </span>
+                    {order.remark ? (
+                      <span>
+                        <Icon type="info-circle-o" />
+                        {order.remark}
+                      </span>
+                    ) : null}
+                  </div>
+                </Card>
+              </Timeline.Item>
+            );
+          })
+        )}
       </Timeline>
     </>
   );

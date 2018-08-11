@@ -16,7 +16,7 @@ import {
   Radio
 } from "antd";
 import CommonModal from "../../../../components/CommonModal";
-import styles from "./OrderDetail.css";
+import styles from "./orderDetail.less";
 
 const dataSource = {
   orderId: 1,
@@ -72,30 +72,28 @@ const OrderDetailForm = Form.create()(props => {
   function renderOperation(text, record) {
     return (
       <span>
-        <CommonModal>
-          <a href="javascript:;" className="ant-dropdown-link">
-            添加自选
-          </a>
-        </CommonModal>
-        <Divider type="vertical" />
         <a href="javascript:;">删除</a>
       </span>
     );
   }
-
+  const formItemLayout = {};
   return (
-    <Form layout="inline" hideRequiredMark>
+    <Form layout="vertical" hideRequiredMark>
       <Form.Item
         wrapperCol={{ span: 24, width: "100%" }}
         style={{ width: "100%" }}
       >
+        <CommonModal>
+          <Button icon="plus" style={{ marginBottom: 10 }}>
+            添加蛋糕
+          </Button>
+        </CommonModal>
         <Table
           size="small"
           dataSource={dataSource.cakes}
           bordered
           rowClassName="editable-row"
           pagination={false}
-          className={styles.tableBody}
           footer={renderFooter}
         >
           <Table.Column title="名称" dataIndex="cakeName" />
@@ -105,59 +103,58 @@ const OrderDetailForm = Form.create()(props => {
           <Table.Column title="总价" dataIndex="price" />
           <Table.Column title="操作" render={renderOperation} />
         </Table>
-        <CommonModal>
-          <Button icon="plus" style={{ width: "100%" }}>
-            添加蛋糕
-          </Button>
-        </CommonModal>
       </Form.Item>
       <Divider />
-      <Row>
-        <Col span={7}>
-          <Form.Item label="收货人">
-            <Input style={{ width: 200 }} />
+      <Row gutter={16}>
+        <Col span={12}>
+          <Form.Item {...formItemLayout} label="收货人">
+            <Input />
           </Form.Item>
         </Col>
-        <Col span={8}>
-          <Form.Item label="联系方式">
-            <InputNumber style={{ width: 200 }} />
-          </Form.Item>
-        </Col>
-        <Col span={9}>
-          <Form.Item label="取货时间">
-            <DatePicker style={{ width: 120, marginRight: 10 }} />
-            <TimePicker style={{ width: 120 }} format="HH:mm" />
+        <Col span={12}>
+          <Form.Item {...formItemLayout} label="联系方式">
+            <InputNumber style={{ width: "100%" }} />
           </Form.Item>
         </Col>
       </Row>
-      <Row>
-        <Form.Item label="备注">
-          <Input />
-        </Form.Item>
+      <Row gutter={16}>
+        <Col span={12}>
+          <Form.Item {...formItemLayout} label="配送方式">
+            <Radio.Group options={options} />
+          </Form.Item>
+        </Col>
+        <Col span={12}>
+          <Form.Item {...formItemLayout} label="取货时间">
+            <DatePicker style={{ width: "50%", marginRight: 10 }} />
+            <TimePicker style={{ width: "45%" }} format="HH:mm" />
+          </Form.Item>
+        </Col>
       </Row>
-      <Row>
-        <Form.Item label="配送方式">
-          <Radio.Group options={options} />
-        </Form.Item>
+      <Row gutter={16}>
+        <Col span={12}>
+          <Form.Item {...formItemLayout} label="送货地址">
+            <Input />
+          </Form.Item>
+        </Col>
+        <Col span={12}>
+          <Form.Item {...formItemLayout} label="配送费">
+            <InputNumber style={{ width: "100%" }} />
+          </Form.Item>
+        </Col>
       </Row>
-      <Row>
-        <Form.Item label="送货地址">
-          <Input style={{ width: "100%" }} />
-        </Form.Item>
-        <Form.Item label="配送费">
-          <InputNumber style={{ width: 150 }} />
-        </Form.Item>
-      </Row>
+      <Form.Item {...formItemLayout} label="备注">
+        <Input.TextArea />
+      </Form.Item>
       <Divider />
-      <Row>
-        <Col span={8}>
+      <Row gutter={16}>
+        <Col span={12}>
           <Form.Item label="应付">
-            <InputNumber style={{ width: 150 }} />
+            <InputNumber style={{ width: "100%" }} />
           </Form.Item>
         </Col>
-        <Col span={8}>
+        <Col span={12}>
           <Form.Item label="实付">
-            <InputNumber style={{ width: 150 }} />
+            <InputNumber style={{ width: "100%" }} />
           </Form.Item>
         </Col>
       </Row>
@@ -178,17 +175,34 @@ function OrderDetail({ dispatch, orderDetailInfo, loading, editing, visible }) {
   return (
     <Drawer
       onClose={visibleHandler}
-      width={1000}
+      width={720}
       maskClosable={false}
       visible={visible}
-      title={orderDetailInfo.name === "" ? "添加甜品" : "甜品详情"}
-      style={{
-        height: "calc(100% - 55px)",
-        overflow: "auto",
-        paddingBottom: 53
-      }}
+      className={styles.orderDetailPanel}
     >
       {loading ? <Spin /> : <OrderDetailForm editing={editing} />}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 0,
+          width: "100%",
+          borderTop: "1px solid #e8e8e8",
+          padding: "10px 16px",
+          textAlign: "right",
+          left: 0,
+          background: "#fff",
+          borderRadius: "0 0 4px 4px"
+        }}
+      >
+        <Button
+          style={{
+            marginRight: 8
+          }}
+        >
+          Cancel
+        </Button>
+        <Button type="primary">Submit</Button>
+      </div>
     </Drawer>
   );
 }

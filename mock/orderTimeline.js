@@ -8,7 +8,16 @@ export default {
       res.json([
         {
           orderId: 1,
-          cakes: "爆浆海盐奶盖 - 巧克力 x 1、爆浆海盐奶盖 - 抹茶 x 1",
+          cakes: [
+            {
+              name: "爆浆海盐奶盖 - 巧克力",
+              quantity: 1
+            },
+            {
+              name: "爆浆海盐奶盖 - 抹茶",
+              quantity: 1
+            }
+          ],
           status: 1,
           isSelfPickUp: false,
           consignee: "张",
@@ -20,7 +29,12 @@ export default {
         },
         {
           orderId: 2,
-          cakes: "蓝朋友的心 x 1",
+          cakes: [
+            {
+              name: "蓝朋友的心",
+              quantity: 1
+            }
+          ],
           status: 2,
           isSelfPickUp: false,
           consignee: "张",
@@ -32,8 +46,20 @@ export default {
         },
         {
           orderId: 3,
-          cakes:
-            "爆浆海盐奶盖 - 巧克力 x 1、爆浆海盐奶盖 - 抹茶 x 1、蓝朋友的心 - 巧克力 x 2",
+          cakes: [
+            {
+              name: "爆浆海盐奶盖 - 巧克力",
+              quantity: 1
+            },
+            {
+              name: "爆浆海盐奶盖 - 抹茶",
+              quantity: 1
+            },
+            {
+              name: "蓝朋友的心 - 巧克力",
+              quantity: 2
+            }
+          ],
           status: 3,
           isSelfPickUp: false,
           consignee: "张",

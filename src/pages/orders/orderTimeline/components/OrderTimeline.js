@@ -1,5 +1,5 @@
 import { connect } from "dva";
-import { Button, Timeline, Card, Icon, DatePicker, Tag } from "antd";
+import { Badge, Button, Timeline, Card, Icon, DatePicker, Tag } from "antd";
 import { routerRedux } from "dva/router";
 import * as commonConstants from "../../../../utils/commonConstants";
 import styles from "./orderTimeline.less";
@@ -38,9 +38,15 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
       />
       <Timeline>
         {orders.length === 0 ? (
-          <div className={styles.orderCardNoOrder}>
-            <Icon type="exclamation-circle-o" />暂无订单
-          </div>
+          <Timeline.Item
+            dot={<Icon type="clock-circle-o" style={{ fontSize: "16px" }} />}
+          >
+            <Card
+              className={styles.orderCard}
+              bordered={false}
+              title={<h2>暂无订单</h2>}
+            />
+          </Timeline.Item>
         ) : (
           orders.map(order => {
             return (
@@ -60,9 +66,18 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
                         {order.remark ? (
                           <Tag color="#F5B041">有备注</Tag>
                         ) : null}
-                        <span className={styles.orderCardTitleCakes}>
-                          {order.cakes}
-                        </span>
+                        {order.cakes.map(cake => {
+                          return (
+                            <div className={styles.orderCardTitleCakes}>
+                              <Badge
+                                count={cake.quantity}
+                                style={{ backgroundColor: "#FFAEB9AA" }}
+                              >
+                                {cake.name}
+                              </Badge>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   }

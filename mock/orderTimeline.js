@@ -18,15 +18,17 @@ export default {
               quantity: 1
             }
           ],
-          price: 240.0,
           status: 1,
-          isSelfPickUp: false,
           consignee: "张",
+          isSelfPickUp: false,
           phone: 12345678901,
-          deliveryAddress: "天津市南开区天津大学",
           pickUpDate: "2018-08-10",
           pickUpTime: "11:30",
-          remark: ""
+          deliveryAddress: "天津市南开区天津大学",
+          deliveryFee: 0,
+          remark: "",
+          shouldPay: 240,
+          realPay: 0
         },
         {
           orderId: 2,
@@ -36,15 +38,17 @@ export default {
               quantity: 1
             }
           ],
-          price: 240.0,
           status: 2,
-          isSelfPickUp: false,
           consignee: "张",
+          isSelfPickUp: false,
           phone: 12345678901,
-          deliveryAddress: "天津市南开区天大宿舍",
           pickUpDate: "2018-08-10",
           pickUpTime: "12:00",
-          remark: ""
+          deliveryAddress: "天津市南开区天大宿舍",
+          deliveryFee: 0,
+          remark: "",
+          shouldPay: 240,
+          realPay: 0
         },
         {
           orderId: 3,
@@ -62,15 +66,17 @@ export default {
               quantity: 2
             }
           ],
-          price: 240.0,
           status: 3,
-          isSelfPickUp: false,
           consignee: "张",
+          isSelfPickUp: false,
           phone: 12345678901,
-          deliveryAddress: "天津市南开区大悦城",
           pickUpDate: "2018-08-10",
           pickUpTime: "12:30",
-          remark: "双份巧克力"
+          deliveryAddress: "天津市南开区大悦城",
+          deliveryFee: 0,
+          remark: "双份巧克力",
+          shouldPay: 240,
+          realPay: 240
         },
         {
           orderId: 4,
@@ -84,15 +90,17 @@ export default {
               quantity: 1
             }
           ],
-          price: 240.0,
           status: 1,
-          isSelfPickUp: false,
           consignee: "张",
+          isSelfPickUp: false,
           phone: 12345678901,
-          deliveryAddress: "天津市南开区天津大学",
           pickUpDate: "2018-08-10",
           pickUpTime: "14:30",
-          remark: ""
+          deliveryAddress: "天津市南开区天津大学",
+          deliveryFee: 0,
+          remark: "",
+          shouldPay: 240,
+          realPay: 0
         },
         {
           orderId: 5,
@@ -102,15 +110,17 @@ export default {
               quantity: 1
             }
           ],
-          price: 240.0,
           status: 2,
-          isSelfPickUp: false,
           consignee: "张",
+          isSelfPickUp: false,
           phone: 12345678901,
-          deliveryAddress: "天津市南开区天大宿舍",
           pickUpDate: "2018-08-10",
           pickUpTime: "16:00",
-          remark: ""
+          deliveryAddress: "天津市南开区天大宿舍",
+          deliveryFee: 0,
+          remark: "",
+          shouldPay: 240,
+          realPay: 0
         }
       ]);
     } else {

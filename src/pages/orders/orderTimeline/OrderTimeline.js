@@ -33,7 +33,12 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
     );
   }
 
-  function orderDetailHandler(orderId) {}
+  function orderDetailHandler(index) {
+    dispatch({
+      type: "orderDetail/editOrder",
+      payload: { order: orders[index] }
+    });
+  }
 
   function renderOrderStatus(status) {
     switch (status) {
@@ -50,8 +55,8 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
     let totalPrice = 0;
     let paidPrice = 0;
     orders.forEach(order => {
-      totalPrice += order.price;
-      paidPrice += order.status === 3 ? order.price : 0;
+      totalPrice += order.shouldPay - order.deliveryFee;
+      paidPrice += order.realPay;
     });
     return (
       <div className={styles.orderTimelineHeaderStatistic}>
@@ -63,8 +68,25 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
   }
 
   function createOrderHandler() {
+    let date = new Date();
+    date.setHours(date.getHours() + 8);
+    const order = {
+      orderId: null,
+      cakes: [],
+      consignee: null,
+      phone: null,
+      isSelfPickUp: true,
+      pickUpDate: date.toJSON().substring(0, 10),
+      pickUpTime: date.toJSON().substring(11, 16),
+      deliveryAddress: null,
+      deliveryFee: 0,
+      remark: null,
+      shouldPay: 0,
+      realPay: 0
+    };
     dispatch({
-      type: "orderDetail/createOrder"
+      type: "orderDetail/editOrder",
+      payload: { order }
     });
   }
 
@@ -85,7 +107,7 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
         </Button>
       </div>
       <Timeline>
-        {orders.map(order => {
+        {orders.map((order, index) => {
           return (
             <Timeline.Item
               dot={<Icon type="clock-circle-o" style={{ fontSize: "16px" }} />}
@@ -123,6 +145,7 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
                       shape="circle"
                       style={{ marginRight: 10 }}
                       icon="edit"
+                      onClick={orderDetailHandler.bind(null, index)}
                     />
                     <Button shape="circle" icon="delete" />
                   </>
@@ -144,7 +167,7 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
                   <br />
                   <span>
                     <Icon type="pay-circle-o" />
-                    {order.price}
+                    {order.shouldPay}
                   </span>
                   {order.remark ? (
                     <span>

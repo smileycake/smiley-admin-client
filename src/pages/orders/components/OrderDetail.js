@@ -4,7 +4,6 @@ import {
   Drawer,
   Form,
   Input,
-  Select,
   Col,
   Row,
   Spin,
@@ -15,52 +14,8 @@ import {
   Table,
   Radio
 } from "antd";
-import CommonModal from "../../../../components/CommonModal";
+import CommonModal from "../../../components/CommonModal";
 import styles from "./orderDetail.less";
-
-const dataSource = {
-  orderId: 1,
-  cakes: [
-    {
-      cakeId: 2,
-      cakeName: "爆浆海盐奶盖",
-      specId: "2-1",
-      specName: "巧克力",
-      quantity: 1,
-      price: 98,
-      customize: [
-        {
-          materialId: 4,
-          name: "草莓",
-          price: 40,
-          quantity: 2,
-          totalPrice: 80
-        },
-        {
-          materialId: 2,
-          name: "糖",
-          price: 20,
-          quantity: 2,
-          totalPrice: 40
-        }
-      ],
-      totalPrice: 218
-    }
-  ],
-  deliveryInfo: {
-    receiverName: "aaa",
-    phone: 17722222222,
-    date: "2018.08.07",
-    time: "12:08",
-    isSelfPickUp: false,
-    address: "地址地址地址地址地址地址",
-    deliverFee: 20
-  },
-  pay: {
-    amountPayable: 238,
-    actuallyPayed: 238
-  }
-};
 
 const OrderDetailForm = Form.create()(props => {
   const options = [{ label: "自提", value: 1 }, { label: "送货", value: 2 }];
@@ -76,7 +31,6 @@ const OrderDetailForm = Form.create()(props => {
       </span>
     );
   }
-  const formItemLayout = {};
   return (
     <Form layout="vertical" hideRequiredMark>
       <Form.Item
@@ -90,7 +44,6 @@ const OrderDetailForm = Form.create()(props => {
         </CommonModal>
         <Table
           size="small"
-          dataSource={dataSource.cakes}
           bordered
           rowClassName="editable-row"
           pagination={false}
@@ -107,24 +60,24 @@ const OrderDetailForm = Form.create()(props => {
       <Divider />
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item {...formItemLayout} label="收货人">
+          <Form.Item label="收货人">
             <Input />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item {...formItemLayout} label="联系方式">
+          <Form.Item label="联系方式">
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
         </Col>
       </Row>
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item {...formItemLayout} label="配送方式">
+          <Form.Item label="配送方式">
             <Radio.Group options={options} />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item {...formItemLayout} label="取货时间">
+          <Form.Item label="取货时间">
             <DatePicker style={{ width: "50%", marginRight: 10 }} />
             <TimePicker style={{ width: "45%" }} format="HH:mm" />
           </Form.Item>
@@ -132,17 +85,17 @@ const OrderDetailForm = Form.create()(props => {
       </Row>
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item {...formItemLayout} label="送货地址">
+          <Form.Item label="送货地址">
             <Input />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item {...formItemLayout} label="配送费">
+          <Form.Item label="配送费">
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
         </Col>
       </Row>
-      <Form.Item {...formItemLayout} label="备注">
+      <Form.Item label="备注">
         <Input.TextArea />
       </Form.Item>
       <Divider />
@@ -178,7 +131,12 @@ function OrderDetail({ dispatch, orderDetailInfo, loading, editing, visible }) {
       width={720}
       maskClosable={false}
       visible={visible}
-      className={styles.orderDetailPanel}
+      title="编辑订单"
+      style={{
+        height: "calc(100% - 55px)",
+        overflow: "auto",
+        paddingBottom: 53
+      }}
     >
       {loading ? <Spin /> : <OrderDetailForm editing={editing} />}
       <div

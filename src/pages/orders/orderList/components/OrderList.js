@@ -1,8 +1,18 @@
 import { connect } from "dva";
-import { Divider, Input, Table, Pagination, Popconfirm, Button } from "antd";
-import OrderDetail from "./OrderDetail";
+import {
+  Divider,
+  Input,
+  Table,
+  Pagination,
+  Popconfirm,
+  Button,
+  Tag,
+  Icon
+} from "antd";
+import OrderDetail from "../../components/OrderDetail";
 import { routerRedux } from "dva/router";
 import * as commonConstants from "../../../../utils/commonConstants";
+import styles from "./orderList.less";
 
 function OrderList({
   dispatch,
@@ -27,25 +37,45 @@ function OrderList({
   }
 
   function renderStatus(status) {
-    let text = "";
     switch (status) {
+      case 1:
+        return <Tag color="#EC7063">未付款</Tag>;
       case 2:
-        text = "已付款";
-        break;
+        return <Tag color="#3498DB">已付款</Tag>;
       case 3:
-        text = "已完成";
-        break;
-      case 4:
-        text = "已退款";
-        break;
-      default:
-        text = "已下单";
+        return <Tag color="#52BE80">已完成</Tag>;
     }
-    return <span> {text} </span>;
   }
 
   function renderIsSelfPickUp(isSelfPickUp) {
     return isSelfPickUp ? <span> 是 </span> : <span> 否 </span>;
+  }
+
+  function renderOperation(text, { id }) {
+    return (
+      <span>
+        <span>
+          <a>
+            <Icon type="edit" />
+          </a>
+        </span>
+        <Divider type="vertical" />
+        <Popconfirm title={commonConstants.ALERT_DELETE}>
+          <a href="">
+            <Icon type="delete" />
+          </a>
+        </Popconfirm>
+      </span>
+    );
+  }
+
+  function renderCakes(cakes, record, index) {
+    return (
+      <Table dataSource={cakes} pagination={false} showHeader={false}>
+        <Table.Column dataIndex="name" />
+        <Table.Column dataIndex="quantity" />
+      </Table>
+    );
   }
 
   return (
@@ -61,17 +91,22 @@ function OrderList({
         pagination={false}
         expandedRowRender={renderIsSelfPickUp}
       >
-        <Table.Column dataIndex="orderId" title="订单编号" />
-        <Table.Column dataIndex="status" title="状态" render={renderStatus} />
-        <Table.Column dataIndex="cakes" title="订单内容" />
-        <Table.Column title="总价" />
-        <Table.Column dataIndex="pickUpTime" title="取货时间" />
+        <Table.Column dataIndex="orderId" title="订单编号" width="10%" />
         <Table.Column
-          dataIndex="isSelfPickUp"
-          title="自提否"
-          render={renderIsSelfPickUp}
+          dataIndex="status"
+          title="状态"
+          width="5%"
+          render={renderStatus}
         />
-        <Table.Column title="操作" />
+        <Table.Column
+          dataIndex="cakes"
+          title="订单内容"
+          render={renderCakes}
+          className={styles.orderListCakes}
+        />
+        <Table.Column dataIndex="price" title="总价" width="8%" />
+        <Table.Column dataIndex="pickUpDate" title="取货日期" width="14%" />
+        <Table.Column title="操作" width="10%" render={renderOperation} />
       </Table>
       <Pagination
         className="ant-table-pagination"

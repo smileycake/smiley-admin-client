@@ -1,4 +1,4 @@
-import OrderTimeline from "./components/OrderTimeline";
+import OrderTimeline from "./OrderTimeline";
 
 export default () => {
   return (

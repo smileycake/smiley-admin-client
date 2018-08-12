@@ -18,6 +18,7 @@ export default {
               quantity: 1
             }
           ],
+          price: 240.0,
           status: 1,
           isSelfPickUp: false,
           consignee: "张",
@@ -35,6 +36,7 @@ export default {
               quantity: 1
             }
           ],
+          price: 240.0,
           status: 2,
           isSelfPickUp: false,
           consignee: "张",
@@ -60,6 +62,7 @@ export default {
               quantity: 2
             }
           ],
+          price: 240.0,
           status: 3,
           isSelfPickUp: false,
           consignee: "张",
@@ -68,6 +71,46 @@ export default {
           pickUpDate: "2018-08-10",
           pickUpTime: "12:30",
           remark: "双份巧克力"
+        },
+        {
+          orderId: 4,
+          cakes: [
+            {
+              name: "爆浆海盐奶盖 - 巧克力",
+              quantity: 1
+            },
+            {
+              name: "爆浆海盐奶盖 - 抹茶",
+              quantity: 1
+            }
+          ],
+          price: 240.0,
+          status: 1,
+          isSelfPickUp: false,
+          consignee: "张",
+          phone: 12345678901,
+          deliveryAddress: "天津市南开区天津大学",
+          pickUpDate: "2018-08-10",
+          pickUpTime: "14:30",
+          remark: ""
+        },
+        {
+          orderId: 5,
+          cakes: [
+            {
+              name: "蓝朋友的心",
+              quantity: 1
+            }
+          ],
+          price: 240.0,
+          status: 2,
+          isSelfPickUp: false,
+          consignee: "张",
+          phone: 12345678901,
+          deliveryAddress: "天津市南开区天大宿舍",
+          pickUpDate: "2018-08-10",
+          pickUpTime: "16:00",
+          remark: ""
         }
       ]);
     } else {

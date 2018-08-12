@@ -2,10 +2,12 @@ import * as orderService from "../services/orders";
 
 export default {
   namespace: "orderTimeline",
+
   state: {
     orders: [],
     date: null
   },
+
   reducers: {
     showOrderTimeline(
       state,
@@ -16,6 +18,7 @@ export default {
       return { ...state, orders, date };
     }
   },
+
   effects: {
     *fetchOrderTimeline(
       {
@@ -35,6 +38,7 @@ export default {
       });
     }
   },
+
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(({ pathname, query }) => {

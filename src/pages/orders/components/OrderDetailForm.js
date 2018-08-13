@@ -19,8 +19,19 @@ import CommonModal from "../../../components/CommonModal";
 class OrderDetailForm extends React.Component {
   constructor(props) {
     super(props);
+    const cakes = [];
+    this.props.cakes.forEach(cake => {
+      cake.specs.forEach(spec => {
+        cakes.push({
+          key: spec.specId,
+          name: cake.name + "-" + spec.name
+        });
+      });
+    });
     this.state = {
-      isSelfPickUp: this.props.order.isSelfPickUp
+      isSelfPickUp: this.props.order.isSelfPickUp,
+      selectedCakes: [],
+      cakes
     };
   }
 
@@ -42,8 +53,12 @@ class OrderDetailForm extends React.Component {
     );
   };
 
+  renderTotalPriceEachCake = (text, record, index) => {
+    return record.price * record.quantity;
+  };
+
   render() {
-    const { isSelfPickUp } = this.state;
+    const { isSelfPickUp, cakes } = this.state;
     const { getFieldDecorator } = this.props.form;
     return (
       <Form layout="vertical" hideRequiredMark>
@@ -51,7 +66,7 @@ class OrderDetailForm extends React.Component {
           wrapperCol={{ span: 24, width: "100%" }}
           style={{ width: "100%" }}
         >
-          <CommonModal>
+          <CommonModal dataSource={cakes}>
             <Button icon="plus" style={{ marginBottom: 10 }}>
               添加蛋糕
             </Button>
@@ -66,12 +81,20 @@ class OrderDetailForm extends React.Component {
               pagination={false}
               footer={this.renderFooter}
             >
-              <Table.Column title="名称" dataIndex="name" />
-              <Table.Column title="规格" dataIndex="specName" />
-              <Table.Column title="数量" dataIndex="quantity" />
-              <Table.Column title="单价" dataIndex="price" />
-              <Table.Column title="总价" dataIndex="totalPrice" />
-              <Table.Column title="操作" render={this.renderOperation} />
+              <Table.Column title="名称" dataIndex="name" width="30%" />
+              <Table.Column title="规格" dataIndex="spec" width="15%" />
+              <Table.Column title="数量" dataIndex="quantity" width="15%" />
+              <Table.Column title="单价" dataIndex="price" width="15%" />
+              <Table.Column
+                title="总价"
+                render={this.renderTotalPriceEachCake}
+                width="15%"
+              />
+              <Table.Column
+                title="操作"
+                render={this.renderOperation}
+                width="10%"
+              />
             </Table>
           )}
         </Form.Item>
@@ -122,7 +145,12 @@ class OrderDetailForm extends React.Component {
             <Col span={12}>
               <Form.Item label="配送费">
                 {getFieldDecorator("deliveryFee")(
-                  <InputNumber style={{ width: "100%" }} />
+                  <InputNumber
+                    formatter={value =>
+                      `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                    style={{ width: "100%" }}
+                  />
                 )}
               </Form.Item>
             </Col>

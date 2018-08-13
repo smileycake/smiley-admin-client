@@ -1,11 +1,13 @@
 import * as orderService from "../services/orders";
+import * as cakeService from "../../cakes/services/cakes";
 
 export default {
   namespace: "orderTimeline",
 
   state: {
     orders: [],
-    date: null
+    date: null,
+    cakes: []
   },
 
   reducers: {
@@ -16,6 +18,14 @@ export default {
       }
     ) {
       return { ...state, orders, date };
+    },
+    cacheCakeList(
+      state,
+      {
+        payload: { cakes }
+      }
+    ) {
+      return { ...state, cakes };
     }
   },
 
@@ -36,6 +46,15 @@ export default {
           date
         }
       });
+    },
+    *fetchCakes({}, { call, put }) {
+      const { data } = yield call(cakeService.fetchCakeList);
+      yield put({
+        type: "cacheCakeList",
+        payload: {
+          cakes: data
+        }
+      });
     }
   },
 
@@ -45,6 +64,7 @@ export default {
         if (pathname === "/orders/orderTimeline") {
           const date = query.date || new Date().toJSON().slice(0, 10);
           dispatch({ type: "fetchOrderTimeline", payload: { date } });
+          dispatch({ type: "fetchCakes" });
         }
       });
     }

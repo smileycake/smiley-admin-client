@@ -2,7 +2,7 @@ import { connect } from "dva";
 import { Button, Drawer, Spin } from "antd";
 import OrderDetailForm from "./OrderDetailForm";
 
-function OrderDetail({ dispatch, order, loading, visible }) {
+function OrderDetail({ dispatch, order, cakes, loading, visible }) {
   function visibleHandler(e) {
     dispatch({
       type: "orderDetail/closeOrderDetailPanel"
@@ -22,7 +22,7 @@ function OrderDetail({ dispatch, order, loading, visible }) {
         paddingBottom: 53
       }}
     >
-      {loading ? <Spin /> : <OrderDetailForm order={order} />}
+      {loading ? <Spin /> : <OrderDetailForm order={order} cakes={cakes} />}
       <div
         style={{
           position: "absolute",
@@ -50,9 +50,11 @@ function OrderDetail({ dispatch, order, loading, visible }) {
 }
 
 function mapStateToProps(state) {
-  const { order, visible } = state.orderDetail;
+  const { order, cakes, visible } = state.orderDetail;
+
   return {
     order,
+    cakes,
     visible,
     loading: state.loading.models.cakeDetail
   };

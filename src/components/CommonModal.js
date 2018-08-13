@@ -35,7 +35,7 @@ class CommonModal extends React.Component {
     return option.name.indexOf(inputValue) > -1;
   };
 
-  materialsChangeHandler = targetKeys => {
+  changeHandler = targetKeys => {
     const { dataSource } = this.props;
     const selectedDataSource = dataSource.filter(data => {
       return targetKeys.includes(data.key);
@@ -68,7 +68,7 @@ class CommonModal extends React.Component {
             showSearch
             filterOption={this.filterOption}
             targetKeys={targetKeys}
-            onChange={this.materialsChangeHandler}
+            onChange={this.changeHandler}
             render={item => item.name}
           />
         </Modal>

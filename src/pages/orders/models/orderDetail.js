@@ -5,17 +5,18 @@ export default {
 
   state: {
     order: {},
-    visible: false
+    visible: false,
+    cakes: []
   },
 
   reducers: {
     editOrder(
       state,
       {
-        payload: { order }
+        payload: { order, cakes }
       }
     ) {
-      return { ...state, order, visible: true };
+      return { ...state, order, cakes, visible: true };
     },
     closeOrderDetailPanel(state) {
       return { ...state, order: {}, visible: false };

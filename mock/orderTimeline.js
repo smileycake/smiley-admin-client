@@ -10,12 +10,18 @@ export default {
           orderId: 1,
           cakes: [
             {
-              name: "爆浆海盐奶盖 - 巧克力",
-              quantity: 1
+              cakeId: 1,
+              name: "爆浆海盐奶盖",
+              spec: "巧克力",
+              quantity: 1,
+              price: 98
             },
             {
-              name: "爆浆海盐奶盖 - 抹茶",
-              quantity: 1
+              cakeId: 2,
+              name: "爆浆海盐奶盖",
+              spec: "抹茶",
+              quantity: 2,
+              price: 98
             }
           ],
           status: 1,
@@ -34,8 +40,11 @@ export default {
           orderId: 2,
           cakes: [
             {
+              cakeId: 3,
               name: "蓝朋友的心",
-              quantity: 1
+              spec: "巧克力",
+              quantity: 1,
+              price: 39
             }
           ],
           status: 2,
@@ -54,16 +63,25 @@ export default {
           orderId: 3,
           cakes: [
             {
-              name: "爆浆海盐奶盖 - 巧克力",
-              quantity: 1
+              cakeId: 1,
+              name: "爆浆海盐奶盖",
+              spec: "巧克力",
+              quantity: 1,
+              price: 98
             },
             {
-              name: "爆浆海盐奶盖 - 抹茶",
-              quantity: 1
+              cakeId: 2,
+              name: "爆浆海盐奶盖",
+              spec: "抹茶",
+              quantity: 1,
+              price: 98
             },
             {
-              name: "蓝朋友的心 - 巧克力",
-              quantity: 2
+              cakeId: 3,
+              name: "蓝朋友的心",
+              spec: "巧克力",
+              quantity: 2,
+              price: 39
             }
           ],
           status: 3,
@@ -82,12 +100,18 @@ export default {
           orderId: 4,
           cakes: [
             {
-              name: "爆浆海盐奶盖 - 巧克力",
-              quantity: 1
+              cakeId: 1,
+              name: "爆浆海盐奶盖",
+              spec: "巧克力",
+              quantity: 1,
+              price: 98
             },
             {
-              name: "爆浆海盐奶盖 - 抹茶",
-              quantity: 1
+              cakeId: 2,
+              name: "爆浆海盐奶盖",
+              spec: "抹茶",
+              quantity: 1,
+              price: 98
             }
           ],
           status: 1,
@@ -106,8 +130,11 @@ export default {
           orderId: 5,
           cakes: [
             {
+              cakeId: 3,
               name: "蓝朋友的心",
-              quantity: 1
+              spec: "巧克力",
+              quantity: 1,
+              price: 39
             }
           ],
           status: 2,

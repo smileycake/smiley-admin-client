@@ -15,12 +15,12 @@ import OrderDetail from "../components/OrderDetail";
 import styles from "./orderTimeline.less";
 import moment from "moment";
 
-function OrderTimeline({ dispatch, orders, date, loading }) {
+function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
   const statusMenu = (
     <Menu>
-      <Menu.Item>未付款</Menu.Item>
-      <Menu.Item>已付款</Menu.Item>
-      <Menu.Item>已完成</Menu.Item>
+      <Menu.Item key="noPay">未付款</Menu.Item>
+      <Menu.Item key="paid">已付款</Menu.Item>
+      <Menu.Item key="done">已完成</Menu.Item>
     </Menu>
   );
 
@@ -86,7 +86,7 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
     };
     dispatch({
       type: "orderDetail/editOrder",
-      payload: { order }
+      payload: { order, cakes }
     });
   }
 
@@ -110,6 +110,7 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
         {orders.map((order, index) => {
           return (
             <Timeline.Item
+              key={order.orderId}
               dot={<Icon type="clock-circle-o" style={{ fontSize: "16px" }} />}
             >
               <Card
@@ -125,12 +126,15 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
                       {order.remark ? <Tag color="#F5B041">有备注</Tag> : null}
                       {order.cakes.map(cake => {
                         return (
-                          <div className={styles.orderCardTitleCakes}>
+                          <div
+                            key={cake.cakeId}
+                            className={styles.orderCardTitleCakes}
+                          >
                             <Badge
                               count={cake.quantity}
                               style={{ backgroundColor: "#FFAEB9AA" }}
                             >
-                              {cake.name}
+                              {cake.name + " - " + cake.spec}
                             </Badge>
                           </div>
                         );
@@ -192,10 +196,11 @@ function OrderTimeline({ dispatch, orders, date, loading }) {
 }
 
 function mapStateToProps(state) {
-  const { orders, date } = state.orderTimeline;
+  const { orders, date, cakes } = state.orderTimeline;
   return {
     orders,
     date,
+    cakes,
     loading: state.loading.models.orderTimeline
   };
 }

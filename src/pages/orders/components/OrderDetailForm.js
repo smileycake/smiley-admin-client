@@ -19,21 +19,34 @@ import CommonModal from "../../../components/CommonModal";
 class OrderDetailForm extends React.Component {
   constructor(props) {
     super(props);
-    const cakes = [];
-    this.props.cakes.forEach(cake => {
-      cake.specs.forEach(spec => {
-        cakes.push({
-          key: spec.specId,
-          name: cake.name + "-" + spec.name
-        });
-      });
-    });
     this.state = {
       isSelfPickUp: this.props.order.isSelfPickUp,
-      selectedCakes: [],
-      cakes
+      cakes: this.props.cakes
     };
   }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      cakes: nextProps.cakes
+    });
+  }
+
+  cakeChangeHandler = selectedCakes => {
+    const newCakes = [];
+    selectedCakes.forEach(cake => {
+      newCakes.push({
+        cakeId: cake.cakeId,
+        specId: cake.key,
+        name: cake.cakeName,
+        spec: cake.specName,
+        price: cake.price,
+        quantity: 1
+      });
+    });
+    this.props.form.setFieldsValue({
+      cakes: newCakes
+    });
+  };
 
   deliveryTypeChange = e => {
     this.setState({
@@ -45,11 +58,32 @@ class OrderDetailForm extends React.Component {
     return <span>aaaa</span>;
   };
 
-  renderOperation = (text, record) => {
+  renderOperation = (text, record, index) => {
     return (
-      <a>
+      <a
+        onClick={() => {
+          const cakes = this.props.form.getFieldValue("cakes");
+          cakes.splice(index, 1);
+          this.props.form.setFieldsValue({
+            cakes
+          });
+        }}
+      >
         <Icon type="delete" />
       </a>
+    );
+  };
+
+  renderQuantity = (text, record, index) => {
+    return (
+      <InputNumber
+        value={text}
+        onChange={quantity => {
+          const cakes = this.props.form.getFieldValue("cakes");
+          cakes[index].quantity = quantity;
+          this.props.form.setFieldsValue({ cakes });
+        }}
+      />
     );
   };
 
@@ -66,7 +100,11 @@ class OrderDetailForm extends React.Component {
           wrapperCol={{ span: 24, width: "100%" }}
           style={{ width: "100%" }}
         >
-          <CommonModal dataSource={cakes}>
+          <CommonModal
+            dataSource={cakes}
+            title="选择蛋糕"
+            onOk={this.cakeChangeHandler}
+          >
             <Button icon="plus" style={{ marginBottom: 10 }}>
               添加蛋糕
             </Button>
@@ -83,7 +121,12 @@ class OrderDetailForm extends React.Component {
             >
               <Table.Column title="名称" dataIndex="name" width="30%" />
               <Table.Column title="规格" dataIndex="spec" width="15%" />
-              <Table.Column title="数量" dataIndex="quantity" width="15%" />
+              <Table.Column
+                title="数量"
+                dataIndex="quantity"
+                width="15%"
+                render={this.renderQuantity}
+              />
               <Table.Column title="单价" dataIndex="price" width="15%" />
               <Table.Column
                 title="总价"

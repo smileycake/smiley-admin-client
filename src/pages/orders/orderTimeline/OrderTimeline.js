@@ -197,10 +197,25 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
 
 function mapStateToProps(state) {
   const { orders, date, cakes } = state.orderTimeline;
+
+  const convertCakes = [];
+  cakes.forEach(cake => {
+    cake.specs.forEach(spec => {
+      convertCakes.push({
+        key: spec.specId,
+        title: cake.name + "-" + spec.name,
+        cakeName: cake.name,
+        specName: spec.name,
+        cakeId: cake.cakeId,
+        price: spec.price
+      });
+    });
+  });
+
   return {
     orders,
     date,
-    cakes,
+    cakes: convertCakes,
     loading: state.loading.models.orderTimeline
   };
 }

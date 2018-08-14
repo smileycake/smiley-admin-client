@@ -11,13 +11,15 @@ export default {
           cakes: [
             {
               cakeId: 1,
+              specId: "1-1",
               name: "爆浆海盐奶盖",
               spec: "巧克力",
               quantity: 1,
               price: 98
             },
             {
-              cakeId: 2,
+              cakeId: 1,
+              specId: "1-2",
               name: "爆浆海盐奶盖",
               spec: "抹茶",
               quantity: 2,
@@ -41,6 +43,7 @@ export default {
           cakes: [
             {
               cakeId: 3,
+              specId: "3-1",
               name: "蓝朋友的心",
               spec: "巧克力",
               quantity: 1,
@@ -64,13 +67,15 @@ export default {
           cakes: [
             {
               cakeId: 1,
+              specId: "1-1",
               name: "爆浆海盐奶盖",
               spec: "巧克力",
               quantity: 1,
               price: 98
             },
             {
-              cakeId: 2,
+              cakeId: 1,
+              specId: "1-2",
               name: "爆浆海盐奶盖",
               spec: "抹茶",
               quantity: 1,
@@ -78,6 +83,7 @@ export default {
             },
             {
               cakeId: 3,
+              specId: "3-1",
               name: "蓝朋友的心",
               spec: "巧克力",
               quantity: 2,
@@ -101,13 +107,15 @@ export default {
           cakes: [
             {
               cakeId: 1,
+              specId: "1-1",
               name: "爆浆海盐奶盖",
               spec: "巧克力",
               quantity: 1,
               price: 98
             },
             {
-              cakeId: 2,
+              cakeId: 1,
+              specId: "1-2",
               name: "爆浆海盐奶盖",
               spec: "抹茶",
               quantity: 1,
@@ -131,6 +139,7 @@ export default {
           cakes: [
             {
               cakeId: 3,
+              specId: "3-1",
               name: "蓝朋友的心",
               spec: "巧克力",
               quantity: 1,

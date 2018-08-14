@@ -69,7 +69,7 @@ class CommonModal extends React.Component {
             filterOption={this.filterOption}
             targetKeys={targetKeys}
             onChange={this.changeHandler}
-            render={item => item.name}
+            render={item => item.title}
           />
         </Modal>
       </span>

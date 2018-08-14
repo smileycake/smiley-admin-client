@@ -1,11 +1,21 @@
 import { connect } from "dva";
 import { Button, Drawer, Spin } from "antd";
 import OrderDetailForm from "./OrderDetailForm";
+import update from "../../../../node_modules/immutability-helper";
 
 function OrderDetail({ dispatch, order, cakes, loading, visible }) {
   function visibleHandler(e) {
     dispatch({
       type: "orderDetail/closeOrderDetailPanel"
+    });
+  }
+
+  function updateOrder(fields) {
+    dispatch({
+      type: "orderDetail/updateOrder",
+      payload: {
+        fields
+      }
     });
   }
 
@@ -22,7 +32,11 @@ function OrderDetail({ dispatch, order, cakes, loading, visible }) {
         paddingBottom: 53
       }}
     >
-      {loading ? <Spin /> : <OrderDetailForm order={order} cakes={cakes} />}
+      {loading ? (
+        <Spin />
+      ) : (
+        <OrderDetailForm order={order} cakes={cakes} onChange={updateOrder} />
+      )}
       <div
         style={{
           position: "absolute",

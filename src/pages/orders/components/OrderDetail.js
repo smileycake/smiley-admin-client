@@ -3,7 +3,7 @@ import { Button, Drawer, Spin } from "antd";
 import OrderDetailForm from "./OrderDetailForm";
 import update from "../../../../node_modules/immutability-helper";
 
-function OrderDetail({ dispatch, order, cakes, loading, visible }) {
+function OrderDetail({ dispatch, order, cakes, visible, loading }) {
   function visibleHandler(e) {
     dispatch({
       type: "orderDetail/closeOrderDetailPanel"

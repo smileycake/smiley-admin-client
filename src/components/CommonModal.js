@@ -4,32 +4,18 @@ import { Modal, Transfer } from "antd";
 class CommonModal extends React.Component {
   constructor(props) {
     super(props);
-    const { dataSource, selectedDataSource } = this.props;
-    const targetKeys = selectedDataSource.map(data => {
-      return data.specId;
-    });
+    const { selectedKeys } = this.props;
     this.state = {
       visible: false,
-      selectedDataSource: [],
-      dataSource,
-      targetKeys
+      targetKeys: selectedKeys || []
     };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      targetKeys: [],
-      selectedDataSource: [],
-      dataSource: nextProps.dataSource || []
+      targetKeys: nextProps.selectedKeys || []
     });
   }
-
-  convert = selected => {
-    const converted = selected.map(data => {
-      return data.specId;
-    });
-    return converted;
-  };
 
   showModelHandler = e => {
     if (e) e.stopPropagation();
@@ -40,7 +26,7 @@ class CommonModal extends React.Component {
 
   onOk = () => {
     if (this.props.onOk) {
-      this.props.onOk(this.state.selectedDataSource);
+      this.props.onOk(this.state.targetKeys);
     }
     this.hideModelHandler();
   };
@@ -56,19 +42,14 @@ class CommonModal extends React.Component {
   };
 
   changeHandler = targetKeys => {
-    const { dataSource } = this.props;
-    const selectedDataSource = dataSource.filter(data => {
-      return targetKeys.includes(data.key);
-    });
     this.setState({
-      targetKeys,
-      selectedDataSource
+      targetKeys
     });
   };
 
   render() {
-    const { children, title } = this.props;
-    const { visible, targetKeys, dataSource } = this.state;
+    const { children, title, rowKey, render, dataSource } = this.props;
+    const { visible, targetKeys } = this.state;
     return (
       <span>
         <span onClick={this.showModelHandler}>{children}</span>
@@ -85,11 +66,12 @@ class CommonModal extends React.Component {
               width: 300,
               height: 300
             }}
+            rowKey={record => record[rowKey]}
             showSearch
             filterOption={this.filterOption}
             targetKeys={targetKeys}
             onChange={this.changeHandler}
-            render={item => item.title}
+            render={render}
           />
         </Modal>
       </span>

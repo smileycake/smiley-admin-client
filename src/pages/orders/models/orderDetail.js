@@ -5,8 +5,8 @@ export default {
 
   state: {
     order: {},
-    visible: false,
-    cakes: []
+    cakes: [],
+    visible: false
   },
 
   reducers: {
@@ -19,7 +19,7 @@ export default {
       return { ...state, order, cakes, visible: true };
     },
     closeOrderDetailPanel(state) {
-      return { ...state, order: {}, visible: false };
+      return { ...state, order: {}, cakes: [], visible: false };
     }
   },
 

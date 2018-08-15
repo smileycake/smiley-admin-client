@@ -215,32 +215,32 @@ export default {
   "GET /api/cakeList": (req, res) => {
     res.json([
       {
-        cakeId: 1,
+        id: 1,
         name: "爆浆海盐奶盖",
         specs: [
           {
-            specId: "1-1",
+            id: "1-1",
             name: "巧克力",
             price: 98
           },
           {
-            specId: "1-2",
+            id: "1-2",
             name: "抹茶",
             price: 98
           },
           {
-            specId: "1-3",
+            id: "1-3",
             name: "酸奶奶油",
             price: 98
           }
         ]
       },
       {
-        cakeId: 2,
+        id: 2,
         name: "蓝朋友的心",
         specs: [
           {
-            specId: "2-1",
+            id: "2-1",
             name: "巧克力",
             price: 39
           }

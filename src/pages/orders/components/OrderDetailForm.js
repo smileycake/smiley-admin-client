@@ -11,6 +11,7 @@ import {
   DatePicker,
   TimePicker,
   Table,
+  Tree,
   Radio
 } from "antd";
 import moment from "moment";
@@ -19,32 +20,56 @@ import CommonModal from "../../../components/CommonModal";
 class OrderDetailForm extends React.Component {
   constructor(props) {
     super(props);
+    this.convertedCakes = [];
+    this.props.cakes.forEach(cake => {
+      cake.specs.forEach(spec => {
+        this.convertedCakes.push({
+          id: spec.id,
+          name: cake.name + "-" + spec.name,
+          price: spec.price
+        });
+      });
+    });
     this.state = {
       isSelfPickUp: this.props.order.isSelfPickUp,
-      allCakes: this.props.cakes
+      selectedCakeKeys: this.props.form.getFieldValue("cakes").map(cake => {
+        return cake.specId;
+      })
     };
   }
 
   componentWillReceiveProps(nextProps) {
+    const cakes = nextProps.form.getFieldValue("cakes");
     this.setState({
-      cakes: nextProps.cakes
+      selectedCakeKeys: cakes
+        ? cakes.map(cake => {
+            return cake.specId;
+          })
+        : []
     });
   }
 
-  cakeChangeHandler = selectedCakes => {
+  cakeChangeHandler = selectedCakeKeys => {
     const newCakes = [];
-    selectedCakes.forEach(cake => {
-      newCakes.push({
-        cakeId: cake.cakeId,
-        specId: cake.key,
-        name: cake.cakeName,
-        spec: cake.specName,
-        price: cake.price,
-        quantity: 1
+    this.props.cakes.forEach(cake => {
+      cake.specs.forEach(spec => {
+        if (selectedCakeKeys.includes(spec.id)) {
+          newCakes.push({
+            cakeId: cake.id,
+            specId: spec.id,
+            name: cake.name,
+            spec: spec.name,
+            price: spec.price,
+            quantity: 1
+          });
+        }
       });
     });
     this.props.form.setFieldsValue({
       cakes: newCakes
+    });
+    this.setState({
+      selectedCakeKeys
     });
   };
 
@@ -66,6 +91,11 @@ class OrderDetailForm extends React.Component {
           cakes.splice(index, 1);
           this.props.form.setFieldsValue({
             cakes
+          });
+          this.setState({
+            selectedCakeKeys: cakes.map(cake => {
+              return cake.specId;
+            })
           });
         }}
       >
@@ -92,24 +122,26 @@ class OrderDetailForm extends React.Component {
   };
 
   render() {
-    const { isSelfPickUp, allCakes } = this.state;
+    const { isSelfPickUp, selectedCakeKeys } = this.state;
     const { getFieldDecorator } = this.props.form;
     return (
       <Form layout="vertical" hideRequiredMark>
+        <CommonModal
+          selectedKeys={selectedCakeKeys}
+          dataSource={this.convertedCakes}
+          title="选择蛋糕"
+          rowKey="id"
+          onOk={this.cakeChangeHandler}
+          render={cake => cake.name}
+        >
+          <Button icon="plus" style={{ marginBottom: 10 }}>
+            添加蛋糕
+          </Button>
+        </CommonModal>
         <Form.Item
           wrapperCol={{ span: 24, width: "100%" }}
           style={{ width: "100%" }}
         >
-          <CommonModal
-            selectedDataSource={this.props.form.getFieldValue("cakes")}
-            dataSource={allCakes}
-            title="选择蛋糕"
-            onOk={this.cakeChangeHandler}
-          >
-            <Button icon="plus" style={{ marginBottom: 10 }}>
-              添加蛋糕
-            </Button>
-          </CommonModal>
           {getFieldDecorator("cakes", {
             valuePropName: "dataSource"
           })(

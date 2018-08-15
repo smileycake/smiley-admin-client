@@ -42,8 +42,8 @@ export default {
           orderId: 2,
           cakes: [
             {
-              cakeId: 3,
-              specId: "3-1",
+              cakeId: 2,
+              specId: "2-1",
               name: "蓝朋友的心",
               spec: "巧克力",
               quantity: 1,
@@ -82,8 +82,8 @@ export default {
               price: 98
             },
             {
-              cakeId: 3,
-              specId: "3-1",
+              cakeId: 2,
+              specId: "2-1",
               name: "蓝朋友的心",
               spec: "巧克力",
               quantity: 2,
@@ -138,8 +138,8 @@ export default {
           orderId: 5,
           cakes: [
             {
-              cakeId: 3,
-              specId: "3-1",
+              cakeId: 2,
+              specId: "2-1",
               name: "蓝朋友的心",
               spec: "巧克力",
               quantity: 1,

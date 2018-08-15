@@ -4,12 +4,32 @@ import { Modal, Transfer } from "antd";
 class CommonModal extends React.Component {
   constructor(props) {
     super(props);
+    const { dataSource, selectedDataSource } = this.props;
+    const targetKeys = selectedDataSource.map(data => {
+      return data.specId;
+    });
     this.state = {
       visible: false,
-      targetKeys: [],
-      selectedDataSource: []
+      selectedDataSource: [],
+      dataSource,
+      targetKeys
     };
   }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      targetKeys: [],
+      selectedDataSource: [],
+      dataSource: nextProps.dataSource || []
+    });
+  }
+
+  convert = selected => {
+    const converted = selected.map(data => {
+      return data.specId;
+    });
+    return converted;
+  };
 
   showModelHandler = e => {
     if (e) e.stopPropagation();
@@ -47,8 +67,8 @@ class CommonModal extends React.Component {
   };
 
   render() {
-    const { children, title, dataSource } = this.props;
-    const { visible, targetKeys } = this.state;
+    const { children, title } = this.props;
+    const { visible, targetKeys, dataSource } = this.state;
     return (
       <span>
         <span onClick={this.showModelHandler}>{children}</span>

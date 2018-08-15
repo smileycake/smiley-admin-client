@@ -21,7 +21,7 @@ class OrderDetailForm extends React.Component {
     super(props);
     this.state = {
       isSelfPickUp: this.props.order.isSelfPickUp,
-      cakes: this.props.cakes
+      allCakes: this.props.cakes
     };
   }
 
@@ -92,7 +92,7 @@ class OrderDetailForm extends React.Component {
   };
 
   render() {
-    const { isSelfPickUp, cakes } = this.state;
+    const { isSelfPickUp, allCakes } = this.state;
     const { getFieldDecorator } = this.props.form;
     return (
       <Form layout="vertical" hideRequiredMark>
@@ -101,7 +101,8 @@ class OrderDetailForm extends React.Component {
           style={{ width: "100%" }}
         >
           <CommonModal
-            dataSource={cakes}
+            selectedDataSource={this.props.form.getFieldValue("cakes")}
+            dataSource={allCakes}
             title="选择蛋糕"
             onOk={this.cakeChangeHandler}
           >

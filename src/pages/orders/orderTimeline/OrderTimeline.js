@@ -36,7 +36,7 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
   function orderDetailHandler(index) {
     dispatch({
       type: "orderDetail/editOrder",
-      payload: { order: orders[index] }
+      payload: { order: orders[index], cakes }
     });
   }
 

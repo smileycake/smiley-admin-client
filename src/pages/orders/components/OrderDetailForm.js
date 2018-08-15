@@ -41,6 +41,7 @@ class OrderDetailForm extends React.Component {
   componentWillReceiveProps(nextProps) {
     const cakes = nextProps.form.getFieldValue("cakes");
     this.setState({
+      isSelfPickUp: nextProps.form.getFieldValue("isSelfPickUp"),
       selectedCakeKeys: cakes
         ? cakes.map(cake => {
             return cake.specId;
@@ -88,12 +89,17 @@ class OrderDetailForm extends React.Component {
       <a
         onClick={() => {
           const cakes = this.props.form.getFieldValue("cakes");
-          cakes.splice(index, 1);
+          const newCakes = [];
+          cakes.forEach((cake, i) => {
+            if (index !== i) {
+              newCakes.push(cake);
+            }
+          });
           this.props.form.setFieldsValue({
-            cakes
+            cakes: newCakes
           });
           this.setState({
-            selectedCakeKeys: cakes.map(cake => {
+            selectedCakeKeys: newCakes.map(cake => {
               return cake.specId;
             })
           });

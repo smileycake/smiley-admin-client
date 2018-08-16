@@ -16,7 +16,7 @@ export default {
           name: "面粉",
           price: 2,
           unit: "克",
-          remain: 50,
+          remain: 30,
           lowRemain: 40
         }
       ]);

@@ -3,7 +3,13 @@ import * as stocksService from "../services/stocks";
 export default {
   namespace: "stocks",
 
-  state: {},
+  state: {
+    stocks: [],
+    total: 0,
+    page: 1,
+    editingPanelVisible: false,
+    currentEditingStock: {}
+  },
 
   reducers: {
     showStockList(
@@ -13,6 +19,20 @@ export default {
       }
     ) {
       return { ...state, stocks, total, page };
+    },
+    openEditingPanel(state) {
+      return { ...state, editingPanelVisible: true };
+    },
+    closeEditingPanel(state) {
+      return { ...state, editingPanelVisible: false };
+    },
+    setCurrentEditingStock(
+      state,
+      {
+        payload: { currentEditingStock }
+      }
+    ) {
+      return { ...state, currentEditingStock };
     }
   },
 

@@ -1,0 +1,88 @@
+.order {
+    &Timeline {
+        &Header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+
+            &DatePicker {
+                width: 140px;
+                margin-bottom: 0px !important;
+            }
+
+            &Statistic {
+                align-self: center;
+                span {
+                    margin-right: 30px;
+                }
+            }
+        }
+    }
+
+    &Card {
+        width: 100%;
+        margin-bottom: 30px;
+
+        :global {
+            .ant-card-head-title {
+                padding: 0 8px !important;
+                height: auto !important;
+                line-height: 40px !important;
+
+                h2 {
+                    margin-bottom: 0px;
+                }
+            }
+
+            .ant-card-head {
+                padding: 0 8px !important;
+                line-height: 40px !important;
+                min-height: 0 !important;
+            }
+            
+            .ant-card-extra {
+                align-self: flex-end;
+                padding: 0 !important;
+            }
+
+        }
+
+        &Title {
+            display: flex;
+            align-items: center;
+
+            &Cakes {
+                margin-right: 20px;
+                font-size: 14px;
+            }
+        }
+
+        &Content {
+            padding-left: 8px;
+
+            span {
+                margin-right: 40px;
+
+                i {
+                    margin-right: 10px;
+                }
+            }
+        }
+
+        &NoOrder {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            font-size: 20px;
+
+            i {
+                margin-right: 10px;
+                font-size: 20px;
+            }
+        }
+
+        &Menu {
+            transform: rotate(90deg);
+        }
+    }
+}

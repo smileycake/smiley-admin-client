@@ -86,8 +86,7 @@ function CommonLayout({ children, location }) {
             style={{
               background: "#fff",
               padding: 24,
-              margin: 0,
-              minHeight: 280
+              margin: 0
             }}
           >
             {children}

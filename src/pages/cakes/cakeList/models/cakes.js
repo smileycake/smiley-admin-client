@@ -7,6 +7,7 @@ export default {
     total: null,
     page: null
   },
+
   reducers: {
     save(
       state,
@@ -17,6 +18,7 @@ export default {
       return { ...state, list, total, page };
     }
   },
+
   effects: {
     *fetchCakeList(
       {
@@ -62,6 +64,7 @@ export default {
       });
     }
   },
+
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(({ pathname, query }) => {

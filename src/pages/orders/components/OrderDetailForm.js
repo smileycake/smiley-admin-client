@@ -11,7 +11,6 @@ import {
   DatePicker,
   TimePicker,
   Table,
-  Tree,
   Radio
 } from "antd";
 import moment from "moment";
@@ -31,30 +30,29 @@ class OrderDetailForm extends React.Component {
       });
     });
     this.state = {
-      isSelfPickUp: this.props.order.isSelfPickUp,
-      selectedCakeKeys: this.props.form.getFieldValue("cakes").map(cake => {
-        return cake.specId;
-      })
+      isSelfPickUp: this.props.order.isSelfPickUp
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const cakes = nextProps.form.getFieldValue("cakes");
     this.setState({
-      isSelfPickUp: nextProps.form.getFieldValue("isSelfPickUp"),
-      selectedCakeKeys: cakes
-        ? cakes.map(cake => {
-            return cake.specId;
-          })
-        : []
+      isSelfPickUp: nextProps.form.getFieldValue("isSelfPickUp")
     });
   }
 
   cakeChangeHandler = selectedCakeKeys => {
-    const newCakes = [];
+    const cakes = this.props.form.getFieldValue("cakes");
+    let existingCakeKeys = cakes.map(cake => {
+      return cake.specId;
+    });
+    let newCakes = [];
+    newCakes.push(...cakes);
     this.props.cakes.forEach(cake => {
       cake.specs.forEach(spec => {
-        if (selectedCakeKeys.includes(spec.id)) {
+        if (
+          selectedCakeKeys.includes(spec.id) &&
+          !existingCakeKeys.includes(spec.id)
+        ) {
           newCakes.push({
             cakeId: cake.id,
             specId: spec.id,
@@ -69,9 +67,7 @@ class OrderDetailForm extends React.Component {
     this.props.form.setFieldsValue({
       cakes: newCakes
     });
-    this.setState({
-      selectedCakeKeys
-    });
+    this.updateShouldPay();
   };
 
   deliveryTypeChange = e => {
@@ -80,56 +76,23 @@ class OrderDetailForm extends React.Component {
     });
   };
 
-  renderFooter = () => {
-    return <span>aaaa</span>;
-  };
-
-  renderOperation = (text, record, index) => {
-    return (
-      <a
-        onClick={() => {
-          const cakes = this.props.form.getFieldValue("cakes");
-          const newCakes = [];
-          cakes.forEach((cake, i) => {
-            if (index !== i) {
-              newCakes.push(cake);
-            }
-          });
-          this.props.form.setFieldsValue({
-            cakes: newCakes
-          });
-          this.setState({
-            selectedCakeKeys: newCakes.map(cake => {
-              return cake.specId;
-            })
-          });
-        }}
-      >
-        <Icon type="delete" />
-      </a>
-    );
-  };
-
-  renderQuantity = (text, record, index) => {
-    return (
-      <InputNumber
-        value={text}
-        onChange={quantity => {
-          const cakes = this.props.form.getFieldValue("cakes");
-          cakes[index].quantity = quantity;
-          this.props.form.setFieldsValue({ cakes });
-        }}
-      />
-    );
-  };
-
-  renderTotalPriceEachCake = (text, record, index) => {
-    return record.price * record.quantity;
+  updateShouldPay = () => {
+    const cakes = this.props.form.getFieldValue("cakes");
+    let shouldPay = 0;
+    cakes.forEach(cake => {
+      shouldPay += cake.price * cake.quantity;
+    });
+    this.props.form.setFieldsValue({ shouldPay });
   };
 
   render() {
-    const { isSelfPickUp, selectedCakeKeys } = this.state;
+    const { isSelfPickUp } = this.state;
     const { getFieldDecorator } = this.props.form;
+    const selectedCakeKeys = (this.props.form.getFieldValue("cakes") || []).map(
+      cake => {
+        return cake.specId;
+      }
+    );
     return (
       <Form layout="vertical" hideRequiredMark>
         <CommonModal
@@ -156,7 +119,13 @@ class OrderDetailForm extends React.Component {
               bordered
               rowClassName="editable-row"
               pagination={false}
-              footer={this.renderFooter}
+              footer={() => {
+                return (
+                  <span>
+                    总计: ￥{this.props.form.getFieldValue("shouldPay")}
+                  </span>
+                );
+              }}
             >
               <Table.Column title="名称" dataIndex="name" width="30%" />
               <Table.Column title="规格" dataIndex="spec" width="15%" />
@@ -164,18 +133,52 @@ class OrderDetailForm extends React.Component {
                 title="数量"
                 dataIndex="quantity"
                 width="15%"
-                render={this.renderQuantity}
+                render={(text, record, index) => {
+                  return (
+                    <InputNumber
+                      value={text}
+                      onChange={quantity => {
+                        const cakes = this.props.form.getFieldValue("cakes");
+                        cakes[index].quantity = quantity;
+                        this.props.form.setFieldsValue({ cakes });
+                        this.updateShouldPay();
+                      }}
+                    />
+                  );
+                }}
               />
               <Table.Column title="单价" dataIndex="price" width="15%" />
               <Table.Column
                 title="总价"
-                render={this.renderTotalPriceEachCake}
                 width="15%"
+                render={(text, record, index) => {
+                  return record.price * record.quantity;
+                }}
               />
               <Table.Column
                 title="操作"
-                render={this.renderOperation}
                 width="10%"
+                render={(text, record, index) => {
+                  return (
+                    <a
+                      onClick={() => {
+                        const cakes = this.props.form.getFieldValue("cakes");
+                        const newCakes = [];
+                        cakes.forEach((cake, i) => {
+                          if (index !== i) {
+                            newCakes.push(cake);
+                          }
+                        });
+                        this.props.form.setFieldsValue({
+                          cakes: newCakes
+                        });
+                        this.updateShouldPay();
+                      }}
+                    >
+                      <Icon type="delete" />
+                    </a>
+                  );
+                }}
               />
             </Table>
           )}

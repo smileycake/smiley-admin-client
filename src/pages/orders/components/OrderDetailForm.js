@@ -210,27 +210,25 @@ class OrderDetailForm extends React.Component {
             </Form.Item>
           </Col>
         </Row>
-        {isSelfPickUp ? null : (
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item label="送货地址">
-                {getFieldDecorator("deliveryAddress")(<Input />)}
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="配送费">
-                {getFieldDecorator("deliveryFee")(
-                  <InputNumber
-                    formatter={value =>
-                      `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    }
-                    style={{ width: "100%" }}
-                  />
-                )}
-              </Form.Item>
-            </Col>
-          </Row>
-        )}
+        <Row gutter={16} style={{ display: isSelfPickUp ? "none" : "" }}>
+          <Col span={12}>
+            <Form.Item label="送货地址">
+              {getFieldDecorator("deliveryAddress")(<Input />)}
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label="配送费">
+              {getFieldDecorator("deliveryFee")(
+                <InputNumber
+                  formatter={value =>
+                    `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  }
+                  style={{ width: "100%" }}
+                />
+              )}
+            </Form.Item>
+          </Col>
+        </Row>
         <Form.Item label="备注">
           {getFieldDecorator("remark")(<Input.TextArea />)}
         </Form.Item>

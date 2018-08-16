@@ -127,7 +127,7 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
                       {order.cakes.map(cake => {
                         return (
                           <div
-                            key={cake.cakeId}
+                            key={cake.specId}
                             className={styles.orderCardTitleCakes}
                           >
                             <Badge

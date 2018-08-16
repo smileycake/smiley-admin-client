@@ -29,15 +29,6 @@ class OrderDetailForm extends React.Component {
         });
       });
     });
-    this.state = {
-      isSelfPickUp: this.props.order.isSelfPickUp
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      isSelfPickUp: nextProps.form.getFieldValue("isSelfPickUp")
-    });
   }
 
   cakeChangeHandler = selectedCakeKeys => {
@@ -71,9 +62,7 @@ class OrderDetailForm extends React.Component {
   };
 
   deliveryTypeChange = e => {
-    this.setState({
-      isSelfPickUp: e.target.value
-    });
+    this.props.form.setFieldsValue({ isSelfPickUp: e.target.value });
   };
 
   updateShouldPay = () => {
@@ -86,7 +75,7 @@ class OrderDetailForm extends React.Component {
   };
 
   render() {
-    const { isSelfPickUp } = this.state;
+    const isSelfPickUp = this.props.form.getFieldValue("isSelfPickUp");
     const { getFieldDecorator } = this.props.form;
     const selectedCakeKeys = (this.props.form.getFieldValue("cakes") || []).map(
       cake => {
@@ -117,6 +106,7 @@ class OrderDetailForm extends React.Component {
             <Table
               size="small"
               bordered
+              rowKey={record => record.specId}
               rowClassName="editable-row"
               pagination={false}
               footer={() => {

@@ -124,6 +124,8 @@ function Cakes({ dispatch, list: dataSource, total, page: current, loading }) {
         </div>
       </div>
       <Table
+        size="small"
+        bordered
         loading={loading}
         columns={colums}
         dataSource={dataSource}

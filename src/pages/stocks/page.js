@@ -1,9 +1,9 @@
-import Stocks from "./components/Stocks";
+import StockList from "./components/StockList";
 
 export default () => {
   return (
     <div>
-      <Stocks />
+      <StockList />
     </div>
   );
 };

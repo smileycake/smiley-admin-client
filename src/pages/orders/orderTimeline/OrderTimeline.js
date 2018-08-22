@@ -8,7 +8,8 @@ import {
   Card,
   Icon,
   DatePicker,
-  Tag
+  Tag,
+  Table
 } from "antd";
 import { routerRedux } from "dva/router";
 import OrderDetail from "../components/OrderDetail";
@@ -90,6 +91,11 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
     });
   }
 
+  const data = [
+    { name: "爆浆海盐奶盖", taste: "巧克力", size: "8寸", quantity: 1 },
+    { name: "爆浆海盐奶盖", taste: "酸奶奶油", size: "6寸", quantity: 2 }
+  ];
+
   return (
     <>
       <OrderDetail />
@@ -107,6 +113,104 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
         </Button>
       </div>
       <Timeline>
+        <Timeline.Item
+          key="1"
+          dot={<Icon type="clock-circle-o" style={{ fontSize: "16px" }} />}
+        >
+          <Card
+            className={styles.orderCard}
+            bordered={false}
+            title={
+              <div>
+                <h2>11:00</h2>
+              </div>
+            }
+            bodyStyle={{ padding: "8px" }}
+          >
+            <Card.Grid style={{ width: "30%", padding: 0, margin: 10 }}>
+              <Card
+                actions={[
+                  <Icon type="profile" />,
+                  <Icon type="edit" />,
+                  <Icon type="delete" />
+                ]}
+                title={
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      textAlign: "center"
+                    }}
+                  >
+                    <span>配送</span>
+                    <div>
+                      <Dropdown overlay={statusMenu} trigger={["click"]}>
+                        {renderOrderStatus(2)}
+                      </Dropdown>
+                    </div>
+                  </div>
+                }
+              >
+                <Table size="small" dataSource={data} pagination={false}>
+                  <Table.Column dataIndex="name" title="名称" width="30%" />
+                  <Table.Column dataIndex="taste" title="口味" width="30%" />
+                  <Table.Column dataIndex="size" title="规格" width="20%" />
+                  <Table.Column dataIndex="quantity" title="数量" width="20%" />
+                </Table>
+                <div style={{ padding: 8 }}>
+                  <div style={{ padding: 8 }}>
+                    <span style={{ marginRight: 40 }}>
+                      <Icon type="user" />
+                      张三
+                    </span>
+                    <span>
+                      <Icon type="phone" />
+                      17777772222
+                    </span>
+                  </div>
+                  <div style={{ padding: 8 }}>
+                    <span>
+                      <Icon type="environment-o" />
+                      南开区鞍山西道天津大学北五村3-4-501
+                    </span>
+                  </div>
+                </div>
+              </Card>
+            </Card.Grid>
+            <Card.Grid style={{ width: "30%", padding: 0, margin: 10 }}>
+              <Card
+                actions={[
+                  <Icon type="profile" />,
+                  <Icon type="edit" />,
+                  <Icon type="delete" />
+                ]}
+                title={
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      textAlign: "center"
+                    }}
+                  >
+                    <span>自提</span>
+                    <div>
+                      <Dropdown overlay={statusMenu} trigger={["click"]}>
+                        {renderOrderStatus(2)}
+                      </Dropdown>
+                    </div>
+                  </div>
+                }
+              >
+                爆浆海盐奶盖 - 巧克力 x 1
+                <span>
+                  <br />
+                  <Icon type="info-circle-o" />
+                  aaa
+                </span>
+              </Card>
+            </Card.Grid>
+          </Card>
+        </Timeline.Item>
         {orders.map((order, index) => {
           return (
             <Timeline.Item

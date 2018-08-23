@@ -54,15 +54,18 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
   function renderStatistic() {
     let totalPrice = 0;
     let paidPrice = 0;
+    let deliveryFee = 0;
     orders.forEach(order => {
       totalPrice += order.shouldPay - order.deliveryFee;
       paidPrice += order.realPay;
+      deliveryFee += order.deliveryFee;
     });
     return (
       <div className={styles.orderTimelineHeaderStatistic}>
         <span>今日总计：{orders.length}单</span>
         <span>应收: {totalPrice}￥</span>
         <span>实收: {paidPrice}￥</span>
+        <span>配送费：{deliveryFee}￥</span>
       </div>
     );
   }
@@ -166,7 +169,7 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
                   </span>
                   <span>
                     <Icon type="environment-o" />
-                    {order.deliveryAddress}
+                    {order.isSelfPickUp ? "自提" : order.deliveryAddress}
                   </span>
                   <br />
                   <span>

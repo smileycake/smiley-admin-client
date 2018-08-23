@@ -1,0 +1,24 @@
+    <e class="object">
+        <orderId type="number"></orderId>
+        <cakes class="array">
+            <e class="object">
+                <cakeId type="number"></cakeId>
+                <specId type="string"></specId>
+                <name type="string"></name>
+                <spec type="string"></spec>
+                <price type="number"></price>
+                <quantity type="number"></quantity>
+            </e>
+        </cakes>
+        <consignee type="string"></consignee>
+        <phone type="string"></phone>
+        <deliveryAddress type="string"></deliveryAddress>
+        <deliveryFee type="number"></deliveryFee>
+        <isSelfPickUp type="boolean"></isSelfPickUp>
+        <remark type="string"></remark>
+        <shouldPay type="number"></shouldPay>
+        <realPay type="number"></realPay>
+        <status type="number"></status>
+        <pickUpDate type="string">2018-08-17</pickUpDate>
+        <pickUpTime type="string"></pickUpTime>
+    </e>

@@ -19,6 +19,29 @@
         }
     }
 
+    &Item {
+        padding-top: 0px;
+
+        :global {
+            .ant-card-body {
+                padding: 0px;
+            }
+        }
+
+        &CakeTable {
+            margin-top: 1px;
+            border: 0px;
+
+            :global {
+                .ant-table-small {
+                    border: 0px;
+                    border-radius: 0px;
+                    border-bottom: 1px solid #e8e8e8 !important;
+                }
+            }
+        }
+    }
+
     &Card {
         width: 100%;
         margin-bottom: 30px;

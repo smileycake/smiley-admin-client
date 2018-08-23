@@ -125,7 +125,6 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
                 <h2>11:00</h2>
               </div>
             }
-            bodyStyle={{ padding: "8px" }}
           >
             <Card.Grid style={{ width: "30%", padding: 0, margin: 10 }}>
               <Card
@@ -142,7 +141,13 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
                       textAlign: "center"
                     }}
                   >
-                    <span>配送</span>
+                    <div>
+                      <span style={{ marginRight: 10 }}>配送</span>
+                      <span style={{ marginRight: 10, fontSize: 12 }}>
+                        合计: ¥ 196.00
+                      </span>
+                      <span style={{ fontSize: 12 }}>(含运费: ¥ 12.00)</span>
+                    </div>
                     <div>
                       <Dropdown overlay={statusMenu} trigger={["click"]}>
                         {renderOrderStatus(2)}
@@ -150,8 +155,14 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
                     </div>
                   </div>
                 }
+                className={styles.orderItem}
               >
-                <Table size="small" dataSource={data} pagination={false}>
+                <Table
+                  size="small"
+                  dataSource={data}
+                  pagination={false}
+                  className={styles.orderItemCakeTable}
+                >
                   <Table.Column dataIndex="name" title="名称" width="30%" />
                   <Table.Column dataIndex="taste" title="口味" width="30%" />
                   <Table.Column dataIndex="size" title="规格" width="20%" />

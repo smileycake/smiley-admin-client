@@ -106,6 +106,53 @@ export default {
               realPay: 130
             }
           ]
+        },
+        {
+          pickUpTime: "12:30",
+          orders: [
+            {
+              orderId: 5,
+              cakes: [
+                {
+                  cakeId: 2,
+                  name: "蓝朋友的心",
+                  taste: "巧克力",
+                  spec: "30g",
+                  quantity: 2
+                }
+              ],
+              status: 1,
+              consignee: "张",
+              isSelfPickUp: false,
+              phone: 12345678901,
+              deliveryAddress: "天津市南开区天津大学",
+              deliveryFee: 12,
+              remark: "",
+              totalPrice: 76,
+              realPay: 88
+            },
+            {
+              orderId: 6,
+              cakes: [
+                {
+                  cakeId: 1,
+                  name: "爆浆海盐奶盖",
+                  taste: "巧克力",
+                  spec: "6寸 + 装饰",
+                  quantity: 1
+                }
+              ],
+              status: 2,
+              consignee: "张",
+              isSelfPickUp: true,
+              phone: 12345678901,
+              deliveryAddress: "",
+              deliveryFee: 0,
+              remark: "多加两个草莓",
+              totalPrice: 130,
+              realPay: 130
+            }
+          ]
         }
       ]);
     } else {

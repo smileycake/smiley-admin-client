@@ -76,7 +76,10 @@ function CommonLayout({ children, location }) {
             </Menu.Item>
           </Menu>
         </Layout.Sider>
-        <Layout style={{ padding: "0 24px 24px", minHeight: "100%" }}>
+        <Layout
+          id="content"
+          style={{ padding: "0 24px 24px", minHeight: "100%" }}
+        >
           <Breadcrumb style={{ margin: "16px 0" }}>
             <Breadcrumb.Item>Home</Breadcrumb.Item>
             <Breadcrumb.Item>List</Breadcrumb.Item>

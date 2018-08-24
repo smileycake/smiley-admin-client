@@ -8,7 +8,9 @@ import {
   Icon,
   DatePicker,
   Tag,
-  Table
+  Table,
+  Collapse,
+  BackTop
 } from "antd";
 import { routerRedux } from "dva/router";
 import OrderDetail from "../components/OrderDetail";
@@ -60,12 +62,44 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
       paidPrice += order.realPay;
       orderCount += order.orders.length;
     });
+    const customPanelStyle = {
+      borderRadius: 4,
+      border: "1px solid #e8e8e8",
+      overflow: "hidden"
+    };
     return (
-      <div className={styles.orderTimelineHeaderStatistic}>
-        <span>今日总计：{orderCount}单</span>
-        <span>应收: {totalPrice}￥</span>
-        <span>实收: {paidPrice}￥</span>
-      </div>
+      <Collapse defaultActiveKey="1" bordered={false}>
+        <Collapse.Panel
+          header={
+            <div className={styles.orderTimelineHeaderStatistic}>
+              <span>今日总计：{orderCount}单</span>
+              <span>应收: ￥ {totalPrice}</span>
+              <span>实收: ￥ {paidPrice}</span>
+            </div>
+          }
+          key="1"
+          style={customPanelStyle}
+        >
+          <Table
+            bordered
+            dataSource={[
+              { cake: "爆浆海盐奶盖 / 巧克力 / 6寸", quantity: 4 },
+              { cake: "爆浆海盐奶盖 / 抹茶 / 8寸 + 装饰", quantity: 1 }
+            ]}
+            size="small"
+            showHeader={false}
+            pagination={false}
+          >
+            <Table.Column dataIndex="cake" title="蛋糕" width="80%" />
+            <Table.Column
+              dataIndex="quantity"
+              title="数量"
+              width="20%"
+              render={quantity => "x " + quantity}
+            />
+          </Table>
+        </Collapse.Panel>
+      </Collapse>
     );
   }
 
@@ -94,15 +128,18 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
 
   return (
     <>
+      <BackTop target={() => document.getElementById("content")} />
       <OrderDetail />
       <div className={styles.orderTimelineHeader}>
-        <DatePicker
-          allowClear={false}
-          style={{ marginBottom: 20 }}
-          onChange={dateChangeHandler}
-          value={moment(date, "YYYY-MM-DD")}
-          className={styles.orderTimelineHeaderDatePicker}
-        />
+        <div>
+          <DatePicker
+            allowClear={false}
+            style={{ marginBottom: 20 }}
+            onChange={dateChangeHandler}
+            value={moment(date, "YYYY-MM-DD")}
+            className={styles.orderTimelineHeaderDatePicker}
+          />
+        </div>
         {renderStatistic()}
         <Button onClick={createOrderHandler}>
           <Icon type="file-add" />添加订单
@@ -179,17 +216,17 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
                           <Table.Column
                             dataIndex="name"
                             title="名称"
-                            width="30%"
+                            width="35%"
                           />
                           <Table.Column
                             dataIndex="taste"
                             title="口味"
-                            width="30%"
+                            width="20%"
                           />
                           <Table.Column
                             dataIndex="spec"
                             title="规格"
-                            width="25%"
+                            width="30%"
                           />
                           <Table.Column
                             dataIndex="quantity"

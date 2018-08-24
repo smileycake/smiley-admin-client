@@ -16,14 +16,14 @@ export default {
                   cakeId: 1,
                   name: "爆浆海盐奶盖",
                   taste: "巧克力",
-                  size: "6寸 + 装饰",
+                  spec: "6寸 + 装饰",
                   quantity: 1
                 },
                 {
                   cakeId: 2,
                   name: "蓝朋友的心",
                   taste: "巧克力",
-                  size: "30g",
+                  spec: "30g",
                   quantity: 1
                 }
               ],
@@ -44,7 +44,7 @@ export default {
                   cakeId: 1,
                   name: "爆浆海盐奶盖",
                   taste: "巧克力",
-                  size: "6寸",
+                  spec: "6寸",
                   quantity: 1
                 }
               ],
@@ -70,7 +70,7 @@ export default {
                   cakeId: 2,
                   name: "蓝朋友的心",
                   taste: "巧克力",
-                  size: "30g",
+                  spec: "30g",
                   quantity: 2
                 }
               ],
@@ -91,7 +91,7 @@ export default {
                   cakeId: 1,
                   name: "爆浆海盐奶盖",
                   taste: "巧克力",
-                  size: "6寸 + 装饰",
+                  spec: "6寸 + 装饰",
                   quantity: 1
                 }
               ],

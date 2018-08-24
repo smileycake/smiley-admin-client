@@ -187,7 +187,7 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
                             width="30%"
                           />
                           <Table.Column
-                            dataIndex="size"
+                            dataIndex="spec"
                             title="规格"
                             width="25%"
                           />

@@ -35,6 +35,59 @@ class OrderDetailForm extends React.Component {
     this.props.form.setFieldsValue({ isSelfPickUp: e.target.value });
   };
 
+  addCakeHandler = () => {
+    const { candidateCakes, selectedCake } = this.state;
+    const { form } = this.props;
+    if (!selectedCake) {
+      return;
+    }
+    const cakes = form.getFieldValue("cakes");
+    let shouldPay = form.getFieldValue("shouldPay");
+    candidateCakes.forEach(cake => {
+      cake.children.forEach(taste => {
+        taste.children.forEach(spec => {
+          if (
+            cake.id === selectedCake[0] &&
+            taste.id === selectedCake[1] &&
+            spec.id === selectedCake[2]
+          ) {
+            let existing = false;
+            cakes.forEach(existingCake => {
+              if (
+                existingCake.cakeId === cake.id &&
+                existingCake.tasteId === taste.id &&
+                existingCake.specId === spec.id
+              ) {
+                shouldPay -= existingCake.quantity * existingCake.price;
+                existingCake.quantity++;
+                shouldPay += existingCake.quantity * existingCake.price;
+                existing = true;
+              }
+            });
+            if (!existing) {
+              cakes.push({
+                cakeId: cake.id,
+                tasteId: taste.id,
+                specId: spec.id,
+                name: cake.name,
+                taste: taste.name,
+                spec: spec.name,
+                quantity: 1,
+                price: spec.price
+              });
+              shouldPay += spec.price;
+            }
+            form.setFieldsValue({
+              cakes,
+              shouldPay
+            });
+            return;
+          }
+        });
+      });
+    });
+  };
+
   render() {
     const { form } = this.props;
     const { getFieldDecorator } = form;
@@ -60,61 +113,7 @@ class OrderDetailForm extends React.Component {
             }}
             fieldNames={{ label: "name", value: "id", children: "children" }}
           />
-          <Button
-            icon="plus"
-            onClick={() => {
-              if (!selectedCake) {
-                return;
-              }
-              const cakes = form.getFieldValue("cakes");
-              let shouldPay = form.getFieldValue("shouldPay");
-              candidateCakes.forEach(cake => {
-                cake.children.forEach(taste => {
-                  taste.children.forEach(spec => {
-                    if (
-                      cake.id === selectedCake[0] &&
-                      taste.id === selectedCake[1] &&
-                      spec.id === selectedCake[2]
-                    ) {
-                      let existing = false;
-                      cakes.forEach(existingCake => {
-                        if (
-                          existingCake.cakeId === cake.id &&
-                          existingCake.tasteId === taste.id &&
-                          existingCake.specId === spec.id
-                        ) {
-                          shouldPay -=
-                            existingCake.quantity * existingCake.price;
-                          existingCake.quantity++;
-                          shouldPay +=
-                            existingCake.quantity * existingCake.price;
-                          existing = true;
-                        }
-                      });
-                      if (!existing) {
-                        cakes.push({
-                          cakeId: cake.id,
-                          tasteId: taste.id,
-                          specId: spec.id,
-                          name: cake.name,
-                          taste: taste.name,
-                          spec: spec.name,
-                          quantity: 1,
-                          price: spec.price
-                        });
-                        shouldPay += spec.price;
-                      }
-                      form.setFieldsValue({
-                        cakes,
-                        shouldPay
-                      });
-                      return;
-                    }
-                  });
-                });
-              });
-            }}
-          >
+          <Button icon="plus" onClick={this.addCakeHandler}>
             添加蛋糕
           </Button>
         </div>

@@ -175,11 +175,7 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
                       className={styles.orderCardGrid}
                     >
                       <Card
-                        actions={[
-                          <Icon type="profile" />,
-                          <Icon type="edit" />,
-                          <Icon type="delete" />
-                        ]}
+                        actions={[<Icon type="edit" />, <Icon type="delete" />]}
                         title={
                           <div
                             style={{

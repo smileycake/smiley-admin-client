@@ -55,37 +55,44 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
 
   function renderStatistic() {
     let orderCount = 0;
-    let totalPrice = 0;
-    let paidPrice = 0;
+    let realPay = 0;
+    let deliveryFee = 0;
+    let cakes = {};
     orders.forEach(order => {
-      totalPrice += order.shouldPay - order.deliveryFee;
-      paidPrice += order.realPay;
       orderCount += order.orders.length;
+      order.orders.forEach(o => {
+        o.cakes.forEach(cake => {
+          let name = cake.name + " / " + cake.taste + " / " + cake.spec;
+          cakes[name] = cakes[name]
+            ? cakes[name] + cake.quantity
+            : cake.quantity;
+        });
+        realPay += o.realPay;
+        deliveryFee += o.deliveryFee;
+      });
     });
-    const customPanelStyle = {
-      borderRadius: 4,
-      border: "1px solid #e8e8e8",
-      overflow: "hidden"
-    };
+    let dataSource = [];
+    Object.getOwnPropertyNames(cakes).forEach(cake => {
+      dataSource.push({ cake: cake, quantity: cakes[cake] });
+    });
     return (
       <Collapse defaultActiveKey="1" bordered={false}>
         <Collapse.Panel
           header={
-            <div className={styles.orderTimelineHeaderStatistic}>
+            <div className={styles.orderHeaderStatistic}>
               <span>今日总计：{orderCount}单</span>
-              <span>应收: ￥ {totalPrice}</span>
-              <span>实收: ￥ {paidPrice}</span>
+              <span>
+                合计: ￥ {realPay}
+                {deliveryFee === 0 ? null : " (含运费: ￥ " + deliveryFee + ")"}
+              </span>
             </div>
           }
           key="1"
-          style={customPanelStyle}
+          className={styles.orderHeaderStatisticPanel}
         >
           <Table
             bordered
-            dataSource={[
-              { cake: "爆浆海盐奶盖 / 巧克力 / 6寸", quantity: 4 },
-              { cake: "爆浆海盐奶盖 / 抹茶 / 8寸 + 装饰", quantity: 1 }
-            ]}
+            dataSource={dataSource}
             size="small"
             showHeader={false}
             pagination={false}
@@ -130,14 +137,14 @@ function OrderTimeline({ dispatch, orders, cakes, date, loading }) {
     <>
       <BackTop target={() => document.getElementById("content")} />
       <OrderDetail />
-      <div className={styles.orderTimelineHeader}>
+      <div className={styles.orderHeader}>
         <div>
           <DatePicker
             allowClear={false}
             style={{ marginBottom: 20 }}
             onChange={dateChangeHandler}
             value={moment(date, "YYYY-MM-DD")}
-            className={styles.orderTimelineHeaderDatePicker}
+            className={styles.orderHeaderDatePicker}
           />
         </div>
         {renderStatistic()}

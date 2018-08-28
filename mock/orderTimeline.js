@@ -108,7 +108,7 @@ export default {
           ]
         },
         {
-          pickUpTime: "12:30",
+          pickUpTime: "15:30",
           orders: [
             {
               orderId: 5,

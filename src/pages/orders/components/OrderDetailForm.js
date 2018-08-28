@@ -11,91 +11,112 @@ import {
   DatePicker,
   TimePicker,
   Table,
-  Radio
+  Radio,
+  Cascader
 } from "antd";
 import moment from "moment";
-import CommonModal from "../../../components/CommonModal";
 
 class OrderDetailForm extends React.Component {
   constructor(props) {
     super(props);
-    this.convertedCakes = [];
-    this.props.cakes.forEach(cake => {
-      cake.specs.forEach(spec => {
-        this.convertedCakes.push({
-          id: spec.id,
-          name: cake.name + "-" + spec.name,
-          price: spec.price
-        });
+    const candidateCakes = this.props.cakes.map(cake => {
+      const children = cake.tastes.map(taste => {
+        return { id: taste.id, name: taste.name, children: taste.specs };
       });
+      return { id: cake.id, name: cake.name, children };
     });
+    this.state = {
+      candidateCakes,
+      selectedCake: null
+    };
   }
-
-  cakeChangeHandler = selectedCakeKeys => {
-    const cakes = this.props.form.getFieldValue("cakes");
-    let existingCakeKeys = cakes.map(cake => {
-      return cake.specId;
-    });
-    let newCakes = [];
-    newCakes.push(...cakes);
-    this.props.cakes.forEach(cake => {
-      cake.specs.forEach(spec => {
-        if (
-          selectedCakeKeys.includes(spec.id) &&
-          !existingCakeKeys.includes(spec.id)
-        ) {
-          newCakes.push({
-            cakeId: cake.id,
-            specId: spec.id,
-            name: cake.name,
-            spec: spec.name,
-            price: spec.price,
-            quantity: 1
-          });
-        }
-      });
-    });
-    this.props.form.setFieldsValue({
-      cakes: newCakes
-    });
-    this.updateShouldPay();
-  };
 
   deliveryTypeChange = e => {
     this.props.form.setFieldsValue({ isSelfPickUp: e.target.value });
   };
 
-  updateShouldPay = () => {
-    const cakes = this.props.form.getFieldValue("cakes");
-    let shouldPay = 0;
-    cakes.forEach(cake => {
-      shouldPay += cake.price * cake.quantity;
+  addCakeHandler = () => {
+    const { candidateCakes, selectedCake } = this.state;
+    const { form } = this.props;
+    if (!selectedCake) {
+      return;
+    }
+    const cakes = form.getFieldValue("cakes");
+    let shouldPay = form.getFieldValue("shouldPay");
+    candidateCakes.forEach(cake => {
+      cake.children.forEach(taste => {
+        taste.children.forEach(spec => {
+          if (
+            cake.id === selectedCake[0] &&
+            taste.id === selectedCake[1] &&
+            spec.id === selectedCake[2]
+          ) {
+            let existing = false;
+            cakes.forEach(existingCake => {
+              if (
+                existingCake.cakeId === cake.id &&
+                existingCake.tasteId === taste.id &&
+                existingCake.specId === spec.id
+              ) {
+                shouldPay -= existingCake.quantity * existingCake.price;
+                existingCake.quantity++;
+                shouldPay += existingCake.quantity * existingCake.price;
+                existing = true;
+              }
+            });
+            if (!existing) {
+              cakes.push({
+                cakeId: cake.id,
+                tasteId: taste.id,
+                specId: spec.id,
+                name: cake.name,
+                taste: taste.name,
+                spec: spec.name,
+                quantity: 1,
+                price: spec.price
+              });
+              shouldPay += spec.price;
+            }
+            form.setFieldsValue({
+              cakes,
+              shouldPay
+            });
+            return;
+          }
+        });
+      });
     });
-    this.props.form.setFieldsValue({ shouldPay });
   };
 
   render() {
-    const isSelfPickUp = this.props.form.getFieldValue("isSelfPickUp");
-    const { getFieldDecorator } = this.props.form;
-    const selectedCakeKeys = (this.props.form.getFieldValue("cakes") || []).map(
-      cake => {
-        return cake.specId;
-      }
-    );
+    const { form } = this.props;
+    const { getFieldDecorator } = form;
+    const { candidateCakes, selectedCake } = this.state;
     return (
       <Form layout="vertical" hideRequiredMark>
-        <CommonModal
-          selectedKeys={selectedCakeKeys}
-          dataSource={this.convertedCakes}
-          title="选择蛋糕"
-          rowKey="id"
-          onOk={this.cakeChangeHandler}
-          render={cake => cake.name}
-        >
-          <Button icon="plus" style={{ marginBottom: 10 }}>
+        <div style={{ display: "flex", marginBottom: 10 }}>
+          <Cascader
+            options={candidateCakes}
+            expandTrigger="hover"
+            placeholder="Please select"
+            onChange={value => {
+              this.setState({
+                selectedCake: value
+              });
+            }}
+            showSearch={(inputValue, path) => {
+              return path.some(
+                option =>
+                  option.label.toLowerCase().indexOf(inputValue.toLowerCase()) >
+                  -1
+              );
+            }}
+            fieldNames={{ label: "name", value: "id", children: "children" }}
+          />
+          <Button icon="plus" onClick={this.addCakeHandler}>
             添加蛋糕
           </Button>
-        </CommonModal>
+        </div>
         <Form.Item
           wrapperCol={{ span: 24, width: "100%" }}
           style={{ width: "100%" }}
@@ -107,43 +128,44 @@ class OrderDetailForm extends React.Component {
               size="small"
               bordered
               rowKey={record => record.specId}
-              rowClassName="editable-row"
               pagination={false}
               footer={() => {
-                return (
-                  <span>
-                    总计: ￥{this.props.form.getFieldValue("shouldPay")}
-                  </span>
-                );
+                return <span>合计: ￥{form.getFieldValue("shouldPay")}</span>;
               }}
             >
               <Table.Column title="名称" dataIndex="name" width="30%" />
-              <Table.Column title="规格" dataIndex="spec" width="15%" />
+              <Table.Column title="口味" dataIndex="taste" width="20%" />
+              <Table.Column title="规格" dataIndex="spec" width="20%" />
               <Table.Column
                 title="数量"
                 dataIndex="quantity"
-                width="15%"
+                width="10%"
                 render={(text, record, index) => {
                   return (
                     <InputNumber
+                      min={1}
+                      size="small"
                       value={text}
                       onChange={quantity => {
-                        const cakes = this.props.form.getFieldValue("cakes");
+                        let shouldPay = form.getFieldValue("shouldPay");
+                        const cakes = form.getFieldValue("cakes");
+                        shouldPay -= cakes[index].quantity * cakes[index].price;
                         cakes[index].quantity = quantity;
-                        this.props.form.setFieldsValue({ cakes });
-                        this.updateShouldPay();
+                        shouldPay += cakes[index].quantity * cakes[index].price;
+                        form.setFieldsValue({
+                          cakes,
+                          shouldPay
+                        });
                       }}
                     />
                   );
                 }}
               />
-              <Table.Column title="单价" dataIndex="price" width="15%" />
               <Table.Column
-                title="总价"
-                width="15%"
-                render={(text, record, index) => {
-                  return record.price * record.quantity;
-                }}
+                title="单价"
+                dataIndex="price"
+                width="10%"
+                render={text => "￥ " + text}
               />
               <Table.Column
                 title="操作"
@@ -152,17 +174,14 @@ class OrderDetailForm extends React.Component {
                   return (
                     <a
                       onClick={() => {
-                        const cakes = this.props.form.getFieldValue("cakes");
-                        const newCakes = [];
-                        cakes.forEach((cake, i) => {
-                          if (index !== i) {
-                            newCakes.push(cake);
-                          }
+                        const cakes = form.getFieldValue("cakes");
+                        let shouldPay = form.getFieldValue("shouldPay");
+                        let cake = cakes.splice(index, 1)[0];
+                        shouldPay -= cake.quantity * cake.price;
+                        form.setFieldsValue({
+                          cakes,
+                          shouldPay
                         });
-                        this.props.form.setFieldsValue({
-                          cakes: newCakes
-                        });
-                        this.updateShouldPay();
                       }}
                     >
                       <Icon type="delete" />
@@ -210,7 +229,10 @@ class OrderDetailForm extends React.Component {
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={16} style={{ display: isSelfPickUp ? "none" : "" }}>
+        <Row
+          gutter={16}
+          style={{ display: form.getFieldValue("isSelfPickUp") ? "none" : "" }}
+        >
           <Col span={12}>
             <Form.Item label="送货地址">
               {getFieldDecorator("deliveryAddress")(<Input />)}

@@ -1,20 +1,24 @@
 .order {
-    &Timeline {
-        &Header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
+    &Header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
 
-            &DatePicker {
-                width: 140px;
-                margin-bottom: 0px !important;
+        &DatePicker {
+            width: 140px;
+        }
+
+        &Statistic {
+            align-self: center;
+            span {
+                margin-right: 30px;
+                font-size: 14px;
             }
 
-            &Statistic {
-                align-self: center;
-                span {
-                    margin-right: 30px;
-                }
+            &Panel {
+                border-radius: 4;
+                border: 1px solid #e8e8e8;
+                overflow: "hidden";
             }
         }
     }
@@ -44,45 +48,40 @@
                 align-self: flex-end;
                 padding: 0 !important;
             }
-
         }
 
-        &Title {
-            display: flex;
-            align-items: center;
+        &Grid {
+            padding: 0;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            width: 350px;
+        }
+    }
 
-            &Cakes {
-                margin-right: 20px;
-                font-size: 14px;
+    &Item {
+        padding-top: 0px;
+
+        :global {
+            .ant-card-body {
+                padding: 0px;
             }
         }
 
-        &Content {
-            padding-left: 8px;
+        &CakeTable {
+            margin-top: 1px;
+            border: 0px;
 
-            span {
-                margin-right: 40px;
+            :global {
+                .ant-table-small {
+                    border: 0px;
+                    border-radius: 0px;
+                    box-shadow: 0px 1px 0px #e8e8e8;
+                }
 
-                i {
-                    margin-right: 10px;
+                table td {
+                    border: none;
                 }
             }
-        }
-
-        &NoOrder {
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            font-size: 20px;
-
-            i {
-                margin-right: 10px;
-                font-size: 20px;
-            }
-        }
-
-        &Menu {
-            transform: rotate(90deg);
         }
     }
 }

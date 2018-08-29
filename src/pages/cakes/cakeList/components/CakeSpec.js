@@ -112,7 +112,7 @@ class CakeSpec extends Component {
             closable={spec.key === "规格1" ? false : true}
           >
             <Row>
-              <Col span={10}>
+              <Col span={12}>
                 <Form.Item label="规格名称">
                   {editing ? (
                     <Input
@@ -125,7 +125,7 @@ class CakeSpec extends Component {
                   )}
                 </Form.Item>
               </Col>
-              <Col span={9}>
+              <Col span={12}>
                 <Form.Item label="售价">
                   {editing ? (
                     <InputNumber
@@ -138,22 +138,6 @@ class CakeSpec extends Component {
                     />
                   ) : (
                     spec.price
-                  )}
-                </Form.Item>
-              </Col>
-              <Col span={5}>
-                <Form.Item label="团购否">
-                  {editing ? (
-                    <Switch
-                      onChange={this.groupPurchaseChangeHandler}
-                      checkedChildren="是"
-                      unCheckedChildren="否"
-                      checked={spec.isGroupPurchase}
-                    />
-                  ) : spec.isGroupPurchase ? (
-                    "是"
-                  ) : (
-                    "否"
                   )}
                 </Form.Item>
               </Col>

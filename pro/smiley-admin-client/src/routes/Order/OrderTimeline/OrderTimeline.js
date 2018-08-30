@@ -8,7 +8,6 @@ import {
   DatePicker,
   Tag,
   Table,
-  Collapse,
   Row,
   Col,
   Radio,
@@ -28,6 +27,7 @@ export default class OrderTimeline extends Component {
   state = {
     date: '2018-08-29',
   };
+
   statusMenu = (
     <Menu>
       <Menu.Item key="noPay">未付款</Menu.Item>
@@ -35,6 +35,7 @@ export default class OrderTimeline extends Component {
       <Menu.Item key="done">已完成</Menu.Item>
     </Menu>
   );
+
   componentDidMount() {
     const { dispatch } = this.props;
     const { date } = this.state;
@@ -45,6 +46,7 @@ export default class OrderTimeline extends Component {
       },
     });
   }
+
   dateChangeHandler = (date, dateString) => {
     this.setState({
       date: dateString,
@@ -69,74 +71,32 @@ export default class OrderTimeline extends Component {
     }
   };
 
-  renderStatistic = () => {
+  renderHeader = () => {
     const {
       orders: { orders },
     } = this.props;
+
     let orderCount = 0;
     let realPay = 0;
     let deliveryFee = 0;
     let cakes = {};
+    let cakeCount = 0;
+    let selfPickUpOrderCount = 0;
+    let deliveryOrderCount = 0;
     orders.forEach(order => {
       orderCount += order.orders.length;
       order.orders.forEach(o => {
         o.cakes.forEach(cake => {
           let name = cake.name + ' / ' + cake.taste + ' / ' + cake.spec;
           cakes[name] = cakes[name] ? cakes[name] + cake.quantity : cake.quantity;
+          cakeCount += cake.quantity;
         });
         realPay += o.realPay;
         deliveryFee += o.deliveryFee;
+        selfPickUpOrderCount += o.isSelfPickUp ? 1 : 0;
+        deliveryOrderCount += o.isSelfPickUp ? 0 : 1;
       });
     });
-    let dataSource = [];
-    Object.getOwnPropertyNames(cakes).forEach(cake => {
-      dataSource.push({ cake: cake, quantity: cakes[cake] });
-    });
-    return (
-      <Collapse defaultActiveKey="1" bordered={false}>
-        <Collapse.Panel
-          header={
-            <div className={styles.orderHeaderStatistic}>
-              <span>今日总计：{orderCount}单</span>
-              <span>
-                合计: ￥ {realPay}
-                {deliveryFee === 0 ? null : ' (含运费: ￥ ' + deliveryFee + ')'}
-              </span>
-            </div>
-          }
-          key="1"
-          className={styles.orderHeaderStatisticPanel}
-        >
-          <Table
-            bordered
-            dataSource={dataSource}
-            size="small"
-            showHeader={false}
-            pagination={false}
-          >
-            <Table.Column dataIndex="cake" title="蛋糕" width="80%" />
-            <Table.Column
-              dataIndex="quantity"
-              title="数量"
-              width="20%"
-              render={quantity => 'x ' + quantity}
-            />
-          </Table>
-        </Collapse.Panel>
-      </Collapse>
-    );
-  };
-
-  createOrderHandler = () => {
-    let date = new Date();
-    date.setHours(date.getHours() + 8);
-  };
-  render() {
-    const { date } = this.state;
-    const {
-      orders: { orders },
-      loading,
-    } = this.props;
 
     const Info = ({ title, value, bordered }) => (
       <div className={styles.headerInfo}>
@@ -146,15 +106,77 @@ export default class OrderTimeline extends Component {
       </div>
     );
 
-    let dataSource = [];
-
-    const menu = (
-      <Menu>
-        <Menu.Item>1st menu item</Menu.Item>
-        <Menu.Item>2nd menu item</Menu.Item>
-        <Menu.Item>3rd menu item</Menu.Item>
-      </Menu>
+    return (
+      <Card bordered={false}>
+        <Row>
+          <Col sm={8} xs={24}>
+            <Info
+              title="今日总计"
+              value={
+                orderCount +
+                '单' +
+                ' (自提' +
+                selfPickUpOrderCount +
+                '单' +
+                ' 配送' +
+                deliveryOrderCount +
+                '单)'
+              }
+              bordered
+            />
+          </Col>
+          <Col sm={8} xs={24}>
+            <Info
+              title="今日共计"
+              value={
+                <Dropdown
+                  overlay={
+                    <Menu>
+                      {Object.keys(cakes).map(key => {
+                        return (
+                          <Menu.Item>
+                            <div className={styles.cakeStatistic}>
+                              <span>{key}</span>
+                              <span>{'x ' + cakes[key]}</span>
+                            </div>
+                          </Menu.Item>
+                        );
+                      })}
+                    </Menu>
+                  }
+                >
+                  <span>
+                    {cakeCount + '个甜品'} <Icon type="down" />
+                  </span>
+                </Dropdown>
+              }
+              bordered
+            />
+          </Col>
+          <Col sm={8} xs={24}>
+            <Info
+              title="今日共收款"
+              value={
+                '￥' + realPay + (deliveryFee === 0 ? null : ' (含运费:￥' + deliveryFee + ')')
+              }
+            />
+          </Col>
+        </Row>
+      </Card>
     );
+  };
+
+  createOrderHandler = () => {
+    let date = new Date();
+    date.setHours(date.getHours() + 8);
+  };
+
+  render() {
+    const { date } = this.state;
+    const {
+      orders: { orders },
+      loading,
+    } = this.props;
 
     const extraContent = (
       <div className={styles.extraContent}>
@@ -162,7 +184,6 @@ export default class OrderTimeline extends Component {
           allowClear={false}
           onChange={this.dateChangeHandler}
           value={moment(date, 'YYYY-MM-DD')}
-          className={styles.orderHeaderDatePicker}
         />
         <Radio.Group defaultValue="all">
           <Radio.Button value="all">全部</Radio.Button>
@@ -176,32 +197,11 @@ export default class OrderTimeline extends Component {
         />
       </div>
     );
+
     return (
       <PageHeaderLayout>
         <div className={styles.orderTimeline}>
-          <Card bordered={false}>
-            <Row>
-              <Col sm={8} xs={24}>
-                <Info
-                  title="今日总计"
-                  value={
-                    <Dropdown overlay={menu}>
-                      <span>
-                        9单 <Icon type="down" />
-                      </span>
-                    </Dropdown>
-                  }
-                  bordered
-                />
-              </Col>
-              <Col sm={8} xs={24}>
-                <Info title="今日共收款" value="$1000 (含运费 $20)" bordered />
-              </Col>
-              <Col sm={8} xs={24}>
-                <Info title="本周完成任务数" value="24个任务" />
-              </Col>
-            </Row>
-          </Card>
+          {this.renderHeader()}
           <Card
             className={styles.listCard}
             bordered={false}
@@ -214,7 +214,7 @@ export default class OrderTimeline extends Component {
             bodyStyle={{ padding: '0 32px 40px 32px' }}
             extra={extraContent}
           >
-            <Timeline>
+            <Timeline pending={loading}>
               {loading
                 ? null
                 : orders.map((order, index) => {
@@ -226,11 +226,7 @@ export default class OrderTimeline extends Component {
                         <Card
                           className={styles.orderCard}
                           bordered={false}
-                          title={
-                            <div>
-                              <h2>{order.pickUpTime}</h2>
-                            </div>
-                          }
+                          title={<h2>{order.pickUpTime}</h2>}
                         >
                           {order.orders.map((order, orderIndex) => {
                             return (
@@ -246,17 +242,14 @@ export default class OrderTimeline extends Component {
                                       }}
                                     >
                                       <div>
-                                        <span style={{ marginRight: 10 }}>
+                                        <Tag color="#543219">
                                           {order.isSelfPickUp ? '自提' : '配送'}
-                                        </span>
+                                        </Tag>
                                         <span style={{ marginRight: 10, fontSize: 12 }}>
-                                          合计: ¥ {order.realPay}
+                                          合计: ¥ {order.realPay}{' '}
+                                          {!order.isSelfPickUp &&
+                                            '(含运费: ¥ ' + order.deliveryFee + ')'}
                                         </span>
-                                        {order.isSelfPickUp ? null : (
-                                          <span style={{ fontSize: 12 }}>
-                                            (含运费: ¥ {order.deliveryFee})
-                                          </span>
-                                        )}
                                       </div>
                                       <div>
                                         <Dropdown overlay={this.statusMenu} trigger={['click']}>

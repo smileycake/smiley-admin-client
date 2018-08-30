@@ -22,7 +22,11 @@
       height: 48px;
       line-height: 48px;
     }
+    .ant-calendar-picker-input {
+      width: 140px
+    }
   }
+
   .headerInfo {
     position: relative;
     text-align: center;
@@ -38,6 +42,12 @@
       font-size: 24px;
       line-height: 32px;
       margin: 0;
+
+      .cakeStatistic {
+        width: 300;
+        display: flex;
+        justify-content: space-between;
+      }
     }
     & > em {
       background-color: @border-color-split;
@@ -176,30 +186,6 @@
 }
 
 .order {
-    &Header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-
-        &DatePicker {
-            width: 140px;
-        }
-
-        &Statistic {
-            align-self: center;
-            span {
-                margin-right: 30px;
-                font-size: 14px;
-            }
-
-            &Panel {
-                border-radius: 4;
-                border: 1px solid #e8e8e8;
-                overflow: "hidden";
-            }
-        }
-    }
-
     &Card {
         width: 100%;
         margin-bottom: 30px;

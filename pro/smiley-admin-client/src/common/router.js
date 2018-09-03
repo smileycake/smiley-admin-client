@@ -91,14 +91,10 @@ function findMenuKey(menuData, path) {
 
 export const getRouterData = app => {
   const routerConfig = {
-    '/cake': {
-      component: dynamicWrapper(app, ['cakes'], () => import('../routes/Cake/List')),
-    },
     '/cake/list': {
       component: dynamicWrapper(app, ['cakes'], () => import('../routes/Cake/CakeList')),
     },
-    '/cake/cakeDetail': {
-      name: '甜品详情',
+    '/cake/list/cakeDetail': {
       component: dynamicWrapper(app, ['cakes'], () => import('../routes/Cake/CakeDetail')),
     },
     '/cake/recipe': {

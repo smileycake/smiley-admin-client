@@ -1,11 +1,12 @@
 import React, { PureComponent, createElement } from 'react';
 import { connect } from 'dva';
-import { routerRedux, Route, Switch } from 'dva/router';
+import { routerRedux, Route, Switch, Redirect } from 'dva/router';
 import { Button, Row, Col, Form, Card, Select, List, Tag, Icon, Input } from 'antd';
 
 import StandardFormRow from 'components/StandardFormRow';
 
 import styles from './CakeList.less';
+import { getRoutes } from '../../utils/utils';
 
 /* eslint react/no-array-index-key: 0 */
 @Form.create()
@@ -18,40 +19,21 @@ export default class CakeList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'cakes/fetchCakes',
-      payload: {
-        count: 8,
-      },
     });
   }
 
   handleCreateCake = () => {
     const { dispatch } = this.props;
-    dispatch(routerRedux.push('/cake/cakeDetail'));
-  };
-
-  handleFormSubmit = () => {
-    const { form, dispatch } = this.props;
-    // setTimeout 用于保证获取表单值是在所有表单字段更新完毕的时候
-    setTimeout(() => {
-      form.validateFields(err => {
-        if (!err) {
-          // eslint-disable-next-line
-          dispatch({
-            type: 'cakes/fetchCakes',
-            payload: {
-              count: 8,
-            },
-          });
-        }
-      });
-    }, 0);
+    dispatch(routerRedux.push('/cake/list/cakeDetail'));
   };
 
   render() {
     const {
-      cakes: { cakes = [] },
+      cakes: { cakes },
       loading,
       form,
+      match,
+      routerData,
     } = this.props;
     const { getFieldDecorator } = form;
 
@@ -102,29 +84,34 @@ export default class CakeList extends PureComponent {
     };
 
     return (
-      <>
-        <Card bordered={false}>
-          <Form layout="inline">
-            <StandardFormRow grid last>
-              <Row gutter={16} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Col lg={4} md={10} sm={10} xs={24}>
-                  <Button icon="plus" onClick={this.handleCreateCake}>
-                    添加
-                  </Button>
-                </Col>
-                <Col lg={8} md={10} sm={10} xs={24}>
-                  <Input.Search
-                    className={styles.search}
-                    placeholder="请输入"
-                    onSearch={() => ({})}
-                  />
-                </Col>
-              </Row>
-            </StandardFormRow>
-          </Form>
-        </Card>
-        <div className={styles.cardList}>{cardList}</div>
-      </>
+      <Switch>
+        {getRoutes(match.path, routerData).map(item => (
+          <Route key={item.key} path={item.path} component={item.component} exact={item.exact} />
+        ))}
+        <>
+          <Card bordered={false}>
+            <Form layout="inline">
+              <StandardFormRow grid last>
+                <Row gutter={16} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Col lg={4} md={10} sm={10} xs={24}>
+                    <Button icon="plus" onClick={this.handleCreateCake}>
+                      添加
+                    </Button>
+                  </Col>
+                  <Col lg={8} md={10} sm={10} xs={24}>
+                    <Input.Search
+                      className={styles.search}
+                      placeholder="请输入"
+                      onSearch={() => ({})}
+                    />
+                  </Col>
+                </Row>
+              </StandardFormRow>
+            </Form>
+          </Card>
+          <div className={styles.cardList}>{cardList}</div>
+        </>
+      </Switch>
     );
   }
 }

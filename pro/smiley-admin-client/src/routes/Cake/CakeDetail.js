@@ -1,15 +1,31 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'dva';
-import { Button, Dropdown, Icon, Row, Col, Card, Badge, Table, Input, Tag, Menu } from 'antd';
+import {
+  Button,
+  Dropdown,
+  Icon,
+  Row,
+  Col,
+  Card,
+  Badge,
+  Table,
+  Input,
+  Tag,
+  Menu,
+  Skeleton,
+} from 'antd';
 import DescriptionList from 'components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './CakeDetail.less';
+import RadioTag from '../../components/CustomComponents/RadioTag';
 
 const { Description } = DescriptionList;
 
 const action = (
   <Fragment>
-    <Button icon="save" type="primary">保存</Button>
+    <Button icon="save" type="primary">
+      保存
+    </Button>
   </Fragment>
 );
 
@@ -20,7 +36,10 @@ const recipeExtra = <Button icon="download">导入配方</Button>;
   loading: loading.effects['cakes/fetchCakeDetail'],
 }))
 export default class CakeDetail extends Component {
-  state = {};
+  state = {
+    selectedTaste: null,
+    selectedSpec: null,
+  };
 
   componentDidMount() {
     const { dispatch } = this.props;
@@ -29,9 +48,16 @@ export default class CakeDetail extends Component {
     });
   }
 
+  onTasteTagChange = (checked, id) => {
+    this.setState({
+      selectedTaste: id,
+    });
+  };
+
   render() {
     const { cakes, loading } = this.props;
     const { cakeDetail } = cakes;
+    const { selectedTaste, selectedSpec } = this.state;
     let materials = [];
     /*
     if (advancedOperation1.length) {
@@ -58,8 +84,8 @@ export default class CakeDetail extends Component {
     const columns = [
       {
         title: '名称',
-        dataIndex: 'type',
-        key: 'type',
+        dataIndex: 'name',
+        key: 'name',
         width: '25%',
         render: (text, row, index) => {
           if (index < advancedOperation1.length) {
@@ -75,15 +101,15 @@ export default class CakeDetail extends Component {
       },
       {
         title: '数量',
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'quantity',
+        key: 'quantity',
         width: '25%',
         render: renderContent,
       },
       {
         title: '单价',
-        dataIndex: 'status',
-        key: 'status',
+        dataIndex: 'price',
+        key: 'price',
         width: '25%',
         render: renderContent,
       },
@@ -103,7 +129,20 @@ export default class CakeDetail extends Component {
       </Menu>
     );
 
-    const extra = (
+    const title = (
+      <Skeleton active paragraph={false} loading={loading}>
+        <Fragment>
+          <Dropdown overlay={menu} trigger={['click']}>
+            <span>{cakeDetail.name}</span>
+          </Dropdown>
+          <a style={{ marginLeft: 10 }}>
+            <Icon type="edit" />
+          </a>
+        </Fragment>
+      </Skeleton>
+    );
+
+    const extra = loading ? null : (
       <Row>
         <Col xs={24} sm={12}>
           <div className={styles.textSecondary}>成本</div>
@@ -117,85 +156,67 @@ export default class CakeDetail extends Component {
     );
 
     const description = (
-      <DescriptionList className={styles.headerList} size="small" col="1">
-        <Description term="甜品类型">
-          {cakeDetail.type}
-          <a style={{ marginLeft: 10 }}>
-            <Icon type="edit" />
-          </a>
-        </Description>
-        <Description term="口味">
-          {!loading && cakeDetail.tastes.map(taste => {
-            return <Tag>{taste.name}</Tag>
-          })}
-        </Description>
-        <Description term="规格">
-          {!loading && cakeDetail.specs.map(spec => {
-            return <Tag>{spec.name}</Tag>
-          })}
-        </Description>
-      </DescriptionList>
-    );
-
-    return (
-      <PageHeaderLayout
-        title={
-          <Fragment>
-            <Dropdown overlay={menu} trigger={['click']}>
-              <span>{cakeDetail.name}</span>
-            </Dropdown>
+      <Skeleton active loading={loading} title={false} className={styles.headerList}>
+        <DescriptionList size="small" col="1">
+          <Description term="甜品类型">
+            {cakeDetail.type}
             <a style={{ marginLeft: 10 }}>
               <Icon type="edit" />
             </a>
-          </Fragment>
-        }
-        loading={loading}
-        content={description}
-        extraContent={extra}
-        action={action}
-      >
+          </Description>
+          <Description term="口味">
+            {typeof loading === 'boolean' &&
+              !loading && (
+                <RadioTag.Group
+                  dataSource={cakeDetail.tastes}
+                  onChange={value => console.log(value)}
+                />
+              )}
+          </Description>
+          <Description term="规格">
+            {typeof loading === 'boolean' &&
+              !loading && (
+                <RadioTag.Group
+                  dataSource={cakeDetail.specs}
+                  onChange={value => console.log(value)}
+                />
+              )}
+          </Description>
+        </DescriptionList>
+      </Skeleton>
+    );
+
+    return (
+      <PageHeaderLayout title={title} content={description} extraContent={extra} action={action}>
         <Card title="配方" className={styles.recipeCard} bordered={false} extra={recipeExtra}>
           <Button type="dashed" icon="plus" className={styles.addRecipe}>
             添加配方
           </Button>
-          <Table
-            title={() => (
-              <div className={styles.recipeTitle}>
-                <div className={styles.name}>
-                  <span>退货商品</span>
-                  <a>
-                    <Icon type="edit" />
-                  </a>
-                </div>
-                <Button icon="book">存为常用配方</Button>
-              </div>
-            )}
-            size="small"
-            style={{ marginBottom: 24 }}
-            pagination={false}
-            loading={loading}
-            dataSource={materials}
-            columns={columns}
-          />
-          <Table
-            title={() => (
-              <div className={styles.recipeTitle}>
-                <div className={styles.name}>
-                  <span>退货商品</span>
-                  <a>
-                    <Icon type="edit" />
-                  </a>
-                </div>
-                <Button icon="book">存为常用配方</Button>
-              </div>
-            )}
-            size="small"
-            style={{ marginBottom: 16 }}
-            pagination={false}
-            loading={loading}
-            dataSource={materials}
-            columns={columns}
-          />
+          {typeof loading === 'boolean' &&
+            !loading &&
+            cakeDetail.recipes[0].detail.map(recipe => {
+              return (
+                <Table
+                  title={() => (
+                    <div className={styles.recipeTitle}>
+                      <div className={styles.name}>
+                        <span>{recipe.name}</span>
+                        <a>
+                          <Icon type="edit" />
+                        </a>
+                      </div>
+                      <Button icon="book">存为常用配方</Button>
+                    </div>
+                  )}
+                  size="small"
+                  style={{ marginBottom: 24 }}
+                  pagination={false}
+                  loading={loading}
+                  dataSource={materials}
+                  columns={columns}
+                />
+              );
+            })}
         </Card>
       </PageHeaderLayout>
     );

@@ -13,6 +13,14 @@ export default class RadioTag extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if ('checked' in nextProps) {
+      this.setState({
+        checked: nextProps.checked,
+      });
+    }
+  }
+
   onClick = () => {
     const lastChecked = this.state.checked;
     const { onChange, value } = this.props;

@@ -64,11 +64,11 @@ export default class RadioTagGroup extends Component {
 
   render() {
     let { children, dataSource } = this.props;
-    const { inputValue, inputVisible } = this.state;
+    const { inputValue, inputVisible, value } = this.state;
     if (dataSource) {
       children = dataSource.map(tag => {
         return (
-          <RadioTag value={tag.id} onChange={this.onRadioChange}>
+          <RadioTag value={tag.id} onChange={this.onRadioChange} checked={tag.id === value}>
             {tag.name}
           </RadioTag>
         );

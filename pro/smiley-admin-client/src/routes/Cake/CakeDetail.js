@@ -6,6 +6,7 @@ import DescriptionList from 'components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './CakeDetail.less';
 import RadioTag from '../../components/CustomComponents/RadioTag';
+import CakeRecipeForm from './CakeRecipeForm';
 
 @connect(({ cakes, loading }) => ({
   cakes,
@@ -60,29 +61,12 @@ export default class CakeDetail extends Component {
     this.updateSelectedRecipe(this.state.selectedTaste, value);
   };
 
-  renderRecipeTitle = name => {
-    return (
-      <div className={styles.recipeTitle}>
-        <div className={styles.name}>
-          <span>{name}</span>
-          <a>
-            <Icon type="edit" />
-          </a>
-        </div>
-        <div>
-          <Button icon="plus" style={{ marginRight: 10 }}>
-            添加原料
-          </Button>
-          <Button icon="export">存为常用配方</Button>
-        </div>
-      </div>
-    );
-  };
-
   render() {
-    const { cakes, loading } = this.props;
+    const { cakes } = this.props;
     const { cakeDetail } = cakes;
     const { selectedTaste, selectedSpec, selectedRecipe } = this.state;
+    let { loading } = this.props;
+    loading = typeof loading === 'boolean' ? loading : true;
 
     const action = (
       <Fragment>
@@ -115,19 +99,18 @@ export default class CakeDetail extends Component {
       </Skeleton>
     );
 
-    const extra =
-      typeof loading === 'boolean' && !loading ? (
-        <Row>
-          <Col xs={24} sm={12}>
-            <div className={styles.textSecondary}>成本</div>
-            <div className={styles.heading}>¥ 30-30</div>
-          </Col>
-          <Col xs={24} sm={12}>
-            <div className={styles.textSecondary}>售价</div>
-            <div className={styles.heading}>¥ {cakeDetail.recipes[selectedRecipe].price}</div>
-          </Col>
-        </Row>
-      ) : null;
+    const extra = !loading ? (
+      <Row>
+        <Col xs={24} sm={12}>
+          <div className={styles.textSecondary}>成本</div>
+          <div className={styles.heading}>¥ 30-30</div>
+        </Col>
+        <Col xs={24} sm={12}>
+          <div className={styles.textSecondary}>售价</div>
+          <div className={styles.heading}>¥ {cakeDetail.recipes[selectedRecipe].price}</div>
+        </Col>
+      </Row>
+    ) : null;
 
     const description = (
       <Skeleton active loading={loading} title={false} className={styles.headerList}>
@@ -139,24 +122,22 @@ export default class CakeDetail extends Component {
             </a>
           </DescriptionList.Description>
           <DescriptionList.Description term="口味">
-            {typeof loading === 'boolean' &&
-              !loading && (
-                <RadioTag.Group
-                  defaultValue={selectedTaste}
-                  dataSource={cakeDetail.tastes}
-                  onChange={this.onTasteChange}
-                />
-              )}
+            {!loading && (
+              <RadioTag.Group
+                defaultValue={selectedTaste}
+                dataSource={cakeDetail.tastes}
+                onChange={this.onTasteChange}
+              />
+            )}
           </DescriptionList.Description>
           <DescriptionList.Description term="规格">
-            {typeof loading === 'boolean' &&
-              !loading && (
-                <RadioTag.Group
-                  defaultValue={selectedSpec}
-                  dataSource={cakeDetail.specs}
-                  onChange={this.onSpecChange}
-                />
-              )}
+            {!loading && (
+              <RadioTag.Group
+                defaultValue={selectedSpec}
+                dataSource={cakeDetail.specs}
+                onChange={this.onSpecChange}
+              />
+            )}
           </DescriptionList.Description>
         </DescriptionList>
       </Skeleton>
@@ -169,77 +150,11 @@ export default class CakeDetail extends Component {
             <Button type="dashed" icon="plus" className={styles.addRecipe}>
               添加配方
             </Button>
-            {typeof loading === 'boolean' &&
-              !loading &&
+            {!loading &&
               cakeDetail.recipes[selectedRecipe].detail.map(recipe => {
-                let { materials } = recipe;
-                let totalPrice = 0;
-                materials.forEach(material => {
-                  totalPrice += material.quantity * material.price;
-                });
-                materials = materials.concat({
-                  name: '总计',
-                  price: totalPrice,
-                });
-                const renderContent = (value, row, index) => {
-                  const obj = {
-                    children: value,
-                    props: {},
-                  };
-                  if (index === materials.length - 1) {
-                    obj.props.colSpan = 0;
-                  }
-                  return obj;
-                };
-                const columns = [
-                  {
-                    title: '名称',
-                    dataIndex: 'name',
-                    key: 'name',
-                    width: '25%',
-                    render: (text, row, index) => {
-                      if (index < materials.length - 1) {
-                        return text;
-                      }
-                      return {
-                        children: <span style={{ fontWeight: 600 }}>总计: {row.price}</span>,
-                        props: {
-                          colSpan: 4,
-                        },
-                      };
-                    },
-                  },
-                  {
-                    title: '数量',
-                    dataIndex: 'quantity',
-                    key: 'quantity',
-                    width: '25%',
-                    render: renderContent,
-                  },
-                  {
-                    title: '单价',
-                    dataIndex: 'price',
-                    key: 'price',
-                    width: '25%',
-                    render: renderContent,
-                  },
-                  {
-                    title: '操作',
-                    width: '25%',
-                    render: renderContent,
-                  },
-                ];
                 return (
                   <Card.Grid style={{ width: '100%', marginBottom: 24, padding: 0 }}>
-                    <Table
-                      title={this.renderRecipeTitle(recipe.name)}
-                      size="small"
-                      pagination={false}
-                      loading={loading}
-                      dataSource={materials}
-                      columns={columns}
-                      bordered
-                    />
+                    <CakeRecipeForm recipe={recipe} />
                   </Card.Grid>
                 );
               })}

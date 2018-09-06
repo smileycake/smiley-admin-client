@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import { Table, Button, Input, message, Popconfirm, Divider, Icon } from 'antd';
+import { Table, Button, Input, message, Popconfirm, Divider, Icon, Select } from 'antd';
 import styles from './CakeRecipeForm.less';
 
 export default class CakeRecipeForm extends PureComponent {
@@ -12,6 +12,34 @@ export default class CakeRecipeForm extends PureComponent {
       dataIndex: 'name',
       key: 'name',
       width: '25%',
+      render: (text, record, index) => {
+        const { allMaterials } = this.state;
+        let existingMaterials = this.getExistingMaterials();
+        return record.editable ? (
+          <Select
+            showSearch
+            style={{ width: 200 }}
+            placeholder="选择原料"
+            optionFilterProp="children"
+            defaultValue={record.id}
+            onChange={value => this.onMaterialChange(value, record.id)}
+            filterOption={(input, option) =>
+              option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            }
+          >
+            {allMaterials.map(material => {
+              let disabled = material.id !== record.id && existingMaterials.includes(material.id);
+              return (
+                <Option value={material.id} disabled={disabled}>
+                  {material.name}
+                </Option>
+              );
+            })}
+          </Select>
+        ) : (
+          text
+        );
+      },
     },
     {
       title: '数量',
@@ -22,7 +50,7 @@ export default class CakeRecipeForm extends PureComponent {
         return record.editable ? (
           <Input value={text} onChange={e => this.onQuantityChange(e, 'quantity', record.id)} />
         ) : (
-          text
+          text + record.unit
         );
       },
     },
@@ -42,6 +70,17 @@ export default class CakeRecipeForm extends PureComponent {
           return null;
         }
         if (record.editable) {
+          if (record.isNew) {
+            return (
+              <span>
+                <a onClick={e => this.saveRow(e, record.id)}>添加</a>
+                <Divider type="vertical" />
+                <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.id)}>
+                  <a>删除</a>
+                </Popconfirm>
+              </span>
+            );
+          }
           return (
             <span>
               <a onClick={e => this.saveRow(e, record.id)}>保存</a>
@@ -65,11 +104,12 @@ export default class CakeRecipeForm extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { recipe } = this.props;
+    const { recipe, materials } = this.props;
     this.state = {
       loading: false,
       materials: recipe.materials,
       name: recipe.name,
+      allMaterials: materials,
       editingRecipeName: false,
     };
   }
@@ -100,18 +140,52 @@ export default class CakeRecipeForm extends PureComponent {
   };
 
   editRecipeName = () => {
+    const { name, editingRecipeName } = this.state;
     this.cacheOriginRecipeName = name;
-    const { editingRecipeName } = this.state;
     this.setState({
       editingRecipeName: !editingRecipeName,
     });
   };
 
   // Materials Operation
-  getRowById(id, newMaterials) {
+  getExistingMaterials = () => {
+    let { materials } = this.state;
+    return materials.map(material => material.id);
+  };
+
+  getAvailableMaterials = () => {
+    let { allMaterials } = this.state;
+    let existingMaterials = this.getExistingMaterials();
+    return allMaterials.filter(material => !existingMaterials.includes(material.id));
+  };
+
+  newMaterial = () => {
+    let availableMaterials = this.getAvailableMaterials();
+    if (availableMaterials.length === 0) {
+      message.info('所有原料都在列表里了哦!');
+      return;
+    }
+    const { materials } = this.state;
+    const newMaterials = materials.map(material => ({ ...material }));
+    newMaterials.push({
+      ...availableMaterials[0],
+      quantity: 0,
+      editable: true,
+      isNew: true,
+    });
+    //this.index += 1;
+    this.setState({ materials: newMaterials });
+  };
+
+  getRowById = (id, newMaterials) => {
     const { materials } = this.state;
     return (newMaterials || materials).filter(material => material.id === id)[0];
-  }
+  };
+
+  getMaterialById = id => {
+    const { allMaterials } = this.state;
+    return allMaterials.filter(material => material.id === id)[0];
+  };
 
   toggleEditable = (e, id) => {
     e.preventDefault();
@@ -190,7 +264,21 @@ export default class CakeRecipeForm extends PureComponent {
     const newMaterials = materials.map(material => ({ ...material }));
     const target = this.getRowById(id, newMaterials);
     if (target) {
-      target[fieldName] = e.target.value;
+      target[fieldName] = Number(e.target.value);
+      this.setState({ materials: newMaterials });
+    }
+  };
+
+  onMaterialChange = (value, id) => {
+    const { materials } = this.state;
+    const newMaterials = materials.map(material => ({ ...material }));
+    const target = this.getRowById(id, newMaterials);
+    const material = this.getMaterialById(value, newMaterials);
+    if (target) {
+      target.id = material.id;
+      target.name = material.name;
+      target.price = material.price;
+      target.unit = material.unit;
       this.setState({ materials: newMaterials });
     }
   };
@@ -235,7 +323,7 @@ export default class CakeRecipeForm extends PureComponent {
                   )}
                 </div>
                 <div>
-                  <Button icon="plus" style={{ marginRight: 10 }}>
+                  <Button icon="plus" style={{ marginRight: 10 }} onClick={this.newMaterial}>
                     添加原料
                   </Button>
                   <Button icon="export" style={{ marginRight: 10 }}>

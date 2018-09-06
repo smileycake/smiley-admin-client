@@ -8,9 +8,10 @@ import styles from './CakeDetail.less';
 import RadioTag from '../../components/CustomComponents/RadioTag';
 import CakeRecipeForm from './CakeRecipeForm';
 
-@connect(({ cakes, loading }) => ({
+@connect(({ materials, cakes, loading }) => ({
   cakes,
-  loading: loading.effects['cakes/fetchCakeDetail'],
+  materials,
+  loading: loading.effects['cakes/fetchCakeDetail'] || loading.effects['materials/fetchMaterials'],
 }))
 export default class CakeDetail extends Component {
   state = {
@@ -23,6 +24,9 @@ export default class CakeDetail extends Component {
     const { dispatch } = this.props;
     dispatch({
       type: 'cakes/fetchCakeDetail',
+    });
+    dispatch({
+      type: 'materials/fetchMaterials',
     });
   }
 
@@ -62,7 +66,7 @@ export default class CakeDetail extends Component {
   };
 
   render() {
-    const { cakes } = this.props;
+    const { cakes, materials } = this.props;
     const { cakeDetail } = cakes;
     const { selectedTaste, selectedSpec, selectedRecipe } = this.state;
     let { loading } = this.props;
@@ -154,7 +158,7 @@ export default class CakeDetail extends Component {
               cakeDetail.recipes[selectedRecipe].detail.map(recipe => {
                 return (
                   <Card.Grid style={{ width: '100%', marginBottom: 24, padding: 0 }}>
-                    <CakeRecipeForm recipe={recipe} />
+                    <CakeRecipeForm recipe={recipe} materials={materials.materials} />
                   </Card.Grid>
                 );
               })}

@@ -3,41 +3,142 @@ import { Table, Button, Input, message, Popconfirm, Divider, Icon } from 'antd';
 import styles from './CakeRecipeForm.less';
 
 export default class CakeRecipeForm extends PureComponent {
-  cacheOriginData = {};
+  cacheOriginMaterials = {};
+  cacheOriginRecipeName = null;
+
+  columns = [
+    {
+      title: '名称',
+      dataIndex: 'name',
+      key: 'name',
+      width: '25%',
+    },
+    {
+      title: '数量',
+      dataIndex: 'quantity',
+      key: 'quantity',
+      width: '25%',
+      render: (text, record, index) => {
+        return record.editable ? (
+          <Input value={text} onChange={e => this.onQuantityChange(e, 'quantity', record.id)} />
+        ) : (
+          text
+        );
+      },
+    },
+    {
+      title: '单价',
+      dataIndex: 'price',
+      key: 'price',
+      width: '25%',
+      render: text => '¥ ' + text,
+    },
+    {
+      title: '操作',
+      width: '25%',
+      render: (text, record, index) => {
+        const { loading } = this.state;
+        if (!!record.editable && loading) {
+          return null;
+        }
+        if (record.editable) {
+          return (
+            <span>
+              <a onClick={e => this.saveRow(e, record.id)}>保存</a>
+              <Divider type="vertical" />
+              <a onClick={e => this.cancel(e, record.id)}>取消</a>
+            </span>
+          );
+        }
+        return (
+          <span>
+            <a onClick={e => this.toggleEditable(e, record.id)}>编辑</a>
+            <Divider type="vertical" />
+            <Popconfirm title="确定删除嘛?~" onConfirm={() => this.remove(record.id)}>
+              <a>删除</a>
+            </Popconfirm>
+          </span>
+        );
+      },
+    },
+  ];
 
   constructor(props) {
     super(props);
     const { recipe } = this.props;
     this.state = {
       loading: false,
-      data: recipe.materials,
+      materials: recipe.materials,
+      name: recipe.name,
+      editingRecipeName: false,
     };
   }
 
-  getRowByKey(key, newData) {
-    const { data } = this.state;
-    return (newData || data).filter(item => item.key === key)[0];
-  }
+  // Recipe Name Operation
+  onRecipeNameChange = e => {
+    this.setState({
+      name: e.target.value,
+    });
+  };
 
-  toggleEditable = (e, key) => {
-    e.preventDefault();
-    const { data } = this.state;
-    const newData = data.map(item => ({ ...item }));
-    const target = this.getRowByKey(key, newData);
-    if (target) {
-      // 进入编辑状态时保存原始数据
-      if (!target.editable) {
-        this.cacheOriginData[key] = { ...target };
-      }
-      target.editable = !target.editable;
-      this.setState({ data: newData });
+  saveRecipeName = () => {
+    const { onChange } = this.props;
+    const { name, materials } = this.state;
+    this.setState({
+      editingRecipeName: false,
+    });
+    if (onChange) {
+      onChange({ name, materials });
     }
   };
 
-  remove = key => {};
+  cancelEditRecipeName = () => {
+    this.setState({
+      editingRecipeName: false,
+      name: this.cacheOriginRecipeName,
+    });
+  };
 
-  saveRow = (e, key) => {
-    const { onEdit } = this.props;
+  editRecipeName = () => {
+    this.cacheOriginRecipeName = name;
+    const { editingRecipeName } = this.state;
+    this.setState({
+      editingRecipeName: !editingRecipeName,
+    });
+  };
+
+  // Materials Operation
+  getRowById(id, newMaterials) {
+    const { materials } = this.state;
+    return (newMaterials || materials).filter(material => material.id === id)[0];
+  }
+
+  toggleEditable = (e, id) => {
+    e.preventDefault();
+    const { materials } = this.state;
+    const newMaterials = materials.map(material => ({ ...material }));
+    const target = this.getRowById(id, newMaterials);
+    if (target) {
+      if (!target.editable) {
+        this.cacheOriginMaterials[id] = { ...target };
+      }
+      target.editable = !target.editable;
+      this.setState({ materials: newMaterials });
+    }
+  };
+
+  remove = id => {
+    const { materials } = this.state;
+    const { onChange } = this.props;
+    const newMaterials = materials.filter(material => material.id !== id);
+    this.setState({ materials: newMaterials });
+    if (onChange) {
+      onChange(newMaterials);
+    }
+  };
+
+  saveRow = (e, id) => {
+    const { onChange } = this.props;
     this.setState({
       loading: true,
     });
@@ -46,21 +147,19 @@ export default class CakeRecipeForm extends PureComponent {
         this.clickedCancel = false;
         return;
       }
-      const target = this.getRowByKey(key) || {};
-      if (!target.quantity) {
-        message.error('请填写完整成员信息。');
-        e.target.focus();
+      const target = this.getRowById(id) || {};
+      if (!target.quantity || target.quantity <= 0) {
+        message.error('数量不能为空哦');
         this.setState({
           loading: false,
         });
         return;
       }
-      const { data } = this.state;
-      const { onChange } = this.props;
+      const { name, materials } = this.state;
       delete target.isNew;
-      this.toggleEditable(e, key);
+      this.toggleEditable(e, id);
       if (onChange) {
-        onChange(data);
+        onChange({ name, materials });
       }
       this.setState({
         loading: false,
@@ -68,97 +167,42 @@ export default class CakeRecipeForm extends PureComponent {
     }, 500);
   };
 
-  cancel(e, key) {
+  cancel(e, id) {
     this.clickedCancel = true;
     e.preventDefault();
-    const { data } = this.state;
-    const newData = data.map(item => ({ ...item }));
-    const target = this.getRowByKey(key, newData);
-    if (this.cacheOriginData[key]) {
-      Object.assign(target, this.cacheOriginData[key]);
+    const { materials } = this.state;
+    const newMaterials = materials.map(material => ({ ...material }));
+    const target = this.getRowById(id, newMaterials);
+    if (this.cacheOriginMaterials[id]) {
+      Object.assign(target, this.cacheOriginMaterials[id]);
       target.editable = false;
-      delete this.cacheOriginData[key];
+      delete this.cacheOriginMaterials[id];
     }
-    this.setState({ data: newData });
+    this.setState({ materials: newMaterials });
     this.clickedCancel = false;
   }
 
-  onQuantityChange = (e, fieldName, key) => {
-    const { data } = this.state;
-    const newData = data.map(item => ({ ...item }));
-    const target = this.getRowByKey(key, newData);
+  onQuantityChange = (e, fieldName, id) => {
+    if (e.target.value !== '' && !Number(e.target.value)) {
+      return;
+    }
+    const { materials } = this.state;
+    const newMaterials = materials.map(material => ({ ...material }));
+    const target = this.getRowById(id, newMaterials);
     if (target) {
       target[fieldName] = e.target.value;
-      this.setState({ data: newData });
+      this.setState({ materials: newMaterials });
     }
   };
 
-  saveInputRef = input => (this.input = input);
-
   render() {
-    const { data, loading } = this.state;
-
+    const { materials, name, loading, editingRecipeName } = this.state;
     const { recipe } = this.props;
-    let { materials, name } = recipe;
     let totalPrice = 0;
     materials.forEach(material => {
       totalPrice += material.quantity * material.price;
     });
-    const columns = [
-      {
-        title: '名称',
-        dataIndex: 'name',
-        key: 'name',
-        width: '25%',
-      },
-      {
-        title: '数量',
-        dataIndex: 'quantity',
-        key: 'quantity',
-        width: '25%',
-        render: (text, record, index) => {
-          return record.editable ? (
-            <Input value={text} onChange={e => this.onQuantityChange(e, 'quantity', record.key)} />
-          ) : (
-            text
-          );
-        },
-      },
-      {
-        title: '单价',
-        dataIndex: 'price',
-        key: 'price',
-        width: '25%',
-      },
-      {
-        title: '操作',
-        width: '25%',
-        render: (text, record, index) => {
-          const { loading } = this.state;
-          if (!!record.editable && loading) {
-            return null;
-          }
-          if (record.editable) {
-            return (
-              <span>
-                <a onClick={e => this.saveRow(e, record.key)}>保存</a>
-                <Divider type="vertical" />
-                <a onClick={e => this.cancel(e, record.key)}>取消</a>
-              </span>
-            );
-          }
-          return (
-            <span>
-              <a onClick={e => this.toggleEditable(e, record.key)}>编辑</a>
-              <Divider type="vertical" />
-              <Popconfirm title="确定删除嘛?~" onConfirm={() => this.remove(record.key)}>
-                <a>删除</a>
-              </Popconfirm>
-            </span>
-          );
-        },
-      },
-    ];
+
     return (
       <Fragment>
         <Table
@@ -166,16 +210,38 @@ export default class CakeRecipeForm extends PureComponent {
             return (
               <div className={styles.recipeTitle}>
                 <div className={styles.name}>
-                  <span>{name}</span>
-                  <a>
-                    <Icon type="edit" />
-                  </a>
+                  {editingRecipeName && (
+                    <Fragment>
+                      <Input
+                        style={{ width: 100 }}
+                        value={name}
+                        onChange={this.onRecipeNameChange}
+                      />
+                      <a onClick={this.saveRecipeName}>
+                        <Icon type="check" />
+                      </a>
+                      <a onClick={this.cancelEditRecipeName}>
+                        <Icon type="stop" />
+                      </a>
+                    </Fragment>
+                  )}
+                  {!editingRecipeName && (
+                    <Fragment>
+                      <span>{name}</span>
+                      <a onClick={this.editRecipeName}>
+                        <Icon type="edit" />
+                      </a>
+                    </Fragment>
+                  )}
                 </div>
                 <div>
                   <Button icon="plus" style={{ marginRight: 10 }}>
                     添加原料
                   </Button>
-                  <Button icon="export">存为常用配方</Button>
+                  <Button icon="export" style={{ marginRight: 10 }}>
+                    存为常用配方
+                  </Button>
+                  <Button icon="close">删除</Button>
                 </div>
               </div>
             );
@@ -183,12 +249,12 @@ export default class CakeRecipeForm extends PureComponent {
           size="small"
           bordered
           rowKey={record => record.id}
-          columns={columns}
-          dataSource={data}
+          columns={this.columns}
+          dataSource={materials}
           pagination={false}
           loading={loading}
           footer={() => {
-            return <span style={{ fontWeight: 600 }}>总计: {totalPrice}</span>;
+            return <span style={{ fontWeight: 600 }}>总计: ¥ {totalPrice}</span>;
           }}
         />
       </Fragment>

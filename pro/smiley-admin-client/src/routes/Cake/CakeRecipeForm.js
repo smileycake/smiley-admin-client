@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import { Table, Button, Input, message, Popconfirm, Divider, Icon, Select } from 'antd';
+import { Table, Tooltip, Button, Input, message, Popconfirm, Divider, Icon, Select } from 'antd';
 import styles from './CakeRecipeForm.less';
 
 export default class CakeRecipeForm extends PureComponent {
@@ -116,6 +116,13 @@ export default class CakeRecipeForm extends PureComponent {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      materials: nextProps.recipe.materials,
+      name: nextProps.recipe.name,
+    });
+  }
+
   copyMaterials = () => {
     const { materials } = this.state;
     return materials.map(material => ({ ...material }));
@@ -140,6 +147,17 @@ export default class CakeRecipeForm extends PureComponent {
     let existingMaterials = this.getExistingMaterials();
     return allMaterials.filter(material => !existingMaterials.includes(material.id));
   };
+
+  // Delete Recipe
+  deleteRecipe = () => {
+    const { deleteRecipe } = this.props;
+    if (deleteRecipe) {
+      deleteRecipe();
+    }
+  };
+
+  // Save Recipe
+  saveRecipe = () => {};
 
   // Recipe Name Operation
   onRecipeNameChange = e => {
@@ -324,14 +342,16 @@ export default class CakeRecipeForm extends PureComponent {
                     </Fragment>
                   )}
                 </div>
-                <div>
-                  <Button icon="plus" style={{ marginRight: 10 }} onClick={this.newMaterial}>
-                    添加原料
-                  </Button>
-                  <Button icon="export" style={{ marginRight: 10 }}>
-                    存为常用配方
-                  </Button>
-                  <Button icon="close">删除</Button>
+                <div className={styles.operation}>
+                  <Tooltip title="添加原料">
+                    <Button icon="plus" shape="circle" onClick={this.newMaterial} />
+                  </Tooltip>
+                  <Tooltip title="存为常用配方">
+                    <Button icon="upload" shape="circle" onClick={this.saveRecipe} />
+                  </Tooltip>
+                  <Tooltip title="删除此配方">
+                    <Button icon="delete" shape="circle" onClick={this.deleteRecipe} />
+                  </Tooltip>
                 </div>
               </div>
             );

@@ -9,7 +9,7 @@ import RadioTag from '../../components/CustomComponents/RadioTag';
 import CakeRecipeForm from './CakeRecipeForm';
 
 @connect(({ materials, cakes, loading }) => ({
-  cakes,
+  cakeDetail: cakes.cakeDetail,
   materials,
   loading: loading.effects['cakes/fetchCakeDetail'] || loading.effects['materials/fetchMaterials'],
 }))
@@ -20,6 +20,12 @@ export default class CakeDetail extends PureComponent {
       selectedTaste: null,
       selectedSpec: null,
       selectedRecipe: null,
+      id: null,
+      name: null,
+      type: null,
+      tastes: [],
+      specs: [],
+      recipes: [],
       cakeDetail: {},
     };
   }
@@ -32,8 +38,7 @@ export default class CakeDetail extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { loading, cakes } = nextProps;
-    const { cakeDetail } = cakes;
+    const { loading, cakeDetail } = nextProps;
     if (!loading) {
       this.updateSelectedRecipe(cakeDetail.tastes[0].id, cakeDetail.specs[0].id);
     }
@@ -45,7 +50,8 @@ export default class CakeDetail extends PureComponent {
 
   updateSelectedRecipe(selectedTaste, selectedSpec) {
     let selectedRecipe = null;
-    this.props.cakes.cakeDetail.recipes.forEach((recipe, index) => {
+    const { cakeDetail } = this.props;
+    cakeDetail.recipes.forEach((recipe, index) => {
       if (recipe.tasteId === selectedTaste && recipe.specId === selectedSpec) {
         selectedRecipe = index;
         return;
@@ -55,9 +61,20 @@ export default class CakeDetail extends PureComponent {
       selectedTaste,
       selectedSpec,
       selectedRecipe,
-      cakeDetail: this.props.cakes.cakeDetail,
+      ...cakeDetail,
     });
   }
+
+  deleteRecipe = id => {
+    const { recipes, selectedRecipe } = this.state;
+    const newRecipes = recipes.map(recipe => ({ ...recipe }));
+    newRecipes[selectedRecipe].detail = newRecipes[selectedRecipe].detail.filter(
+      recipe => id !== recipe.id
+    );
+    this.setState({
+      recipes: newRecipes,
+    });
+  };
 
   onTasteChange = value => {
     this.updateSelectedRecipe(value, this.state.selectedSpec);
@@ -71,9 +88,14 @@ export default class CakeDetail extends PureComponent {
     console.log(index, name, materials);
   };
 
-  getTotalCost = selectedRecipe => {
+  getTotalCost = () => {
+    const { loading } = this.props;
+    if (loading) {
+      return 0;
+    }
+    const { recipes, selectedRecipe } = this.state;
     let totalCost = 0;
-    selectedRecipe.detail.forEach(recipe => {
+    recipes[selectedRecipe].detail.forEach(recipe => {
       recipe.materials.forEach(material => {
         totalCost += material.quantity * material.price;
       });
@@ -83,9 +105,18 @@ export default class CakeDetail extends PureComponent {
 
   render() {
     const { loading, materials } = this.props;
-    const { selectedTaste, selectedSpec, selectedRecipe, cakeDetail } = this.state;
+    const {
+      selectedTaste,
+      selectedSpec,
+      selectedRecipe,
+      name,
+      type,
+      tastes,
+      specs,
+      recipes,
+    } = this.state;
 
-    let totalCost = loading ? 0 : this.getTotalCost(cakeDetail.recipes[selectedRecipe]);
+    let totalCost = this.getTotalCost();
 
     const action = (
       <Fragment>
@@ -116,7 +147,7 @@ export default class CakeDetail extends PureComponent {
       <Skeleton active paragraph={false} loading={loading}>
         <Fragment>
           <Dropdown overlay={menu} trigger={['click']}>
-            <span>{!loading && cakeDetail.name}</span>
+            <span>{!loading && name}</span>
           </Dropdown>
           <a style={{ marginLeft: 10 }}>
             <Icon type="edit" />
@@ -133,7 +164,7 @@ export default class CakeDetail extends PureComponent {
         </Col>
         <Col xs={24} sm={12}>
           <div className={styles.textSecondary}>售价</div>
-          <div className={styles.heading}>¥ {cakeDetail.recipes[selectedRecipe].price}</div>
+          <div className={styles.heading}>¥ {recipes[selectedRecipe].price}</div>
         </Col>
       </Row>
     );
@@ -143,7 +174,7 @@ export default class CakeDetail extends PureComponent {
         {!loading && (
           <DescriptionList size="small" col="1">
             <DescriptionList.Description term="甜品类型">
-              {cakeDetail.type}
+              {type}
               <a style={{ marginLeft: 10 }}>
                 <Icon type="edit" />
               </a>
@@ -151,7 +182,7 @@ export default class CakeDetail extends PureComponent {
             <DescriptionList.Description term="口味">
               <RadioTag.Group
                 defaultValue={selectedTaste}
-                dataSource={cakeDetail.tastes}
+                dataSource={tastes}
                 onChange={this.onTasteChange}
                 newTagPlaceholder="新口味"
               />
@@ -159,7 +190,7 @@ export default class CakeDetail extends PureComponent {
             <DescriptionList.Description term="规格">
               <RadioTag.Group
                 defaultValue={selectedSpec}
-                dataSource={cakeDetail.specs}
+                dataSource={specs}
                 onChange={this.onSpecChange}
                 newTagPlaceholder="新规格"
               />
@@ -174,7 +205,7 @@ export default class CakeDetail extends PureComponent {
         <Card title="配方" className={styles.recipeCard} bordered={false} extra={recipeExtra}>
           <Skeleton active loading={loading} title={false}>
             {!loading &&
-              cakeDetail.recipes[selectedRecipe].detail.map((recipe, index) => {
+              recipes[selectedRecipe].detail.map((recipe, index) => {
                 return (
                   <Card.Grid style={{ width: '100%', marginBottom: 24, padding: 0 }} key={index}>
                     <CakeRecipeForm
@@ -183,12 +214,13 @@ export default class CakeDetail extends PureComponent {
                       onChange={(name, materials) => {
                         this.onMaterialsChange(name, materials, index);
                       }}
+                      deleteRecipe={() => this.deleteRecipe(recipe.id)}
                     />
                   </Card.Grid>
                 );
               })}
             {!loading &&
-              cakeDetail.recipes[selectedRecipe].detail.length === 0 && (
+              recipes[selectedRecipe].detail.length === 0 && (
                 <div className={styles.noData}>暂无配方...</div>
               )}
           </Skeleton>

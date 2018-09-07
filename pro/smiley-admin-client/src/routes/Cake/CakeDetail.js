@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'dva';
 import shallowEqual from 'shallowequal';
-import { Button, Dropdown, Icon, Row, Col, Card, Table, Input, Menu, Skeleton } from 'antd';
+import { Button, Dropdown, Icon, Row, Col, Card, Menu, Skeleton } from 'antd';
 import DescriptionList from 'components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './CakeDetail.less';

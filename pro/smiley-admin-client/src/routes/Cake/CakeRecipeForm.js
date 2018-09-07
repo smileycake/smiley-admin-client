@@ -10,14 +10,14 @@ export default class CakeRecipeForm extends PureComponent {
     {
       title: '名称',
       dataIndex: 'name',
-      width: '25%',
+      width: '20%',
       render: (text, record, index) => {
         const { allMaterials } = this.state;
         let existingMaterials = this.getExistingMaterials();
         return record.editable ? (
           <Select
             showSearch
-            style={{ width: 200 }}
+            style={{ width: 150 }}
             placeholder="选择原料"
             optionFilterProp="children"
             defaultValue={record.id}
@@ -29,9 +29,9 @@ export default class CakeRecipeForm extends PureComponent {
             {allMaterials.map(material => {
               let disabled = material.id !== record.id && existingMaterials.includes(material.id);
               return (
-                <Option value={material.id} disabled={disabled}>
+                <Select.Option value={material.id} disabled={disabled} key={material.id}>
                   {material.name}
-                </Option>
+                </Select.Option>
               );
             })}
           </Select>
@@ -43,7 +43,7 @@ export default class CakeRecipeForm extends PureComponent {
     {
       title: '数量',
       dataIndex: 'quantity',
-      width: '25%',
+      width: '20%',
       render: (text, record, index) => {
         return record.editable ? (
           <Input value={text} onChange={e => this.onQuantityChange(e, index)} />
@@ -55,12 +55,17 @@ export default class CakeRecipeForm extends PureComponent {
     {
       title: '单价',
       dataIndex: 'price',
-      width: '25%',
+      width: '20%',
       render: text => '¥ ' + text,
     },
     {
+      title: '金额',
+      width: '20%',
+      render: (text, record) => '¥ ' + record.quantity * record.price,
+    },
+    {
       title: '操作',
-      width: '25%',
+      width: '20%',
       render: (text, record, index) => {
         const { loading } = this.state;
         if (!!record.editable && loading) {
@@ -150,7 +155,7 @@ export default class CakeRecipeForm extends PureComponent {
       editingRecipeName: false,
     });
     if (onChange) {
-      onChange({ name, materials });
+      onChange(name, materials);
     }
   };
 
@@ -194,19 +199,21 @@ export default class CakeRecipeForm extends PureComponent {
     if (target) {
       if (!target.editable) {
         this.cacheOriginMaterials[index] = { ...target };
+        target.editable = true;
+      } else {
+        delete target.editable;
       }
-      target.editable = !target.editable;
       this.setState({ materials: newMaterials });
     }
   };
 
   remove = index => {
-    const { materials } = this.state;
+    const { name, materials } = this.state;
     const newMaterials = materials.filter((material, i) => i !== index);
     this.setState({ materials: newMaterials });
     const { onChange } = this.props;
     if (onChange) {
-      onChange(newMaterials);
+      onChange(name, newMaterials);
     }
   };
 
@@ -232,7 +239,7 @@ export default class CakeRecipeForm extends PureComponent {
       this.toggleEditable(e, index);
       const { onChange } = this.props;
       if (onChange) {
-        onChange({ name, materials });
+        onChange(name, materials);
       }
       this.setState({
         loading: false,
@@ -247,7 +254,7 @@ export default class CakeRecipeForm extends PureComponent {
     const target = this.getRowByIndex(index, newMaterials);
     if (this.cacheOriginMaterials[index]) {
       Object.assign(target, this.cacheOriginMaterials[index]);
-      target.editable = false;
+      delete target.editable;
       delete this.cacheOriginMaterials[index];
     }
     this.setState({ materials: newMaterials });
@@ -281,7 +288,6 @@ export default class CakeRecipeForm extends PureComponent {
 
   render() {
     const { materials, name, loading, editingRecipeName } = this.state;
-    const { recipe } = this.props;
     let totalPrice = 0;
     materials.forEach(material => {
       totalPrice += material.quantity * material.price;

@@ -23,6 +23,9 @@ export default class RadioTag extends React.Component {
 
   onClick = () => {
     const lastChecked = this.state.checked;
+    if (lastChecked) {
+      return;
+    }
     const { onChange, value } = this.props;
     this.setState({
       checked: !lastChecked,

@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import shallowEqual from 'shallowequal';
 import { Button, Dropdown, Icon, Row, Col, Card, Menu, Skeleton } from 'antd';
@@ -13,12 +13,16 @@ import CakeRecipeForm from './CakeRecipeForm';
   materials,
   loading: loading.effects['cakes/fetchCakeDetail'] || loading.effects['materials/fetchMaterials'],
 }))
-export default class CakeDetail extends Component {
-  state = {
-    selectedTaste: null,
-    selectedSpec: null,
-    selectedRecipe: null,
-  };
+export default class CakeDetail extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedTaste: null,
+      selectedSpec: null,
+      selectedRecipe: null,
+      cakeDetail: {},
+    };
+  }
 
   componentDidMount() {
     const { dispatch } = this.props;
@@ -51,6 +55,7 @@ export default class CakeDetail extends Component {
       selectedTaste,
       selectedSpec,
       selectedRecipe,
+      cakeDetail: this.props.cakes.cakeDetail,
     });
   }
 
@@ -60,6 +65,10 @@ export default class CakeDetail extends Component {
 
   onSpecChange = value => {
     this.updateSelectedRecipe(this.state.selectedTaste, value);
+  };
+
+  onMaterialsChange = (name, materials, index) => {
+    console.log(index, name, materials);
   };
 
   getTotalCost = selectedRecipe => {
@@ -73,11 +82,8 @@ export default class CakeDetail extends Component {
   };
 
   render() {
-    const { cakes, materials } = this.props;
-    const { cakeDetail } = cakes;
-    const { selectedTaste, selectedSpec, selectedRecipe } = this.state;
-    let { loading } = this.props;
-    loading = typeof loading === 'boolean' ? loading : true;
+    const { loading, materials } = this.props;
+    const { selectedTaste, selectedSpec, selectedRecipe, cakeDetail } = this.state;
 
     let totalCost = loading ? 0 : this.getTotalCost(cakeDetail.recipes[selectedRecipe]);
 
@@ -89,7 +95,7 @@ export default class CakeDetail extends Component {
       </Fragment>
     );
 
-    const recipeExtra = (
+    const recipeExtra = loading ? null : (
       <Fragment>
         <Button icon="plus" className={styles.addRecipe}>
           添加配方
@@ -147,6 +153,7 @@ export default class CakeDetail extends Component {
                 defaultValue={selectedTaste}
                 dataSource={cakeDetail.tastes}
                 onChange={this.onTasteChange}
+                newTagPlaceholder="新口味"
               />
             </DescriptionList.Description>
             <DescriptionList.Description term="规格">
@@ -154,6 +161,7 @@ export default class CakeDetail extends Component {
                 defaultValue={selectedSpec}
                 dataSource={cakeDetail.specs}
                 onChange={this.onSpecChange}
+                newTagPlaceholder="新规格"
               />
             </DescriptionList.Description>
           </DescriptionList>
@@ -169,7 +177,13 @@ export default class CakeDetail extends Component {
               cakeDetail.recipes[selectedRecipe].detail.map((recipe, index) => {
                 return (
                   <Card.Grid style={{ width: '100%', marginBottom: 24, padding: 0 }} key={index}>
-                    <CakeRecipeForm recipe={recipe} materials={materials.materials} />
+                    <CakeRecipeForm
+                      recipe={recipe}
+                      materials={materials.materials}
+                      onChange={(name, materials) => {
+                        this.onMaterialsChange(name, materials, index);
+                      }}
+                    />
                   </Card.Grid>
                 );
               })}

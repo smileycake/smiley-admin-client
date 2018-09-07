@@ -63,7 +63,7 @@ export default class RadioTagGroup extends Component {
   };
 
   render() {
-    let { children, dataSource } = this.props;
+    let { children, dataSource, newTagPlaceholder } = this.props;
     const { inputValue, inputVisible, value } = this.state;
     if (dataSource) {
       children = dataSource.map(tag => {
@@ -96,7 +96,7 @@ export default class RadioTagGroup extends Component {
         )}
         {!inputVisible && (
           <Tag onClick={this.showInput} style={{ background: '#fff', borderStyle: 'dashed' }}>
-            <Icon type="plus" /> New Tag
+            <Icon type="plus" /> {newTagPlaceholder ? newTagPlaceholder : 'New Tag'}
           </Tag>
         )}
       </div>

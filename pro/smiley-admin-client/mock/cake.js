@@ -144,6 +144,24 @@ export function fakeCakeDetail() {
           },
         ],
       },
+      {
+        tasteId: 1,
+        specId: 2,
+        price: 113,
+        detail: [],
+      },
+      {
+        tasteId: 2,
+        specId: 1,
+        price: 118,
+        detail: [],
+      },
+      {
+        tasteId: 2,
+        specId: 2,
+        price: 133,
+        detail: [],
+      },
     ],
   };
   return detail;

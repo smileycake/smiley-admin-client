@@ -5,7 +5,7 @@ export default {
 
   state: {
     cakes: [],
-    cakeDetail: {},
+    cakeDetail: null,
   },
 
   effects: {
@@ -38,6 +38,24 @@ export default {
         ...state,
         cakeDetail: action.payload,
       };
+    },
+    resetCakeDetail(state) {
+      return {
+        ...state,
+        cakeDetail: null,
+      };
+    },
+  },
+
+  subscriptions: {
+    setup({ dispatch, history }) {
+      return history.listen(({ pathname, query }) => {
+        if (pathname === '/cake/list/cakeDetail') {
+          dispatch({
+            type: 'fetchCakeDetail',
+          });
+        }
+      });
     },
   },
 };

@@ -23,9 +23,6 @@ export default class CakeDetail extends Component {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cakes/fetchCakeDetail',
-    });
-    dispatch({
       type: 'materials/fetchMaterials',
     });
   }
@@ -58,11 +55,21 @@ export default class CakeDetail extends Component {
   }
 
   onTasteChange = value => {
-    this.updateSelectedRecipe(value);
+    this.updateSelectedRecipe(value, this.state.selectedSpec);
   };
 
   onSpecChange = value => {
     this.updateSelectedRecipe(this.state.selectedTaste, value);
+  };
+
+  getTotalCost = selectedRecipe => {
+    let totalCost = 0;
+    selectedRecipe.detail.forEach(recipe => {
+      recipe.materials.forEach(material => {
+        totalCost += material.quantity * material.price;
+      });
+    });
+    return totalCost;
   };
 
   render() {
@@ -71,6 +78,8 @@ export default class CakeDetail extends Component {
     const { selectedTaste, selectedSpec, selectedRecipe } = this.state;
     let { loading } = this.props;
     loading = typeof loading === 'boolean' ? loading : true;
+
+    let totalCost = loading ? 0 : this.getTotalCost(cakeDetail.recipes[selectedRecipe]);
 
     const action = (
       <Fragment>
@@ -94,7 +103,7 @@ export default class CakeDetail extends Component {
       <Skeleton active paragraph={false} loading={loading}>
         <Fragment>
           <Dropdown overlay={menu} trigger={['click']}>
-            <span>{cakeDetail.name}</span>
+            <span>{!loading && cakeDetail.name}</span>
           </Dropdown>
           <a style={{ marginLeft: 10 }}>
             <Icon type="edit" />
@@ -103,47 +112,45 @@ export default class CakeDetail extends Component {
       </Skeleton>
     );
 
-    const extra = !loading ? (
+    const extra = loading ? null : (
       <Row>
         <Col xs={24} sm={12}>
           <div className={styles.textSecondary}>成本</div>
-          <div className={styles.heading}>¥ 30-30</div>
+          <div className={styles.heading}>¥ {totalCost}</div>
         </Col>
         <Col xs={24} sm={12}>
           <div className={styles.textSecondary}>售价</div>
           <div className={styles.heading}>¥ {cakeDetail.recipes[selectedRecipe].price}</div>
         </Col>
       </Row>
-    ) : null;
+    );
 
     const description = (
       <Skeleton active loading={loading} title={false} className={styles.headerList}>
-        <DescriptionList size="small" col="1">
-          <DescriptionList.Description term="甜品类型">
-            {cakeDetail.type}
-            <a style={{ marginLeft: 10 }}>
-              <Icon type="edit" />
-            </a>
-          </DescriptionList.Description>
-          <DescriptionList.Description term="口味">
-            {!loading && (
+        {!loading && (
+          <DescriptionList size="small" col="1">
+            <DescriptionList.Description term="甜品类型">
+              {cakeDetail.type}
+              <a style={{ marginLeft: 10 }}>
+                <Icon type="edit" />
+              </a>
+            </DescriptionList.Description>
+            <DescriptionList.Description term="口味">
               <RadioTag.Group
                 defaultValue={selectedTaste}
                 dataSource={cakeDetail.tastes}
                 onChange={this.onTasteChange}
               />
-            )}
-          </DescriptionList.Description>
-          <DescriptionList.Description term="规格">
-            {!loading && (
+            </DescriptionList.Description>
+            <DescriptionList.Description term="规格">
               <RadioTag.Group
                 defaultValue={selectedSpec}
                 dataSource={cakeDetail.specs}
                 onChange={this.onSpecChange}
               />
-            )}
-          </DescriptionList.Description>
-        </DescriptionList>
+            </DescriptionList.Description>
+          </DescriptionList>
+        )}
       </Skeleton>
     );
 

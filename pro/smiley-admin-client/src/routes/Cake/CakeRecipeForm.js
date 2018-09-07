@@ -220,6 +220,10 @@ export default class CakeRecipeForm extends PureComponent {
         target.editable = true;
       } else {
         delete target.editable;
+        const { onChange } = this.props;
+        if (onChange) {
+          onChange(this.state.name, newMaterials);
+        }
       }
       this.setState({ materials: newMaterials });
     }
@@ -255,10 +259,6 @@ export default class CakeRecipeForm extends PureComponent {
       }
       delete target.isNew;
       this.toggleEditable(e, index);
-      const { onChange } = this.props;
-      if (onChange) {
-        onChange(name, materials);
-      }
       this.setState({
         loading: false,
       });

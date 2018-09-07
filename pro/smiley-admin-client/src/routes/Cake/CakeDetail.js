@@ -14,6 +14,8 @@ import CakeRecipeForm from './CakeRecipeForm';
   loading: loading.effects['cakes/fetchCakeDetail'] || loading.effects['materials/fetchMaterials'],
 }))
 export default class CakeDetail extends PureComponent {
+  newRecipeItemId = 0;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -57,6 +59,7 @@ export default class CakeDetail extends PureComponent {
         return;
       }
     });
+    this.newRecipeItemId = cakeDetail.recipes[selectedRecipe].detail.length;
     this.setState({
       selectedTaste,
       selectedSpec,
@@ -65,9 +68,27 @@ export default class CakeDetail extends PureComponent {
     });
   }
 
-  deleteRecipe = id => {
-    const { recipes, selectedRecipe } = this.state;
-    const newRecipes = recipes.map(recipe => ({ ...recipe }));
+  copyRecipes = () => {
+    const { recipes } = this.state;
+    return recipes.map(recipe => ({ ...recipe }));
+  };
+
+  addRecipeItem = () => {
+    const { selectedRecipe } = this.state;
+    const newRecipes = this.copyRecipes();
+    newRecipes[selectedRecipe].detail.unshift({
+      id: this.newRecipeItemId++,
+      name: '新配方',
+      materials: [],
+    });
+    this.setState({
+      recipes: newRecipes,
+    });
+  };
+
+  deleteRecipeItem = id => {
+    const { selectedRecipe } = this.state;
+    const newRecipes = this.copyRecipes();
     newRecipes[selectedRecipe].detail = newRecipes[selectedRecipe].detail.filter(
       recipe => id !== recipe.id
     );
@@ -85,7 +106,13 @@ export default class CakeDetail extends PureComponent {
   };
 
   onMaterialsChange = (name, materials, index) => {
-    console.log(index, name, materials);
+    const { selectedRecipe } = this.state;
+    const newRecipes = this.copyRecipes();
+    newRecipes[selectedRecipe].detail[index].name = name;
+    newRecipes[selectedRecipe].detail[index].materials = materials;
+    this.setState({
+      recipes: newRecipes,
+    });
   };
 
   getTotalCost = () => {
@@ -128,7 +155,7 @@ export default class CakeDetail extends PureComponent {
 
     const recipeExtra = loading ? null : (
       <Fragment>
-        <Button icon="plus" className={styles.addRecipe}>
+        <Button icon="plus" className={styles.addRecipeItem} onClick={this.addRecipeItem}>
           添加配方
         </Button>
         <Button icon="download">导入配方</Button>
@@ -214,7 +241,7 @@ export default class CakeDetail extends PureComponent {
                       onChange={(name, materials) => {
                         this.onMaterialsChange(name, materials, index);
                       }}
-                      deleteRecipe={() => this.deleteRecipe(recipe.id)}
+                      deleteRecipe={() => this.deleteRecipeItem(recipe.id)}
                     />
                   </Card.Grid>
                 );

@@ -10,7 +10,6 @@ export default class CakeRecipeForm extends PureComponent {
     {
       title: '名称',
       dataIndex: 'name',
-      key: 'name',
       width: '25%',
       render: (text, record, index) => {
         const { allMaterials } = this.state;
@@ -22,7 +21,7 @@ export default class CakeRecipeForm extends PureComponent {
             placeholder="选择原料"
             optionFilterProp="children"
             defaultValue={record.id}
-            onChange={value => this.onMaterialChange(value, record.id)}
+            onChange={value => this.onMaterialChange(value, index)}
             filterOption={(input, option) =>
               option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
             }
@@ -44,11 +43,10 @@ export default class CakeRecipeForm extends PureComponent {
     {
       title: '数量',
       dataIndex: 'quantity',
-      key: 'quantity',
       width: '25%',
       render: (text, record, index) => {
         return record.editable ? (
-          <Input value={text} onChange={e => this.onQuantityChange(e, 'quantity', record.id)} />
+          <Input value={text} onChange={e => this.onQuantityChange(e, index)} />
         ) : (
           text + record.unit
         );
@@ -57,7 +55,6 @@ export default class CakeRecipeForm extends PureComponent {
     {
       title: '单价',
       dataIndex: 'price',
-      key: 'price',
       width: '25%',
       render: text => '¥ ' + text,
     },
@@ -73,9 +70,9 @@ export default class CakeRecipeForm extends PureComponent {
           if (record.isNew) {
             return (
               <span>
-                <a onClick={e => this.saveRow(e, record.id)}>添加</a>
+                <a onClick={e => this.saveRow(e, index)}>添加</a>
                 <Divider type="vertical" />
-                <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.id)}>
+                <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(index)}>
                   <a>删除</a>
                 </Popconfirm>
               </span>
@@ -83,17 +80,17 @@ export default class CakeRecipeForm extends PureComponent {
           }
           return (
             <span>
-              <a onClick={e => this.saveRow(e, record.id)}>保存</a>
+              <a onClick={e => this.saveRow(e, index)}>保存</a>
               <Divider type="vertical" />
-              <a onClick={e => this.cancel(e, record.id)}>取消</a>
+              <a onClick={e => this.cancel(e, index)}>取消</a>
             </span>
           );
         }
         return (
           <span>
-            <a onClick={e => this.toggleEditable(e, record.id)}>编辑</a>
+            <a onClick={e => this.toggleEditable(e, index)}>编辑</a>
             <Divider type="vertical" />
-            <Popconfirm title="确定删除嘛?~" onConfirm={() => this.remove(record.id)}>
+            <Popconfirm title="确定删除嘛?~" onConfirm={() => this.remove(index)}>
               <a>删除</a>
             </Popconfirm>
           </span>
@@ -113,6 +110,31 @@ export default class CakeRecipeForm extends PureComponent {
       editingRecipeName: false,
     };
   }
+
+  copyMaterials = () => {
+    const { materials } = this.state;
+    return materials.map(material => ({ ...material }));
+  };
+
+  getRowByIndex = (index, materials) => {
+    return materials.filter((material, i) => i === index)[0];
+  };
+
+  getMaterialById = id => {
+    const { allMaterials } = this.state;
+    return allMaterials.filter(material => material.id === id)[0];
+  };
+
+  getExistingMaterials = () => {
+    let { materials } = this.state;
+    return materials.map(material => material.id);
+  };
+
+  getAvailableMaterials = () => {
+    let { allMaterials } = this.state;
+    let existingMaterials = this.getExistingMaterials();
+    return allMaterials.filter(material => !existingMaterials.includes(material.id));
+  };
 
   // Recipe Name Operation
   onRecipeNameChange = e => {
@@ -148,25 +170,13 @@ export default class CakeRecipeForm extends PureComponent {
   };
 
   // Materials Operation
-  getExistingMaterials = () => {
-    let { materials } = this.state;
-    return materials.map(material => material.id);
-  };
-
-  getAvailableMaterials = () => {
-    let { allMaterials } = this.state;
-    let existingMaterials = this.getExistingMaterials();
-    return allMaterials.filter(material => !existingMaterials.includes(material.id));
-  };
-
   newMaterial = () => {
     let availableMaterials = this.getAvailableMaterials();
     if (availableMaterials.length === 0) {
       message.info('所有原料都在列表里了哦!');
       return;
     }
-    const { materials } = this.state;
-    const newMaterials = materials.map(material => ({ ...material }));
+    const newMaterials = this.copyMaterials();
     newMaterials.push({
       ...availableMaterials[0],
       quantity: 0,
@@ -177,42 +187,31 @@ export default class CakeRecipeForm extends PureComponent {
     this.setState({ materials: newMaterials });
   };
 
-  getRowById = (id, newMaterials) => {
-    const { materials } = this.state;
-    return (newMaterials || materials).filter(material => material.id === id)[0];
-  };
-
-  getMaterialById = id => {
-    const { allMaterials } = this.state;
-    return allMaterials.filter(material => material.id === id)[0];
-  };
-
-  toggleEditable = (e, id) => {
+  toggleEditable = (e, index) => {
     e.preventDefault();
-    const { materials } = this.state;
-    const newMaterials = materials.map(material => ({ ...material }));
-    const target = this.getRowById(id, newMaterials);
+    const newMaterials = this.copyMaterials();
+    const target = this.getRowByIndex(index, newMaterials);
     if (target) {
       if (!target.editable) {
-        this.cacheOriginMaterials[id] = { ...target };
+        this.cacheOriginMaterials[index] = { ...target };
       }
       target.editable = !target.editable;
       this.setState({ materials: newMaterials });
     }
   };
 
-  remove = id => {
+  remove = index => {
     const { materials } = this.state;
-    const { onChange } = this.props;
-    const newMaterials = materials.filter(material => material.id !== id);
+    const newMaterials = materials.filter((material, i) => i !== index);
     this.setState({ materials: newMaterials });
+    const { onChange } = this.props;
     if (onChange) {
       onChange(newMaterials);
     }
   };
 
-  saveRow = (e, id) => {
-    const { onChange } = this.props;
+  saveRow = (e, index) => {
+    const { name, materials } = this.state;
     this.setState({
       loading: true,
     });
@@ -221,17 +220,17 @@ export default class CakeRecipeForm extends PureComponent {
         this.clickedCancel = false;
         return;
       }
-      const target = this.getRowById(id) || {};
-      if (!target.quantity || target.quantity <= 0) {
-        message.error('数量不能为空哦');
+      const target = this.getRowByIndex(index, materials) || {};
+      if (!target.name || !target.quantity || target.quantity <= 0) {
+        message.error('原料信息有误哦');
         this.setState({
           loading: false,
         });
         return;
       }
-      const { name, materials } = this.state;
       delete target.isNew;
-      this.toggleEditable(e, id);
+      this.toggleEditable(e, index);
+      const { onChange } = this.props;
       if (onChange) {
         onChange({ name, materials });
       }
@@ -241,39 +240,36 @@ export default class CakeRecipeForm extends PureComponent {
     }, 500);
   };
 
-  cancel(e, id) {
+  cancel = (e, index) => {
     this.clickedCancel = true;
     e.preventDefault();
-    const { materials } = this.state;
-    const newMaterials = materials.map(material => ({ ...material }));
-    const target = this.getRowById(id, newMaterials);
-    if (this.cacheOriginMaterials[id]) {
-      Object.assign(target, this.cacheOriginMaterials[id]);
+    const newMaterials = this.copyMaterials();
+    const target = this.getRowByIndex(index, newMaterials);
+    if (this.cacheOriginMaterials[index]) {
+      Object.assign(target, this.cacheOriginMaterials[index]);
       target.editable = false;
-      delete this.cacheOriginMaterials[id];
+      delete this.cacheOriginMaterials[index];
     }
     this.setState({ materials: newMaterials });
     this.clickedCancel = false;
-  }
+  };
 
-  onQuantityChange = (e, fieldName, id) => {
+  onQuantityChange = (e, index) => {
     if (e.target.value !== '' && !Number(e.target.value)) {
       return;
     }
-    const { materials } = this.state;
-    const newMaterials = materials.map(material => ({ ...material }));
-    const target = this.getRowById(id, newMaterials);
+    const newMaterials = this.copyMaterials();
+    const target = this.getRowByIndex(index, newMaterials);
     if (target) {
-      target[fieldName] = Number(e.target.value);
+      target.quantity = Number(e.target.value);
       this.setState({ materials: newMaterials });
     }
   };
 
-  onMaterialChange = (value, id) => {
-    const { materials } = this.state;
-    const newMaterials = materials.map(material => ({ ...material }));
-    const target = this.getRowById(id, newMaterials);
-    const material = this.getMaterialById(value, newMaterials);
+  onMaterialChange = (value, index) => {
+    const newMaterials = this.copyMaterials();
+    const target = this.getRowByIndex(index, newMaterials);
+    const material = this.getMaterialById(value);
     if (target) {
       target.id = material.id;
       target.name = material.name;

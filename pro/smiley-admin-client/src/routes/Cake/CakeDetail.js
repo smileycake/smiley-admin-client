@@ -89,7 +89,14 @@ export default class CakeDetail extends Component {
       </Fragment>
     );
 
-    const recipeExtra = <Button icon="download">导入配方</Button>;
+    const recipeExtra = (
+      <Fragment>
+        <Button icon="plus" className={styles.addRecipe}>
+          添加配方
+        </Button>
+        <Button icon="download">导入配方</Button>
+      </Fragment>
+    );
 
     const menu = (
       <Menu>
@@ -158,17 +165,18 @@ export default class CakeDetail extends Component {
       <PageHeaderLayout title={title} content={description} extraContent={extra} action={action}>
         <Card title="配方" className={styles.recipeCard} bordered={false} extra={recipeExtra}>
           <Skeleton active loading={loading} title={false}>
-            <Button type="dashed" icon="plus" className={styles.addRecipe}>
-              添加配方
-            </Button>
             {!loading &&
-              cakeDetail.recipes[selectedRecipe].detail.map(recipe => {
+              cakeDetail.recipes[selectedRecipe].detail.map((recipe, index) => {
                 return (
-                  <Card.Grid style={{ width: '100%', marginBottom: 24, padding: 0 }}>
+                  <Card.Grid style={{ width: '100%', marginBottom: 24, padding: 0 }} key={index}>
                     <CakeRecipeForm recipe={recipe} materials={materials.materials} />
                   </Card.Grid>
                 );
               })}
+            {!loading &&
+              cakeDetail.recipes[selectedRecipe].detail.length === 0 && (
+                <div className={styles.noData}>暂无配方...</div>
+              )}
           </Skeleton>
         </Card>
       </PageHeaderLayout>

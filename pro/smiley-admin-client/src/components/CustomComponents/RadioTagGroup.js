@@ -68,7 +68,12 @@ export default class RadioTagGroup extends Component {
     if (dataSource) {
       children = dataSource.map(tag => {
         return (
-          <RadioTag value={tag.id} onChange={this.onRadioChange} checked={tag.id === value}>
+          <RadioTag
+            value={tag.id}
+            onChange={this.onRadioChange}
+            checked={tag.id === value}
+            key={tag.id}
+          >
             {tag.name}
           </RadioTag>
         );

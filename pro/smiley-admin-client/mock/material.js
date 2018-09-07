@@ -6,28 +6,24 @@ export function fakeMaterials() {
       id: 1,
       name: '糖',
       price: 10,
-      quantity: 500,
       unit: '克',
     },
     {
       id: 2,
       name: '面粉',
       price: 5,
-      quantity: 600,
       unit: '克',
     },
     {
       id: 3,
       name: '牛奶',
       price: 5,
-      quantity: 600,
       unit: '克',
     },
     {
       id: 4,
       name: '乳酪',
       price: 5,
-      quantity: 600,
       unit: '克',
     },
   ];

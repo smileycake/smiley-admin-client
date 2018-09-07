@@ -349,9 +349,9 @@ export default class CakeRecipeForm extends PureComponent {
                   <Tooltip title="存为常用配方">
                     <Button icon="upload" shape="circle" onClick={this.saveRecipe} />
                   </Tooltip>
-                  <Tooltip title="删除此配方">
-                    <Button icon="delete" shape="circle" onClick={this.deleteRecipe} />
-                  </Tooltip>
+                  <Popconfirm title="是否要删除此配方？" onConfirm={this.deleteRecipe}>
+                    <Button icon="delete" shape="circle" />
+                  </Popconfirm>
                 </div>
               </div>
             );

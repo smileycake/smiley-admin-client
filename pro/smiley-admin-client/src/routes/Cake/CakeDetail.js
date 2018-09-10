@@ -28,7 +28,6 @@ export default class CakeDetail extends PureComponent {
       tastes: [],
       specs: [],
       recipes: [],
-      cakeDetail: {},
     };
   }
 
@@ -40,9 +39,23 @@ export default class CakeDetail extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { loading, cakeDetail } = nextProps;
+    const { loading, cakeDetail, defaultTaste, defaultSpec } = nextProps;
     if (!loading) {
-      this.updateSelectedRecipe(cakeDetail.tastes[0].id, cakeDetail.specs[0].id);
+      let selectedTaste = defaultTaste || cakeDetail.tastes[0].id;
+      let selectedSpec = defaultSpec || cakeDetail.specs[0].id;
+      let selectedRecipe = null;
+      cakeDetail.recipes.forEach((recipe, index) => {
+        if (recipe.tasteId === selectedTaste && recipe.specId === selectedSpec) {
+          selectedRecipe = index;
+        }
+      });
+      this.newRecipeItemId = cakeDetail.recipes[selectedRecipe].detail.length;
+      this.setState({
+        selectedTaste,
+        selectedSpec,
+        selectedRecipe,
+        ...cakeDetail,
+      });
     }
   }
 
@@ -51,20 +64,18 @@ export default class CakeDetail extends PureComponent {
   }
 
   updateSelectedRecipe(selectedTaste, selectedSpec) {
+    const { recipes } = this.state;
     let selectedRecipe = null;
-    const { cakeDetail } = this.props;
-    cakeDetail.recipes.forEach((recipe, index) => {
+    recipes.forEach((recipe, index) => {
       if (recipe.tasteId === selectedTaste && recipe.specId === selectedSpec) {
         selectedRecipe = index;
-        return;
       }
     });
-    this.newRecipeItemId = cakeDetail.recipes[selectedRecipe].detail.length;
+    this.newRecipeItemId = recipes[selectedRecipe].detail.length;
     this.setState({
       selectedTaste,
       selectedSpec,
       selectedRecipe,
-      ...cakeDetail,
     });
   }
 
@@ -147,9 +158,7 @@ export default class CakeDetail extends PureComponent {
 
     const action = (
       <Fragment>
-        <Button icon="save" type="primary">
-          保存
-        </Button>
+        <Button type="primary">保存</Button>
       </Fragment>
     );
 

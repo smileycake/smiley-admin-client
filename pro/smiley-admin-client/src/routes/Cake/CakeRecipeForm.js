@@ -322,15 +322,15 @@ export default class CakeRecipeForm extends PureComponent {
                     <Fragment>
                       <Input
                         style={{ width: 100 }}
+                        autoFocus
                         value={name}
                         onChange={this.onRecipeNameChange}
+                        onPressEnter={this.saveRecipeName}
+                        onKeyUp={e => {
+                          if (e.key === 'Escape') this.cancelEditRecipeName();
+                        }}
+                        onBlur={this.cancelEditRecipeName}
                       />
-                      <a onClick={this.saveRecipeName}>
-                        <Icon type="check" />
-                      </a>
-                      <a onClick={this.cancelEditRecipeName}>
-                        <Icon type="stop" />
-                      </a>
                     </Fragment>
                   )}
                   {!editingRecipeName && (

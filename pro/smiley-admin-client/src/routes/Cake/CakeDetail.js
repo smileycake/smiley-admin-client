@@ -1,7 +1,7 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'dva';
 import shallowEqual from 'shallowequal';
-import { Button, Dropdown, Icon, Row, Col, Card, Menu, Skeleton } from 'antd';
+import { Button, Icon, Input, Row, Col, Card, Skeleton } from 'antd';
 import DescriptionList from 'components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './CakeDetail.less';
@@ -13,8 +13,12 @@ import CakeRecipeForm from './CakeRecipeForm';
   materials,
   loading: loading.effects['cakes/fetchCakeDetail'] || loading.effects['materials/fetchMaterials'],
 }))
-export default class CakeDetail extends PureComponent {
+export default class CakeDetail extends Component {
   newRecipeItemId = 0;
+  newTasteId = 0;
+  newSpecId = 0;
+  cacheOriginName = null;
+  cacheOriginPrice = null;
 
   constructor(props) {
     super(props);
@@ -28,6 +32,8 @@ export default class CakeDetail extends PureComponent {
       tastes: [],
       specs: [],
       recipes: [],
+      editingName: false,
+      editingPrice: false,
     };
   }
 
@@ -50,6 +56,8 @@ export default class CakeDetail extends PureComponent {
         }
       });
       this.newRecipeItemId = cakeDetail.recipes[selectedRecipe].detail.length;
+      this.newTasteId = cakeDetail.tastes.length;
+      this.newSpecId = cakeDetail.specs.length;
       this.setState({
         selectedTaste,
         selectedSpec,
@@ -72,6 +80,8 @@ export default class CakeDetail extends PureComponent {
       }
     });
     this.newRecipeItemId = recipes[selectedRecipe].detail.length;
+    this.newTasteId = cakeDetail.tastes.length;
+    this.newSpecId = cakeDetail.specs.length;
     this.setState({
       selectedTaste,
       selectedSpec,
@@ -88,7 +98,7 @@ export default class CakeDetail extends PureComponent {
     const { selectedRecipe } = this.state;
     const newRecipes = this.copyRecipes();
     newRecipes[selectedRecipe].detail.unshift({
-      id: this.newRecipeItemId++,
+      id: ++this.newRecipeItemId,
       name: '新配方',
       materials: [],
     });
@@ -141,6 +151,87 @@ export default class CakeDetail extends PureComponent {
     return totalCost;
   };
 
+  onNameChange = e => {
+    this.setState({
+      name: e.target.value,
+    });
+  };
+
+  saveName = () => {
+    this.toggleEditName();
+  };
+
+  cancelEditName = () => {
+    this.setState({
+      editingName: false,
+      name: this.cacheOriginName,
+    });
+  };
+
+  toggleEditName = () => {
+    const { name, editingName } = this.state;
+    if (!editingName) {
+      this.cacheOriginName = name;
+    }
+    this.setState({
+      editingName: !editingName,
+    });
+  };
+
+  onPriceChange = e => {
+    if (e.target.value !== '' && !Number(e.target.value)) {
+      return;
+    }
+    const { selectedRecipe } = this.state;
+    const newRecipes = this.copyRecipes();
+    newRecipes[selectedRecipe].price = Number(e.target.value);
+    this.setState({
+      recipes: newRecipes,
+    });
+  };
+
+  savePrice = () => {
+    this.toggleEditPrice();
+  };
+
+  cancelEditPrice = () => {
+    const { selectedRecipe } = this.state;
+    const newRecipes = this.copyRecipes();
+    newRecipes[selectedRecipe].price = this.cacheOriginPrice;
+    this.setState({
+      editingPrice: false,
+      recipes: newRecipes,
+    });
+  };
+
+  toggleEditPrice = () => {
+    const { recipes, selectedRecipe, editingPrice } = this.state;
+    if (!editingPrice) {
+      this.cacheOriginPrice = recipes[selectedRecipe].price;
+    }
+    this.setState({
+      editingPrice: !editingPrice,
+    });
+  };
+
+  onAddNewTaste = taste => {
+    const { tastes } = this.state;
+    const newTastes = tastes.map(taste => ({ ...taste }));
+    newTastes.push({ id: ++this.newTasteId, name: taste });
+    this.setState({
+      tastes: newTastes,
+    });
+  };
+
+  onAddNewSpec = spec => {
+    const { specs } = this.state;
+    const newSpecs = specs.map(spec => ({ ...spec }));
+    newSpecs.push({ id: ++this.newSpecId, name: spec });
+    this.setState({
+      specs: newSpecs,
+    });
+  };
+
   render() {
     const { loading, materials } = this.props;
     const {
@@ -152,11 +243,13 @@ export default class CakeDetail extends PureComponent {
       tastes,
       specs,
       recipes,
+      editingName,
+      editingPrice,
     } = this.state;
 
     let totalCost = this.getTotalCost();
 
-    const action = (
+    const action = loading ? null : (
       <Fragment>
         <Button type="primary">保存</Button>
       </Fragment>
@@ -171,24 +264,29 @@ export default class CakeDetail extends PureComponent {
       </Fragment>
     );
 
-    const menu = (
-      <Menu>
-        <Menu.Item key="0">1st menu item</Menu.Item>
-        <Menu.Item key="1">2nd menu item</Menu.Item>
-        <Menu.Item key="3">3rd menu item</Menu.Item>
-      </Menu>
-    );
-
-    const title = (
+    const title = loading ? null : (
       <Skeleton active paragraph={false} loading={loading}>
-        <Fragment>
-          <Dropdown overlay={menu} trigger={['click']}>
-            <span>{!loading && name}</span>
-          </Dropdown>
-          <a style={{ marginLeft: 10 }}>
-            <Icon type="edit" />
-          </a>
-        </Fragment>
+        {editingName && (
+          <Input
+            style={{ width: 150 }}
+            autoFocus
+            value={name}
+            onChange={this.onNameChange}
+            onPressEnter={this.saveName}
+            onKeyUp={e => {
+              if (e.key === 'Escape') this.cancelEditName();
+            }}
+            onBlur={this.cancelEditName}
+          />
+        )}
+        {!editingName && (
+          <Fragment>
+            <span>{name}</span>
+            <a style={{ marginLeft: 10 }} onClick={this.toggleEditName}>
+              <Icon type="edit" />
+            </a>
+          </Fragment>
+        )}
       </Skeleton>
     );
 
@@ -200,7 +298,29 @@ export default class CakeDetail extends PureComponent {
         </Col>
         <Col xs={24} sm={12}>
           <div className={styles.textSecondary}>售价</div>
-          <div className={styles.heading}>¥ {recipes[selectedRecipe].price}</div>
+          <div className={styles.heading}>
+            {editingPrice && (
+              <Input
+                style={{ width: 75 }}
+                autoFocus
+                value={recipes[selectedRecipe].price}
+                onChange={this.onPriceChange}
+                onPressEnter={this.savePrice}
+                onKeyUp={e => {
+                  if (e.key === 'Escape') this.cancelEditPrice();
+                }}
+                onBlur={this.cancelEditPrice}
+              />
+            )}
+            {!editingPrice && (
+              <Fragment>
+                ¥ {recipes[selectedRecipe].price}
+                <a style={{ marginLeft: 10 }} onClick={this.toggleEditPrice}>
+                  <Icon type="edit" />
+                </a>
+              </Fragment>
+            )}
+          </div>
         </Col>
       </Row>
     );
@@ -220,6 +340,7 @@ export default class CakeDetail extends PureComponent {
                 defaultValue={selectedTaste}
                 dataSource={tastes}
                 onChange={this.onTasteChange}
+                onAddTag={this.onAddNewTaste}
                 newTagPlaceholder="新口味"
               />
             </DescriptionList.Description>
@@ -228,6 +349,7 @@ export default class CakeDetail extends PureComponent {
                 defaultValue={selectedSpec}
                 dataSource={specs}
                 onChange={this.onSpecChange}
+                onAddTag={this.onAddNewSpec}
                 newTagPlaceholder="新规格"
               />
             </DescriptionList.Description>

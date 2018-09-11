@@ -18,11 +18,11 @@ export default class RadioTagGroup extends Component {
   constructor(props) {
     super(props);
     let value;
-    const { children } = this.props;
+    const { children, defaultValue, dataSource } = this.props;
     if (this.props.value) {
       value = this.props.value;
-    } else if (this.props.defaultValue) {
-      value = this.props.defaultValue;
+    } else if (defaultValue) {
+      value = defaultValue;
     } else {
       const checkedValue = getCheckedValue(children);
       value = checkedValue && checkedValue.value;
@@ -31,7 +31,27 @@ export default class RadioTagGroup extends Component {
       inputVisible: false,
       inputValue: '',
       value,
+      dataSource,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    let value;
+    const { children, defaultValue, dataSource } = nextProps;
+    if (nextProps.value) {
+      value = nextProps.value;
+    } else if (defaultValue) {
+      value = defaultValue;
+    } else {
+      const checkedValue = getCheckedValue(children);
+      value = checkedValue && checkedValue.value;
+    }
+    this.setState({
+      inputVisible: false,
+      inputValue: '',
+      value,
+      dataSource,
+    });
   }
 
   onRadioChange = value => {
@@ -55,7 +75,15 @@ export default class RadioTagGroup extends Component {
     this.setState({ inputValue: e.target.value });
   };
 
-  handleInputConfirm = () => {
+  confirmInput = () => {
+    const { onAddTag } = this.props;
+    if (onAddTag) {
+      onAddTag(this.input.props.value);
+    }
+    this.cancelInput();
+  };
+
+  cancelInput = () => {
     this.setState({
       inputVisible: false,
       inputValue: '',
@@ -63,8 +91,8 @@ export default class RadioTagGroup extends Component {
   };
 
   render() {
-    let { children, dataSource, newTagPlaceholder } = this.props;
-    const { inputValue, inputVisible, value } = this.state;
+    let { children, newTagPlaceholder } = this.props;
+    const { inputValue, inputVisible, value, dataSource } = this.state;
     if (dataSource) {
       children = dataSource.map(tag => {
         return (
@@ -90,8 +118,11 @@ export default class RadioTagGroup extends Component {
             style={{ width: 78 }}
             value={inputValue}
             onChange={this.handleInputChange}
-            onBlur={this.handleInputConfirm}
-            onPressEnter={this.handleInputConfirm}
+            onBlur={this.cancelInput}
+            onPressEnter={this.confirmInput}
+            onKeyUp={e => {
+              if (e.key === 'Escape') this.cancelInput();
+            }}
           />
         )}
         {!inputVisible && (

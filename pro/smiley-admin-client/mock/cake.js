@@ -5,34 +5,66 @@ export function fakeCakes() {
   list.push({
     cakeId: 1,
     name: '爆浆海盐奶盖',
-    cover:
-      'http://qcloud.dpfile.com/pc/P9hJ81LgvlUB8tynC8-nNh5RjTKNZLgBTIE6NSjUsrRouI64PLnDNyiI08ZHM8ZfjoJrvItByyS4HHaWdXyO_DrXIaWutJls2xCVbatkhjUNNiIYVnHvzugZCuBITtvjski7YaLlHpkrQUr5euoQrg.jpg',
+    type: '奶油蛋糕',
+    tastes: [
+      {
+        id: 1,
+        name: '巧克力',
+      },
+      {
+        id: 2,
+        name: '抹茶',
+      },
+    ],
+    specs: [
+      {
+        id: 1,
+        name: '6寸',
+      },
+      {
+        id: 2,
+        name: '6寸 + 装饰',
+      },
+    ],
     prices: [
       {
-        taste: '巧克力',
-        spec: '6寸',
+        tasteId: 1,
+        specId: 1,
         price: 98,
       },
       {
-        taste: '巧克力',
-        spec: '6寸 + 装饰',
+        tasteId: 1,
+        specId: 2,
         price: 113,
       },
       {
-        taste: '抹茶',
-        spec: '6寸',
-        price: 98,
+        tasteId: 2,
+        specId: 1,
+        price: 118,
       },
       {
-        taste: '抹茶',
-        spec: '6寸 + 装饰',
-        price: 115,
+        tasteId: 2,
+        specId: 2,
+        price: 133,
       },
     ],
   });
   list.push({
     cakeId: 2,
     name: '蓝朋友的心',
+    type: '慕斯',
+    tastes: [
+      {
+        id: 1,
+        name: '巧克力',
+      },
+    ],
+    specs: [
+      {
+        id: 1,
+        name: '常规',
+      },
+    ],
     prices: [
       {
         taste: '巧克力',

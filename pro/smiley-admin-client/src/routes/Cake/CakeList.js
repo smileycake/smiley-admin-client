@@ -1,86 +1,54 @@
-import React, { PureComponent, createElement } from 'react';
+import React, { PureComponent } from 'react';
+import moment from 'moment';
 import { connect } from 'dva';
 import { routerRedux, Route, Switch, Redirect } from 'dva/router';
-import { Button, Row, Col, Form, Card, Select, List, Tag, Icon, Input } from 'antd';
-
-import StandardFormRow from 'components/StandardFormRow';
-
+import { List, Card, Input, Button } from 'antd';
+import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './CakeList.less';
 import { getRoutes } from '../../utils/utils';
 
-/* eslint react/no-array-index-key: 0 */
-@Form.create()
+const { Search } = Input;
+
 @connect(({ cakes, loading }) => ({
-  cakes,
-  loading: loading.models.cakes,
+  cakes: cakes.cakes,
+  loading: loading.effects['cakes/fetchCakes'],
 }))
 export default class CakeList extends PureComponent {
-  componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'cakes/fetchCakes',
-    });
-  }
-
   handleCreateCake = () => {
     const { dispatch } = this.props;
     dispatch(routerRedux.push('/cake/list/cakeDetail'));
   };
 
-  render() {
-    const {
-      cakes: { cakes },
-      loading,
-      form,
-      match,
-      routerData,
-    } = this.props;
-    const { getFieldDecorator } = form;
-
-    const cardList = cakes ? (
-      <List
-        rowKey="id"
-        loading={loading}
-        grid={{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }}
-        dataSource={cakes}
-        renderItem={item => (
-          <List.Item>
-            <Card
-              className={styles.card}
-              hoverable
-              cover={
-                <div height={154}>
-                  <img
-                    alt={item.title}
-                    src={item.cover}
-                    style={{ maxWidth: '100%', wdith: 'auto', maxHeight: '100%', height: 'auto' }}
-                  />
-                </div>
-              }
-              actions={[<Icon type="delete" />]}
-            >
-              <Card.Meta title={<a>{item.name}</a>} />
-              {item.prices.map(price => {
-                return (
-                  <div className={styles.priceContent}>
-                    <span>
-                      {price.taste} / {price.spec}
-                    </span>
-                    <span>￥{price.price}</span>
-                  </div>
-                );
-              })}
-            </Card>
-          </List.Item>
-        )}
-      />
-    ) : null;
-
-    const formItemLayout = {
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 },
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'cakes/fetchCakes',
+      payload: {
+        count: 5,
       },
+    });
+  }
+
+  render() {
+    const { cakes, loading, match, routerData } = this.props;
+
+    const Info = ({ title, value, bordered }) => (
+      <div className={styles.headerInfo}>
+        <span>{title}</span>
+        <p>{value}</p>
+        {bordered && <em />}
+      </div>
+    );
+
+    const extraContent = (
+      <div className={styles.extraContent}>
+        <Search className={styles.extraContentSearch} placeholder="请输入" onSearch={() => ({})} />
+      </div>
+    );
+
+    const paginationProps = {
+      pageSize: 5,
+      total: 50,
     };
 
     return (
@@ -89,27 +57,55 @@ export default class CakeList extends PureComponent {
           <Route key={item.key} path={item.path} component={item.component} exact={item.exact} />
         ))}
         <>
-          <Card bordered={false}>
-            <Form layout="inline">
-              <StandardFormRow grid last>
-                <Row gutter={16} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Col lg={4} md={10} sm={10} xs={24}>
-                    <Button icon="plus" onClick={this.handleCreateCake}>
-                      添加
-                    </Button>
-                  </Col>
-                  <Col lg={8} md={10} sm={10} xs={24}>
-                    <Input.Search
-                      className={styles.search}
-                      placeholder="请输入"
-                      onSearch={() => ({})}
-                    />
-                  </Col>
-                </Row>
-              </StandardFormRow>
-            </Form>
-          </Card>
-          <div className={styles.cardList}>{cardList}</div>
+          <PageHeaderLayout>
+            <div className={styles.standardList}>
+              <Card
+                className={styles.listCard}
+                bordered={false}
+                style={{ marginTop: 24 }}
+                bodyStyle={{ padding: '0 32px 40px 32px' }}
+                extra={extraContent}
+              >
+                <Button
+                  type="dashed"
+                  style={{ width: '100%', marginBottom: 8 }}
+                  icon="plus"
+                  onClick={this.handleCreateCake}
+                >
+                  添加
+                </Button>
+                <List
+                  size="large"
+                  rowKey="id"
+                  loading={loading}
+                  pagination={paginationProps}
+                  dataSource={cakes}
+                  renderItem={item => (
+                    <List.Item actions={[<a>编辑</a>, <a>删除</a>]}>
+                      <List.Item.Meta
+                        title={<a href={item.href}>{item.name}</a>}
+                        description={item.subDescription}
+                      />
+                      <div className={styles.listContent}>
+                        <div className={styles.listContentItem} style={{ width: 100 }}>
+                          <span>价格</span>
+                          <p>0</p>
+                        </div>
+                        <div className={styles.listContentItem} style={{ width: 100 }}>
+                          <span>类型</span>
+                          <p>{item.type}</p>
+                        </div>
+                        <div className={styles.listContentItem}>
+                          <span>开始时间</span>
+                          <p>{moment(item.createdAt).format('YYYY-MM-DD HH:mm')}</p>
+                        </div>
+                      </div>
+                    </List.Item>
+                  )}
+                />
+              </Card>
+            </div>
+          </PageHeaderLayout>
         </>
       </Switch>
     );

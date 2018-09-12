@@ -9,13 +9,15 @@ export default class RadioTag extends React.Component {
 
   constructor(props) {
     super(props);
-    const { checked, value, label } = this.props;
+    const { checked, value, label, editable, closable } = this.props;
     this.state = {
       checked: checked ? checked : false,
       popupConfigVisible: false,
       editing: false,
       value,
       label,
+      editable: editable || false,
+      closable: closable || false,
     };
   }
 
@@ -25,6 +27,8 @@ export default class RadioTag extends React.Component {
         checked: nextProps.checked,
         value: nextProps.value,
         label: nextProps.label,
+        editable: nextProps.editable || false,
+        closable: nextProps.closable || false,
       });
     }
   }
@@ -100,11 +104,11 @@ export default class RadioTag extends React.Component {
 
   render() {
     const { children } = this.props;
-    const { checked, popupConfigVisible, editing, label } = this.state;
+    const { checked, popupConfigVisible, editing, label, editable, closable } = this.state;
     return (
       <Fragment>
         {!editing && (
-          <Tag closable={true} onClose={this.toggleVisible} color={checked ? '#108ee9' : null}>
+          <Tag closable={closable} onClose={this.toggleVisible} color={checked ? '#108ee9' : null}>
             <Popconfirm
               title="确定删除嘛?~"
               visible={popupConfigVisible}
@@ -113,7 +117,9 @@ export default class RadioTag extends React.Component {
             >
               <span style={{ display: 'inline-block' }} onClick={this.onClick}>
                 {label}
-                <Icon type="edit" style={{ marginLeft: 5 }} onClick={this.toggleEdit} />
+                {editable && (
+                  <Icon type="edit" style={{ marginLeft: 5 }} onClick={this.toggleEdit} />
+                )}
               </span>
             </Popconfirm>
           </Tag>

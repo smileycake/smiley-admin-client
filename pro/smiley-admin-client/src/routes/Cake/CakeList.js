@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import { routerRedux, Route, Switch, Redirect } from 'dva/router';
@@ -6,6 +6,7 @@ import { List, Card, Input, Button } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './CakeList.less';
 import { getRoutes } from '../../utils/utils';
+import RadioTag from '../../components/CustomComponents/RadioTag';
 
 const { Search } = Input;
 
@@ -84,7 +85,11 @@ export default class CakeList extends PureComponent {
                     <List.Item actions={[<a>编辑</a>, <a>删除</a>]}>
                       <List.Item.Meta
                         title={<a href={item.href}>{item.name}</a>}
-                        description={item.subDescription}
+                        description={
+                          <Fragment>
+                            <RadioTag.Group dataSource={item.tastes} />
+                          </Fragment>
+                        }
                       />
                       <div className={styles.listContent}>
                         <div className={styles.listContentItem} style={{ width: 100 }}>

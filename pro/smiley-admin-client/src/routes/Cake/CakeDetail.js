@@ -479,6 +479,9 @@ export default class CakeDetail extends Component {
                 onAddTag={this.onAddNewTaste}
                 onDeleteTag={this.onDeleteTaste}
                 onLabelChange={this.onTasteNameChange}
+                showNewTag
+                editable
+                closable
                 newTagPlaceholder="新口味"
               />
             </DescriptionList.Description>
@@ -490,6 +493,9 @@ export default class CakeDetail extends Component {
                 onAddTag={this.onAddNewSpec}
                 onDeleteTag={this.onDeleteSpec}
                 onLabelChange={this.onSpecNameChange}
+                showNewTag
+                editable
+                closable
                 newTagPlaceholder="新规格"
               />
             </DescriptionList.Description>

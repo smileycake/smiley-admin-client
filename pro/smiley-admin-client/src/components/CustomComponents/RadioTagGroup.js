@@ -18,7 +18,7 @@ export default class RadioTagGroup extends Component {
   constructor(props) {
     super(props);
     let value;
-    const { children, defaultValue, dataSource } = this.props;
+    const { children, defaultValue, dataSource, showNewTag, editable, closable } = this.props;
     if (this.props.value) {
       value = this.props.value;
     } else if (defaultValue) {
@@ -32,12 +32,15 @@ export default class RadioTagGroup extends Component {
       inputValue: '',
       value,
       dataSource,
+      showNewTag: showNewTag || false,
+      editable: editable || false,
+      closable: closable || false,
     };
   }
 
   componentWillReceiveProps(nextProps) {
     let value;
-    const { children, defaultValue, dataSource } = nextProps;
+    const { children, defaultValue, dataSource, showNewTag, editable, closable } = nextProps;
     if (nextProps.value) {
       value = nextProps.value;
     } else if (defaultValue) {
@@ -51,6 +54,9 @@ export default class RadioTagGroup extends Component {
       inputValue: '',
       value,
       dataSource,
+      showNewTag: showNewTag || false,
+      editable: editable || false,
+      closable: closable || false,
     });
   }
 
@@ -106,7 +112,15 @@ export default class RadioTagGroup extends Component {
 
   render() {
     let { children, newTagPlaceholder } = this.props;
-    const { inputValue, inputVisible, value, dataSource } = this.state;
+    const {
+      inputValue,
+      inputVisible,
+      value,
+      dataSource,
+      showNewTag,
+      editable,
+      closable,
+    } = this.state;
     if (dataSource) {
       children = dataSource.map(tag => {
         return (
@@ -118,6 +132,8 @@ export default class RadioTagGroup extends Component {
             onLabelChange={label => this.onLabelChange(tag.id, label)}
             checked={tag.id === value}
             key={tag.id}
+            editable={editable}
+            closable={closable}
           />
         );
       });
@@ -140,11 +156,12 @@ export default class RadioTagGroup extends Component {
             }}
           />
         )}
-        {!inputVisible && (
-          <Tag onClick={this.showInput} style={{ background: '#fff', borderStyle: 'dashed' }}>
-            <Icon type="plus" /> {newTagPlaceholder ? newTagPlaceholder : 'New Tag'}
-          </Tag>
-        )}
+        {showNewTag &&
+          !inputVisible && (
+            <Tag onClick={this.showInput} style={{ background: '#fff', borderStyle: 'dashed' }}>
+              <Icon type="plus" /> {newTagPlaceholder ? newTagPlaceholder : 'New Tag'}
+            </Tag>
+          )}
       </div>
     );
   }

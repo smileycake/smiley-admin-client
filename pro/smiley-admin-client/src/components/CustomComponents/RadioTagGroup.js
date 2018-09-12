@@ -65,6 +65,13 @@ export default class RadioTagGroup extends Component {
     }
   };
 
+  onDeleteTag = id => {
+    const { onDeleteTag } = this.props;
+    if (onDeleteTag) {
+      onDeleteTag(id);
+    }
+  };
+
   showInput = () => {
     this.setState({ inputVisible: true }, () => this.input.focus());
   };
@@ -90,6 +97,13 @@ export default class RadioTagGroup extends Component {
     });
   };
 
+  onLabelChange = (id, label) => {
+    const { onLabelChange } = this.props;
+    if (onLabelChange) {
+      onLabelChange(id, label);
+    }
+  };
+
   render() {
     let { children, newTagPlaceholder } = this.props;
     const { inputValue, inputVisible, value, dataSource } = this.state;
@@ -98,12 +112,13 @@ export default class RadioTagGroup extends Component {
         return (
           <RadioTag
             value={tag.id}
+            label={tag.name}
             onChange={this.onRadioChange}
+            onClose={() => this.onDeleteTag(tag.id)}
+            onLabelChange={label => this.onLabelChange(tag.id, label)}
             checked={tag.id === value}
             key={tag.id}
-          >
-            {tag.name}
-          </RadioTag>
+          />
         );
       });
     }

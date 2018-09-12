@@ -47,23 +47,12 @@ export default class CakeDetail extends Component {
   componentWillReceiveProps(nextProps) {
     const { loading, cakeDetail, defaultTaste, defaultSpec } = nextProps;
     if (!loading) {
-      let selectedTaste = defaultTaste || cakeDetail.tastes[0].id;
-      let selectedSpec = defaultSpec || cakeDetail.specs[0].id;
-      let selectedRecipe = null;
-      cakeDetail.recipes.forEach((recipe, index) => {
-        if (recipe.tasteId === selectedTaste && recipe.specId === selectedSpec) {
-          selectedRecipe = index;
-        }
-      });
-      this.newRecipeItemId = cakeDetail.recipes[selectedRecipe].detail.length;
-      this.newTasteId = cakeDetail.tastes.length;
-      this.newSpecId = cakeDetail.specs.length;
-      this.setState({
-        selectedTaste,
-        selectedSpec,
-        selectedRecipe,
-        ...cakeDetail,
-      });
+      this.setState(
+        {
+          ...cakeDetail,
+        },
+        () => this.updateSelectedRecipe()
+      );
     }
   }
 
@@ -72,16 +61,18 @@ export default class CakeDetail extends Component {
   }
 
   updateSelectedRecipe(selectedTaste, selectedSpec) {
-    const { recipes } = this.state;
+    const { tastes, specs, recipes } = this.state;
+    selectedTaste = selectedTaste || (tastes.length === 0 ? null : tastes[0].id);
+    selectedSpec = selectedSpec || (specs.length === 0 ? null : specs[0].id);
     let selectedRecipe = null;
     recipes.forEach((recipe, index) => {
       if (recipe.tasteId === selectedTaste && recipe.specId === selectedSpec) {
         selectedRecipe = index;
       }
     });
-    this.newRecipeItemId = recipes[selectedRecipe].detail.length;
-    this.newTasteId = cakeDetail.tastes.length;
-    this.newSpecId = cakeDetail.specs.length;
+    this.newRecipeItemId = recipes[selectedRecipe] ? recipes[selectedRecipe].detail.length : 0;
+    this.newTasteId = tastes.length;
+    this.newSpecId = specs.length;
     this.setState({
       selectedTaste,
       selectedSpec,
@@ -138,10 +129,10 @@ export default class CakeDetail extends Component {
 
   getTotalCost = () => {
     const { loading } = this.props;
-    if (loading) {
+    const { recipes, selectedRecipe } = this.state;
+    if (loading || !selectedRecipe) {
       return 0;
     }
-    const { recipes, selectedRecipe } = this.state;
     let totalCost = 0;
     recipes[selectedRecipe].detail.forEach(recipe => {
       recipe.materials.forEach(material => {
@@ -215,18 +206,90 @@ export default class CakeDetail extends Component {
   };
 
   onAddNewTaste = taste => {
-    const { tastes } = this.state;
+    const { tastes, specs } = this.state;
     const newTastes = tastes.map(taste => ({ ...taste }));
-    newTastes.push({ id: ++this.newTasteId, name: taste });
+    const id = ++this.newTasteId;
+    newTastes.push({ id, name: taste });
+    const newRecipes = this.copyRecipes();
+    specs.forEach(spec => {
+      newRecipes.push({
+        tasteId: id,
+        specId: spec.id,
+        price: 0,
+        detail: [],
+      });
+    });
+    this.setState({
+      tastes: newTastes,
+      recipes: newRecipes,
+    });
+  };
+
+  onDeleteTaste = id => {
+    const { tastes, specs, selectedTaste } = this.state;
+    const newTastes = tastes.filter(taste => taste.id != id);
+    this.setState(
+      {
+        tastes: newTastes,
+      },
+      () => {
+        if (id === selectedTaste) {
+          this.updateSelectedRecipe();
+        }
+      }
+    );
+  };
+
+  onAddNewSpec = spec => {
+    const { tastes, specs } = this.state;
+    const newSpecs = specs.map(spec => ({ ...spec }));
+    const id = ++this.newSpecId;
+    newSpecs.push({ id, name: spec });
+    const newRecipes = this.copyRecipes();
+    tastes.forEach(taste => {
+      newRecipes.push({
+        tasteId: taste.id,
+        specId: id,
+        price: 0,
+        detail: [],
+      });
+    });
+    this.setState({
+      specs: newSpecs,
+      recipes: newRecipes,
+    });
+  };
+
+  onDeleteSpec = id => {
+    const { tastes, specs, selectedSpec } = this.state;
+    const newSpecs = specs.filter(spec => spec.id != id);
+    this.setState(
+      {
+        specs: newSpecs,
+      },
+      () => {
+        if (id === selectedSpec) {
+          this.updateSelectedRecipe();
+        }
+      }
+    );
+  };
+
+  onTasteNameChange = (id, name) => {
+    const { tastes } = this.state;
+    const newTastes = tastes.map(taste => {
+      return taste.id === id ? { id, name } : { ...taste };
+    });
     this.setState({
       tastes: newTastes,
     });
   };
 
-  onAddNewSpec = spec => {
+  onSpecNameChange = (id, name) => {
     const { specs } = this.state;
-    const newSpecs = specs.map(spec => ({ ...spec }));
-    newSpecs.push({ id: ++this.newSpecId, name: spec });
+    const newSpecs = specs.map(spec => {
+      return spec.id === id ? { id, name } : { ...spec };
+    });
     this.setState({
       specs: newSpecs,
     });
@@ -251,16 +314,25 @@ export default class CakeDetail extends Component {
 
     const action = loading ? null : (
       <Fragment>
-        <Button type="primary">保存</Button>
+        <Button type="primary" disabled={selectedRecipe === null}>
+          保存
+        </Button>
       </Fragment>
     );
 
     const recipeExtra = loading ? null : (
       <Fragment>
-        <Button icon="plus" className={styles.addRecipeItem} onClick={this.addRecipeItem}>
+        <Button
+          icon="plus"
+          className={styles.addRecipeItem}
+          onClick={this.addRecipeItem}
+          disabled={selectedRecipe === null}
+        >
           添加配方
         </Button>
-        <Button icon="download">导入配方</Button>
+        <Button icon="download" disabled={selectedRecipe === null}>
+          导入配方
+        </Button>
       </Fragment>
     );
 
@@ -290,40 +362,43 @@ export default class CakeDetail extends Component {
       </Skeleton>
     );
 
-    const extra = loading ? null : (
-      <Row>
-        <Col xs={24} sm={12}>
-          <div className={styles.textSecondary}>成本</div>
-          <div className={styles.heading}>¥ {totalCost}</div>
-        </Col>
-        <Col xs={24} sm={12}>
-          <div className={styles.textSecondary}>售价</div>
-          <div className={styles.heading}>
-            {editingPrice && (
-              <Input
-                style={{ width: 75 }}
-                autoFocus
-                value={recipes[selectedRecipe].price}
-                onChange={this.onPriceChange}
-                onPressEnter={this.savePrice}
-                onKeyUp={e => {
-                  if (e.key === 'Escape') this.cancelEditPrice();
-                }}
-                onBlur={this.cancelEditPrice}
-              />
-            )}
-            {!editingPrice && (
-              <Fragment>
-                ¥ {recipes[selectedRecipe].price}
-                <a style={{ marginLeft: 10 }} onClick={this.toggleEditPrice}>
-                  <Icon type="edit" />
-                </a>
-              </Fragment>
-            )}
-          </div>
-        </Col>
-      </Row>
-    );
+    const extra =
+      loading || selectedRecipe === null ? null : (
+        <Row>
+          <Col xs={24} sm={12}>
+            <div className={styles.textSecondary}>成本</div>
+            <div className={styles.heading}>¥ {totalCost}</div>
+          </Col>
+          <Col xs={24} sm={12}>
+            <div className={styles.textSecondary}>售价</div>
+            <div className={styles.heading}>
+              {editingPrice && (
+                <Input
+                  style={{ width: 75 }}
+                  autoFocus
+                  value={recipes[selectedRecipe].price}
+                  onChange={this.onPriceChange}
+                  onPressEnter={this.savePrice}
+                  onKeyUp={e => {
+                    if (e.key === 'Escape') this.cancelEditPrice();
+                  }}
+                  onBlur={this.cancelEditPrice}
+                />
+              )}
+              {!editingPrice && (
+                <Fragment>
+                  ¥ {recipes[selectedRecipe].price}
+                  {selectedRecipe !== null && (
+                    <a style={{ marginLeft: 10 }} onClick={this.toggleEditPrice}>
+                      <Icon type="edit" />
+                    </a>
+                  )}
+                </Fragment>
+              )}
+            </div>
+          </Col>
+        </Row>
+      );
 
     const description = (
       <Skeleton active loading={loading} title={false} className={styles.headerList}>
@@ -341,6 +416,8 @@ export default class CakeDetail extends Component {
                 dataSource={tastes}
                 onChange={this.onTasteChange}
                 onAddTag={this.onAddNewTaste}
+                onDeleteTag={this.onDeleteTaste}
+                onLabelChange={this.onTasteNameChange}
                 newTagPlaceholder="新口味"
               />
             </DescriptionList.Description>
@@ -350,6 +427,8 @@ export default class CakeDetail extends Component {
                 dataSource={specs}
                 onChange={this.onSpecChange}
                 onAddTag={this.onAddNewSpec}
+                onDeleteTag={this.onDeleteSpec}
+                onLabelChange={this.onSpecNameChange}
                 newTagPlaceholder="新规格"
               />
             </DescriptionList.Description>
@@ -363,6 +442,7 @@ export default class CakeDetail extends Component {
         <Card title="配方" className={styles.recipeCard} bordered={false} extra={recipeExtra}>
           <Skeleton active loading={loading} title={false}>
             {!loading &&
+              selectedRecipe !== null &&
               recipes[selectedRecipe].detail.map((recipe, index) => {
                 return (
                   <Card.Grid style={{ width: '100%', marginBottom: 24, padding: 0 }} key={index}>
@@ -378,7 +458,7 @@ export default class CakeDetail extends Component {
                 );
               })}
             {!loading &&
-              recipes[selectedRecipe].detail.length === 0 && (
+              (selectedRecipe === null || recipes[selectedRecipe].detail.length === 0) && (
                 <div className={styles.noData}>暂无配方...</div>
               )}
           </Skeleton>

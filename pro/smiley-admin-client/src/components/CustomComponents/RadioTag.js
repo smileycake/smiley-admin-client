@@ -1,15 +1,21 @@
 import React from 'react';
-import { Tag } from 'antd';
+import { Icon, Input, Popconfirm, Tag } from 'antd';
 import RadioTagGroup from './RadioTagGroup';
+import { Fragment } from 'react';
 
 export default class RadioTag extends React.Component {
   static Group = RadioTagGroup;
+  cacheOriginLabel = null;
 
   constructor(props) {
     super(props);
-    const { checked } = this.props;
+    const { checked, value, label } = this.props;
     this.state = {
       checked: checked ? checked : false,
+      popupConfigVisible: false,
+      editing: false,
+      value,
+      label,
     };
   }
 
@@ -17,11 +23,14 @@ export default class RadioTag extends React.Component {
     if ('checked' in nextProps) {
       this.setState({
         checked: nextProps.checked,
+        value: nextProps.value,
+        label: nextProps.label,
       });
     }
   }
 
-  onClick = () => {
+  onClick = e => {
+    e.preventDefault();
     const lastChecked = this.state.checked;
     if (lastChecked) {
       return;
@@ -35,13 +44,96 @@ export default class RadioTag extends React.Component {
     }
   };
 
+  onDoubleClick = e => {
+    console.log(e);
+  };
+
+  afterClose = () => {
+    const { onClose } = this.props;
+    if (onClose) {
+      onClose();
+    }
+    this.toggleVisible();
+  };
+
+  toggleVisible = e => {
+    if (e) {
+      e.preventDefault();
+    }
+    const { popupConfigVisible } = this.state;
+    this.setState({
+      popupConfigVisible: !popupConfigVisible,
+    });
+  };
+
+  toggleEdit = () => {
+    const { editing, label } = this.state;
+    if (!editing) {
+      this.cacheOriginLabel = label;
+    }
+    this.setState({
+      editing: !editing,
+    });
+  };
+
+  cancelEdit = () => {
+    this.setState({
+      label: this.cacheOriginLabel,
+      editing: false,
+    });
+  };
+
+  onLabelChange = e => {
+    this.setState({
+      label: e.target.value,
+    });
+  };
+
+  onLabelChangeConfirm = () => {
+    const { onLabelChange } = this.props;
+    const { label } = this.state;
+    if (onLabelChange) {
+      onLabelChange(label);
+    }
+    this.toggleEdit();
+  };
+
   render() {
     const { children } = this.props;
-    const { checked } = this.state;
+    const { checked, popupConfigVisible, editing, label } = this.state;
     return (
-      <Tag closable={true} onClick={this.onClick} color={checked ? '#108ee9' : null}>
-        {children ? <span>{children}</span> : null}
-      </Tag>
+      <Fragment>
+        {!editing && (
+          <Tag closable={true} onClose={this.toggleVisible} color={checked ? '#108ee9' : null}>
+            <Popconfirm
+              title="确定删除嘛?~"
+              visible={popupConfigVisible}
+              onCancel={this.toggleVisible}
+              onConfirm={this.afterClose}
+            >
+              <span style={{ display: 'inline-block' }} onClick={this.onClick}>
+                {label}
+                <Icon type="edit" style={{ marginLeft: 5 }} onClick={this.toggleEdit} />
+              </span>
+            </Popconfirm>
+          </Tag>
+        )}
+        {editing && (
+          <Input
+            autoFocus
+            type="text"
+            size="small"
+            value={label}
+            style={{ width: 78 }}
+            onChange={this.onLabelChange}
+            onBlur={this.cancelEdit}
+            onPressEnter={this.onLabelChangeConfirm}
+            onKeyUp={e => {
+              if (e.key === 'Escape') this.cancelEdit();
+            }}
+          />
+        )}
+      </Fragment>
     );
   }
 }

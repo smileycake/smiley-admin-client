@@ -48,7 +48,10 @@ export function fakeCakeDetail() {
   const detail = {
     id: 1,
     name: '爆浆海盐奶盖',
-    type: '奶油蛋糕',
+    type: {
+      id: 1,
+      name: '奶油蛋糕',
+    },
     tastes: [
       {
         id: 1,
@@ -167,6 +170,19 @@ export function fakeCakeDetail() {
   return detail;
 }
 
+export function fakeCakeType() {
+  return [
+    {
+      id: 1,
+      name: '奶油蛋糕',
+    },
+    {
+      id: 2,
+      name: '慕斯',
+    },
+  ];
+}
+
 export function getCakes(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
@@ -205,7 +221,27 @@ export function getCakeDetail(req, res, u) {
   }
 }
 
+export function getCakeType(req, res, u) {
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    url = req.url; // eslint-disable-line
+  }
+
+  const params = parse(url, true).query;
+
+  const count = params.count * 1 || 20;
+
+  const result = fakeCakeType();
+
+  if (res && res.json) {
+    res.json(result);
+  } else {
+    return result;
+  }
+}
+
 export default {
   getCakes,
   getCakeDetail,
+  getCakeType,
 };

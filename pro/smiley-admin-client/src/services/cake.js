@@ -8,3 +8,7 @@ export async function queryCakes() {
 export async function queryCakeDetail() {
   return request('/api/cake/detail');
 }
+
+export async function queryCakeType() {
+  return request('/api/cake/type');
+}

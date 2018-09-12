@@ -7,7 +7,7 @@ import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
 import { format, delay } from 'roadhog-api-doc';
 import { getOrders } from './mock/order';
-import { getCakes, getCakeDetail } from './mock/cake';
+import { getCakes, getCakeDetail, getCakeType } from './mock/cake';
 import { getMaterials } from './mock/material';
 
 // 是否禁用代理
@@ -18,6 +18,7 @@ const proxy = {
   'GET /api/materials': getMaterials,
   'GET /api/cake/list': getCakes,
   'GET /api/cake/detail': getCakeDetail,
+  'GET /api/cake/type': getCakeType,
   'GET /api/orders': getOrders,
   // 支持值为 Object 和 Array
   'GET /api/currentUser': {

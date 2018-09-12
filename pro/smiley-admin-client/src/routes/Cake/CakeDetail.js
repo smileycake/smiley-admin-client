@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'dva';
 import shallowEqual from 'shallowequal';
-import { Button, Icon, Input, Row, Col, Card, Skeleton } from 'antd';
+import { Button, Icon, Input, Row, Col, Card, Select, Skeleton } from 'antd';
 import DescriptionList from 'components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './CakeDetail.less';
@@ -10,8 +10,12 @@ import CakeRecipeForm from './CakeRecipeForm';
 
 @connect(({ materials, cakes, loading }) => ({
   cakeDetail: cakes.cakeDetail,
+  cakeType: cakes.cakeType,
   materials,
-  loading: loading.effects['cakes/fetchCakeDetail'] || loading.effects['materials/fetchMaterials'],
+  loading:
+    loading.effects['cakes/fetchCakeDetail'] ||
+    loading.effects['materials/fetchMaterials'] ||
+    loading.effects['cakes/fetchCakeType'],
 }))
 export default class CakeDetail extends Component {
   newRecipeItemId = 0;
@@ -19,6 +23,7 @@ export default class CakeDetail extends Component {
   newSpecId = 0;
   cacheOriginName = null;
   cacheOriginPrice = null;
+  cacheOriginType = null;
 
   constructor(props) {
     super(props);
@@ -34,6 +39,7 @@ export default class CakeDetail extends Component {
       recipes: [],
       editingName: false,
       editingPrice: false,
+      editingType: false,
     };
   }
 
@@ -295,8 +301,38 @@ export default class CakeDetail extends Component {
     });
   };
 
+  cancelEditType = () => {
+    const { type, editingType } = this.state;
+    this.setState({
+      type: this.cacheOriginType,
+      editingType: !editingType,
+    });
+  };
+
+  onCakeTypeConfirm = () => {
+    this.toggleEditType();
+  };
+
+  onChangeCakeType = id => {
+    const { cakeType } = this.props;
+    const newType = cakeType.filter(type => type.id === id)[0];
+    this.setState({
+      type: newType,
+    });
+  };
+
+  toggleEditType = () => {
+    const { editingType, type } = this.state;
+    if (!editingType) {
+      this.cacheOriginType = type;
+    }
+    this.setState({
+      editingType: !editingType,
+    });
+  };
+
   render() {
-    const { loading, materials } = this.props;
+    const { loading, materials, cakeType } = this.props;
     const {
       selectedTaste,
       selectedSpec,
@@ -308,6 +344,7 @@ export default class CakeDetail extends Component {
       recipes,
       editingName,
       editingPrice,
+      editingType,
     } = this.state;
 
     let totalCost = this.getTotalCost();
@@ -405,10 +442,34 @@ export default class CakeDetail extends Component {
         {!loading && (
           <DescriptionList size="small" col="1">
             <DescriptionList.Description term="甜品类型">
-              {type}
-              <a style={{ marginLeft: 10 }}>
-                <Icon type="edit" />
-              </a>
+              {!editingType && (
+                <Fragment>
+                  {type.name}
+                  <a style={{ marginLeft: 10 }} onClick={this.toggleEditType}>
+                    <Icon type="edit" />
+                  </a>
+                </Fragment>
+              )}
+              {editingType && (
+                <Fragment>
+                  <Select
+                    size="small"
+                    style={{ width: 100 }}
+                    defaultValue={type.id}
+                    onSelect={this.onChangeCakeType}
+                  >
+                    {cakeType.map(type => {
+                      return <Select.Option value={type.id}>{type.name}</Select.Option>;
+                    })}
+                  </Select>
+                  <a style={{ marginLeft: 10 }} onClick={this.cancelEditType}>
+                    <Icon type="stop" />
+                  </a>
+                  <a style={{ marginLeft: 10 }} onClick={this.onCakeTypeConfirm}>
+                    <Icon type="check" />
+                  </a>
+                </Fragment>
+              )}
             </DescriptionList.Description>
             <DescriptionList.Description term="口味">
               <RadioTag.Group

@@ -1,4 +1,4 @@
-import { queryCakes, queryCakeDetail } from '../services/cake';
+import { queryCakes, queryCakeDetail, queryCakeType } from '../services/cake';
 
 export default {
   namespace: 'cakes',
@@ -6,6 +6,7 @@ export default {
   state: {
     cakes: [],
     cakeDetail: null,
+    cakeType: [],
   },
 
   effects: {
@@ -24,6 +25,14 @@ export default {
         payload: response,
       });
     },
+
+    *fetchCakeType({ payload }, { call, put }) {
+      const response = yield call(queryCakeType, payload);
+      yield put({
+        type: 'queryCakeType',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -37,6 +46,12 @@ export default {
       return {
         ...state,
         cakeDetail: action.payload,
+      };
+    },
+    queryCakeType(state, action) {
+      return {
+        ...state,
+        cakeType: action.payload,
       };
     },
     resetCakeDetail(state) {
@@ -53,6 +68,9 @@ export default {
         if (pathname === '/cake/list/cakeDetail') {
           dispatch({
             type: 'fetchCakeDetail',
+          });
+          dispatch({
+            type: 'fetchCakeType',
           });
         }
       });

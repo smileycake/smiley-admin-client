@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Tag, Icon, Input } from 'antd';
 import RadioTag from './RadioTag';
+import styles from './RadioTagGroup.less';
 
 const getCheckedValue = children => {
   let value = null;
@@ -17,7 +18,7 @@ const getCheckedValue = children => {
 export default class RadioTagGroup extends Component {
   constructor(props) {
     super(props);
-    let value;
+    let value = null;
     const { children, defaultValue, dataSource, showNewTag, editable, closable } = this.props;
     if (this.props.value) {
       value = this.props.value;
@@ -39,7 +40,7 @@ export default class RadioTagGroup extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    let value;
+    let value = null;
     const { children, defaultValue, dataSource, showNewTag, editable, closable } = nextProps;
     if (nextProps.value) {
       value = nextProps.value;
@@ -63,10 +64,12 @@ export default class RadioTagGroup extends Component {
   onRadioChange = value => {
     const lastValue = this.state.value;
     const { onChange } = this.props;
-    if (onChange && value !== lastValue) {
+    if (value !== lastValue) {
       this.setState({
         value,
       });
+    }
+    if (onChange) {
       onChange(value);
     }
   };
@@ -122,9 +125,10 @@ export default class RadioTagGroup extends Component {
       closable,
     } = this.state;
     if (dataSource) {
-      children = dataSource.map(tag => {
+      children = dataSource.map((tag, index) => {
         return (
           <RadioTag
+            className={index === dataSource.length - 1 && !showNewTag ? styles.lastTag : null}
             value={tag.id}
             label={tag.name}
             onChange={this.onRadioChange}

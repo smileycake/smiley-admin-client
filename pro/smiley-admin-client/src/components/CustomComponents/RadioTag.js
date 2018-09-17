@@ -103,12 +103,17 @@ export default class RadioTag extends React.Component {
   };
 
   render() {
-    const { children } = this.props;
+    const { className } = this.props;
     const { checked, popupConfigVisible, editing, label, editable, closable } = this.state;
     return (
       <Fragment>
         {!editing && (
-          <Tag closable={closable} onClose={this.toggleVisible} color={checked ? '#108ee9' : null}>
+          <Tag
+            className={className}
+            closable={closable}
+            onClose={this.toggleVisible}
+            color={checked ? '#108ee9' : null}
+          >
             <Popconfirm
               title="确定删除嘛?~"
               visible={popupConfigVisible}

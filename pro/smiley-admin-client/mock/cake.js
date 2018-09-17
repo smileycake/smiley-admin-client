@@ -25,14 +25,6 @@ export function fakeCakes() {
         id: 2,
         name: '6寸 + 装饰',
       },
-      {
-        id: 3,
-        name: '8寸',
-      },
-      {
-        id: 4,
-        name: '8寸 + 装饰',
-      },
     ],
     prices: [
       {
@@ -75,8 +67,8 @@ export function fakeCakes() {
     ],
     prices: [
       {
-        taste: '巧克力',
-        spec: '常规',
+        tasteId: 1,
+        specId: 1,
         price: 38,
       },
     ],

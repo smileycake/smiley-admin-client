@@ -1,18 +1,16 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import { routerRedux, Route, Switch } from 'dva/router';
-import { Card, Form, Input, Button, Table, message } from 'antd';
+import { Card, Input, Button, Table, Popconfirm, message } from 'antd';
 import shallowEqual from 'shallowequal';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { getRoutes } from '../../utils/utils';
-import styles from './CakeList.less';
 import RadioTag from '../../components/CustomComponents/RadioTag';
 
 @connect(({ cakes, loading }) => ({
   cakes: cakes.cakes,
   loading: loading.effects['cakes/fetchCakes'],
 }))
-@Form.create()
 export default class CakeList extends React.Component {
   state = {
     formValues: {},
@@ -98,6 +96,8 @@ export default class CakeList extends React.Component {
     );
   };
 
+  onDeleteCake = (id, index) => {};
+
   handleSearch = e => {
     e.preventDefault();
 
@@ -167,14 +167,23 @@ export default class CakeList extends React.Component {
       },
       {
         title: '价格',
-        width: '10%',
         render: (text, record, index) => {
           return '¥ ' + (showingPrice[index] ? showingPrice[index] : 0);
         },
+        width: '10%',
       },
       {
         title: '操作',
-        render: () => <a href="">删除</a>,
+        render: (text, record, index) => (
+          <Popconfirm
+            title="确定删除嘛?~"
+            onConfirm={() => {
+              this.onDeleteCake(record.id, index);
+            }}
+          >
+            <a href="">删除</a>
+          </Popconfirm>
+        ),
         width: '10%',
       },
     ];
@@ -195,14 +204,12 @@ export default class CakeList extends React.Component {
               }
               extra={<Input.Search placeholder="请输入" />}
             >
-              <div className={styles.tableList}>
-                <Table
-                  loading={loading}
-                  rowKey={record => record.id}
-                  dataSource={cakes}
-                  columns={columns}
-                />
-              </div>
+              <Table
+                loading={loading}
+                rowKey={record => record.id}
+                dataSource={cakes}
+                columns={columns}
+              />
             </Card>
           </PageHeaderLayout>
         </>

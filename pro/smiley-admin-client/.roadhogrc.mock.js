@@ -9,6 +9,7 @@ import { format, delay } from 'roadhog-api-doc';
 import { getOrders } from './mock/order';
 import { getCakes, getCakeDetail, getCakeType } from './mock/cake';
 import { getMaterials } from './mock/material';
+import { getRecipes } from './mock/recipe';
 
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
@@ -16,6 +17,7 @@ const noProxy = process.env.NO_PROXY === 'true';
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 const proxy = {
   'GET /api/materials': getMaterials,
+  'GET /api/recipes': getRecipes,
   'GET /api/cake/list': getCakes,
   'GET /api/cake/detail': getCakeDetail,
   'GET /api/cake/type': getCakeType,

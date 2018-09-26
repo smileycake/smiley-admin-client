@@ -1,21 +1,23 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'dva';
 import shallowEqual from 'shallowequal';
-import { Button, Icon, Input, Row, Col, Card, Select, Skeleton } from 'antd';
+import { Button, Icon, Input, Row, Col, Card, Select, Skeleton, Drawer, List } from 'antd';
 import DescriptionList from 'components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './CakeDetail.less';
 import RadioTag from '../../components/CustomComponents/RadioTag';
 import CakeRecipeForm from './CakeRecipeForm';
 
-@connect(({ materials, cakes, loading }) => ({
+@connect(({ materials, cakes, recipes, loading }) => ({
   cakeDetail: cakes.cakeDetail,
   cakeType: cakes.cakeType,
   materials,
+  availableRecipes: recipes.recipes,
   loading:
     loading.effects['cakes/fetchCakeDetail'] ||
     loading.effects['materials/fetchMaterials'] ||
-    loading.effects['cakes/fetchCakeType'],
+    loading.effects['cakes/fetchCakeType'] ||
+    loading.effects['recipes/fetchRecipes'],
 }))
 export default class CakeDetail extends Component {
   newRecipeItemId = 0;
@@ -40,6 +42,7 @@ export default class CakeDetail extends Component {
       editingName: false,
       editingPrice: false,
       editingType: false,
+      recipeDrawerVisible: false,
     };
   }
 
@@ -47,6 +50,9 @@ export default class CakeDetail extends Component {
     const { dispatch } = this.props;
     dispatch({
       type: 'materials/fetchMaterials',
+    });
+    dispatch({
+      type: 'recipes/fetchRecipes',
     });
   }
 
@@ -89,6 +95,13 @@ export default class CakeDetail extends Component {
   copyRecipes = () => {
     const { recipes } = this.state;
     return recipes.map(recipe => ({ ...recipe }));
+  };
+
+  toggleShowingRecipeDrawer = () => {
+    const { recipeDrawerVisible } = this.state;
+    this.setState({
+      recipeDrawerVisible: !recipeDrawerVisible,
+    });
   };
 
   addRecipeItem = () => {
@@ -332,7 +345,7 @@ export default class CakeDetail extends Component {
   };
 
   render() {
-    const { loading, materials, cakeType } = this.props;
+    const { loading, materials, cakeType, availableRecipes } = this.props;
     const {
       selectedTaste,
       selectedSpec,
@@ -345,6 +358,7 @@ export default class CakeDetail extends Component {
       editingName,
       editingPrice,
       editingType,
+      recipeDrawerVisible,
     } = this.state;
 
     let totalCost = this.getTotalCost();
@@ -367,7 +381,11 @@ export default class CakeDetail extends Component {
         >
           添加配方
         </Button>
-        <Button icon="download" disabled={selectedRecipe === null}>
+        <Button
+          icon="download"
+          onClick={this.toggleShowingRecipeDrawer}
+          disabled={selectedRecipe === null}
+        >
           导入配方
         </Button>
       </Fragment>
@@ -530,6 +548,26 @@ export default class CakeDetail extends Component {
               )}
           </Skeleton>
         </Card>
+        <Drawer
+          visible={recipeDrawerVisible}
+          closable={false}
+          title="导入配方"
+          width={360}
+          className={styles.availableRecipe}
+          onClose={this.toggleShowingRecipeDrawer}
+        >
+          <List
+            itemLayout="vertical"
+            dataSource={availableRecipes}
+            renderItem={item => (
+              <List.Item extra={<Button size="small" shape="circle" icon="plus" />}>
+                <div>
+                  <span>{item.name}</span>
+                </div>
+              </List.Item>
+            )}
+          />
+        </Drawer>
       </PageHeaderLayout>
     );
   }

@@ -95,7 +95,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['cakes'], () => import('../routes/Cake/CakeList')),
     },
     '/cake/list/cakeDetail': {
-      component: dynamicWrapper(app, ['cakes', 'materials'], () =>
+      component: dynamicWrapper(app, ['cakes', 'materials', 'recipes'], () =>
         import('../routes/Cake/CakeDetail')
       ),
     },

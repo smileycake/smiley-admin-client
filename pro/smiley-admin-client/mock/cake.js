@@ -3,7 +3,7 @@ import { parse } from 'url';
 export function fakeCakes() {
   const list = [];
   list.push({
-    cakeId: 1,
+    id: 1,
     name: '爆浆海盐奶盖',
     type: '奶油蛋糕',
     tastes: [
@@ -50,7 +50,7 @@ export function fakeCakes() {
     ],
   });
   list.push({
-    cakeId: 2,
+    id: 2,
     name: '蓝朋友的心',
     type: '慕斯',
     tastes: [

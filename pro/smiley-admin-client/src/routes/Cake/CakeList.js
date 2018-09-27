@@ -24,6 +24,11 @@ export default class CakeList extends React.Component {
     dispatch(routerRedux.push('/cake/list/cakeDetail'));
   };
 
+  showCakeDetail = id => {
+    const { dispatch } = this.props;
+    dispatch(routerRedux.push('/cake/list/cakeDetail'));
+  };
+
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
@@ -131,6 +136,9 @@ export default class CakeList extends React.Component {
         title: '名称',
         dataIndex: 'name',
         width: '20%',
+        render: (name, record) => {
+          return <a onClick={e => this.showCakeDetail(record.id)}>{name}</a>;
+        },
       },
       {
         title: '类型',

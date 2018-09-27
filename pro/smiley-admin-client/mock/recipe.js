@@ -36,7 +36,7 @@ export function fakeRecipes() {
         {
           id: 5,
           name: '肯迪亚奶油',
-          price: 5,
+          price: 20,
           quantity: 600,
           unit: '克',
         },

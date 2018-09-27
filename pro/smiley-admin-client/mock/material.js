@@ -26,6 +26,12 @@ export function fakeMaterials() {
       price: 5,
       unit: '克',
     },
+    {
+      id: 5,
+      name: '肯迪亚奶油',
+      price: 20,
+      unit: '克',
+    },
   ];
   return list;
 }

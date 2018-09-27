@@ -5,14 +5,69 @@ export function fakeRecipes() {
     {
       id: 1,
       name: '蛋糕胚',
+      materials: [
+        {
+          id: 1,
+          name: '糖',
+          price: 10,
+          quantity: 500,
+          unit: '克',
+        },
+        {
+          id: 2,
+          name: '面粉',
+          price: 5,
+          quantity: 600,
+          unit: '克',
+        },
+      ],
     },
     {
       id: 2,
       name: '淋面',
+      materials: [
+        {
+          id: 1,
+          name: '糖',
+          price: 10,
+          quantity: 500,
+          unit: '克',
+        },
+        {
+          id: 5,
+          name: '肯迪亚奶油',
+          price: 5,
+          quantity: 600,
+          unit: '克',
+        },
+      ],
     },
     {
       id: 3,
       name: '海盐乳酪流心',
+      materials: [
+        {
+          id: 1,
+          name: '糖',
+          price: 10,
+          quantity: 500,
+          unit: '克',
+        },
+        {
+          id: 2,
+          name: '面粉',
+          price: 5,
+          quantity: 600,
+          unit: '克',
+        },
+        {
+          id: 5,
+          name: '肯迪亚奶油',
+          price: 5,
+          quantity: 600,
+          unit: '克',
+        },
+      ],
     },
   ];
   return list;

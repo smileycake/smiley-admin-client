@@ -104,6 +104,20 @@ export default class CakeDetail extends Component {
     });
   };
 
+  importRecipe = id => {
+    const { selectedRecipe } = this.state;
+    const { availableRecipes } = this.props;
+    const newRecipes = this.copyRecipes();
+    const importedRecipe = availableRecipes.filter(recipe => recipe.id === id)[0];
+    newRecipes[selectedRecipe].detail.unshift({
+      ...importedRecipe,
+      id: ++this.newRecipeItemId,
+    });
+    this.setState({
+      recipes: newRecipes,
+    });
+  };
+
   addRecipeItem = () => {
     const { selectedRecipe } = this.state;
     const newRecipes = this.copyRecipes();
@@ -560,7 +574,16 @@ export default class CakeDetail extends Component {
             itemLayout="vertical"
             dataSource={availableRecipes}
             renderItem={item => (
-              <List.Item extra={<Button size="small" shape="circle" icon="plus" />}>
+              <List.Item
+                extra={
+                  <Button
+                    size="small"
+                    shape="circle"
+                    icon="plus"
+                    onClick={e => this.importRecipe(item.id)}
+                  />
+                }
+              >
                 <div>
                   <span>{item.name}</span>
                 </div>

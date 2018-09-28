@@ -58,212 +58,100 @@
       right: 0;
     }
   }
-  .listContent {
-    font-size: 0;
-    .listContentItem {
-      color: @text-color-secondary;
-      display: inline-block;
-      vertical-align: middle;
-      font-size: @font-size-base;
-      margin-left: 40px;
-      > span {
-        line-height: 20px;
-      }
-      > p {
-        margin-top: 4px;
-        margin-bottom: 0;
-        line-height: 22px;
-      }
-    }
+
+  .datePicker {
+    margin-right: 16px;
   }
+
   .extraContentSearch {
     margin-left: 16px;
     width: 272px;
   }
 }
 
-@media screen and (max-width: @screen-xs) {
-  .standardList {
+.orderCard {
+  :global {
+    .ant-card-meta-title {
+      margin-bottom: 12px;
+      & > a {
+        color: @heading-color;
+        display: inline-block;
+        max-width: 100%;
+      }
+    }
+
+    .ant-card-actions {
+      background: #f7f9fa;
+    }
+
+    .ant-card-body:hover {
+      .ant-card-meta-title > a {
+        color: @primary-color;
+      }
+    }
+
+    .ant-card-body {
+      padding: 0px;
+    }
+
+    .ant-card-head-title {
+      padding: 0 8px !important;
+      height: auto !important;
+      line-height: 40px !important;
+
+      h2 {
+        margin-bottom: 0px;
+      }
+    }
+
+    .ant-card-head {
+      padding: 0 8px !important;
+      line-height: 40px !important;
+      min-height: 0 !important;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    
+    .ant-card-extra {
+      align-self: flex-end;
+      padding: 0 !important;
+    }
+  }
+
+  .title {
+    display: flex;
+    justify-content: space-between;
+    line-height: 20px !important;
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+    div {
+      display: flex;
+      align-self: center;
+
+      .orderInfo {
+        flex-direction: column;
+        text-align: left;
+        font-size: 14px;
+        margin-left: 10px;
+      }
+    }
+  }
+
+  .cakeTable {
+    margin-top: 1px;
+    border: 0px;
+
     :global {
-      .ant-list-item-content {
-        display: block;
-        flex: none;
-        width: 100%;
+      .ant-table-small {
+        border: 0px;
+        border-radius: 0px;
+        box-shadow: 0px 1px 0px #e8e8e8;
       }
-      .ant-list-item-action {
-        margin-left: 0;
-      }
-    }
-    .listContent {
-      margin-left: 0;
-      & > div {
-        margin-left: 0;
-      }
-    }
-    .listCard {
-      :global {
-        .ant-card-head-title {
-          overflow: visible;
-        }
+
+      table td {
+        border: none;
       }
     }
   }
-}
-
-@media screen and (max-width: @screen-sm) {
-  .standardList {
-    .extraContentSearch {
-      margin-left: 0;
-      width: 100%;
-    }
-    .headerInfo {
-      margin-bottom: 16px;
-      & > em {
-        display: none;
-      }
-    }
-  }
-}
-
-@media screen and (max-width: @screen-md) {
-  .standardList {
-    .listContent {
-      & > div {
-        display: block;
-      }
-      & > div:last-child {
-        top: 0;
-        width: 100%;
-      }
-    }
-  }
-  .listCard {
-    :global {
-      .ant-radio-group {
-        display: block;
-        margin-bottom: 8px;
-      }
-    }
-  }
-}
-
-@media screen and (max-width: @screen-lg) and (min-width: @screen-md) {
-  .standardList {
-    .listContent {
-      & > div {
-        display: block;
-      }
-      & > div:last-child {
-        top: 0;
-        width: 100%;
-      }
-    }
-  }
-}
-
-@media screen and (max-width: @screen-xl) {
-  .standardList {
-    .listContent {
-      & > div {
-        margin-left: 24px;
-      }
-      & > div:last-child {
-        top: 0;
-      }
-    }
-  }
-}
-
-@media screen and (max-width: 1400px) {
-  .standardList {
-    .listContent {
-      text-align: right;
-      & > div:last-child {
-        top: 0;
-      }
-    }
-  }
-}
-
-.order {
-    &Card {
-        width: 100%;
-        margin-bottom: 30px;
-        justify-content: space-between;
-
-        :global {
-            .ant-card-head-title {
-                padding: 0 8px !important;
-                height: auto !important;
-                line-height: 40px !important;
-
-                h2 {
-                    margin-bottom: 0px;
-                }
-            }
-
-            .ant-card-head {
-                padding: 0 8px !important;
-                line-height: 40px !important;
-                min-height: 0 !important;
-            }
-            
-            .ant-card-extra {
-                align-self: flex-end;
-                padding: 0 !important;
-            }
-        }
-
-        .cardTitle {
-          display: flex;
-          justify-content: space-between;
-          line-height: 20px !important;
-          text-align: center;
-          margin-top: 10px;
-
-          div {
-            display: flex;
-            align-self: center;
-
-            .orderInfo {
-              flex-direction: column;
-              text-align: left;
-              font-size: 14px;
-              margin-left: 10px;
-            }
-          }
-        }
-
-        &Grid {
-            padding: 0;
-            width: 380px;
-        }
-    }
-
-    &Item {
-        padding-top: 0px;
-
-        :global {
-            .ant-card-body {
-                padding: 0px;
-            }
-        }
-
-        &CakeTable {
-            margin-top: 1px;
-            border: 0px;
-
-            :global {
-                .ant-table-small {
-                    border: 0px;
-                    border-radius: 0px;
-                    box-shadow: 0px 1px 0px #e8e8e8;
-                }
-
-                table td {
-                    border: none;
-                }
-            }
-        }
-    }
 }

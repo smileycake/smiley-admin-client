@@ -63,7 +63,7 @@ export default class CakeDetail extends Component {
         {
           ...cakeDetail,
         },
-        () => this.updateSelectedRecipe()
+        this.updateSelectedRecipe
       );
     }
   }
@@ -161,9 +161,8 @@ export default class CakeDetail extends Component {
   };
 
   getTotalCost = () => {
-    const { loading } = this.props;
     const { recipes, selectedRecipe } = this.state;
-    if (loading || !selectedRecipe) {
+    if (selectedRecipe === null) {
       return 0;
     }
     let totalCost = 0;
@@ -375,7 +374,7 @@ export default class CakeDetail extends Component {
       recipeDrawerVisible,
     } = this.state;
 
-    let totalCost = this.getTotalCost();
+    let totalCost = loading ? 0 : this.getTotalCost();
 
     const action = loading ? null : (
       <Fragment>

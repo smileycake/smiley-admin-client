@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {
   Dropdown,
   Button,
@@ -17,9 +17,10 @@ import {
 } from 'antd';
 import styles from './OrderTimeline.less';
 import { connect } from 'dva';
+import { routerRedux, Route, Switch } from 'dva/router';
 import moment from 'moment';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
-import { Fragment } from 'react';
+import { getRoutes } from '../../../utils/utils';
 
 @connect(({ orders, loading }) => ({
   orders,
@@ -48,6 +49,11 @@ export default class OrderTimeline extends Component {
       },
     });
   }
+
+  showOrderDetail = id => {
+    const { dispatch } = this.props;
+    dispatch(routerRedux.push('/order/timeline/orderDetail'));
+  };
 
   dateChangeHandler = (date, dateString) => {
     this.setState({
@@ -177,6 +183,8 @@ export default class OrderTimeline extends Component {
     const { date } = this.state;
     const {
       orders: { orders },
+      match,
+      routerData,
     } = this.props;
 
     const extraContent = (
@@ -232,139 +240,148 @@ export default class OrderTimeline extends Component {
     ];
 
     return (
-      <PageHeaderLayout>
-        <div className={styles.orderTimeline}>
-          {this.renderHeader()}
-          <Card
-            bordered={false}
-            title={
-              <Button type="primary" icon="file-add" onClick={this.createOrderHandler}>
-                添加订单
-              </Button>
-            }
-            style={{ marginTop: 24 }}
-            bodyStyle={{ padding: '0 32px 40px 32px' }}
-            extra={extraContent}
-          >
-            <Timeline>
-              {orders.map((order, index) => {
-                return (
-                  <Timeline.Item
-                    key={index}
-                    dot={<Icon type="clock-circle-o" style={{ fontSize: '16px' }} />}
-                  >
-                    <h2>{order.pickUpTime}</h2>
-                    <List
-                      rowKey="id"
-                      grid={{ gutter: 24, md: 2, sm: 1, xs: 1 }}
-                      dataSource={order.orders}
-                      renderItem={order => (
-                        <List.Item key={order.id}>
-                          <Card
-                            hoverable
-                            className={styles.orderCard}
-                            actions={[<Icon type="edit" />, <Icon type="delete" />]}
-                            title={
-                              <div className={styles.title}>
-                                <div>
-                                  <Tag color="#543219">{order.isSelfPickUp ? '自提' : '配送'}</Tag>
-                                  <div className={styles.orderInfo}>
-                                    <span>订单编号: {order.orderId}</span>
-                                    <span style={{ fontSize: 12 }}>
-                                      合计: ¥ {order.realPay}
-                                      {!order.isSelfPickUp &&
-                                        '(含运费: ¥ ' + order.deliveryFee + ')'}
-                                    </span>
+      <Switch>
+        {getRoutes(match.path, routerData).map(item => (
+          <Route key={item.key} path={item.path} component={item.component} exact={item.exact} />
+        ))}
+        <>
+          <PageHeaderLayout>
+            <div className={styles.orderTimeline}>
+              {this.renderHeader()}
+              <Card
+                bordered={false}
+                title={
+                  <Button type="primary" icon="file-add" onClick={this.showOrderDetail}>
+                    添加订单
+                  </Button>
+                }
+                style={{ marginTop: 24 }}
+                bodyStyle={{ padding: '0 32px 40px 32px' }}
+                extra={extraContent}
+              >
+                <Timeline>
+                  {orders.map((order, index) => {
+                    return (
+                      <Timeline.Item
+                        key={index}
+                        dot={<Icon type="clock-circle-o" style={{ fontSize: '16px' }} />}
+                      >
+                        <h2>{order.pickUpTime}</h2>
+                        <List
+                          rowKey="id"
+                          grid={{ gutter: 24, md: 2, sm: 1, xs: 1 }}
+                          dataSource={order.orders}
+                          renderItem={order => (
+                            <List.Item key={order.id}>
+                              <Card
+                                hoverable
+                                className={styles.orderCard}
+                                actions={[<Icon type="edit" />, <Icon type="delete" />]}
+                                title={
+                                  <div className={styles.title}>
+                                    <div>
+                                      <Tag color="#543219">
+                                        {order.isSelfPickUp ? '自提' : '配送'}
+                                      </Tag>
+                                      <div className={styles.orderInfo}>
+                                        <span>订单编号: {order.orderId}</span>
+                                        <span style={{ fontSize: 12 }}>
+                                          合计: ¥ {order.realPay}
+                                          {!order.isSelfPickUp &&
+                                            '(含运费: ¥ ' + order.deliveryFee + ')'}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <Dropdown overlay={this.statusMenu} trigger={['click']}>
+                                        {this.renderOrderStatus(order.status)}
+                                      </Dropdown>
+                                    </div>
                                   </div>
-                                </div>
-                                <div>
-                                  <Dropdown overlay={this.statusMenu} trigger={['click']}>
-                                    {this.renderOrderStatus(order.status)}
-                                  </Dropdown>
-                                </div>
-                              </div>
-                            }
-                          >
-                            <Table
-                              className={styles.cakeTable}
-                              size="small"
-                              dataSource={order.cakes}
-                              pagination={false}
-                              showHeader={false}
-                              columns={columns}
-                            />
-                            <div
-                              style={{
-                                display: 'flex',
-                                paddingTop: 10,
-                                paddingBottom: 10,
-                                marginLeft: 10,
-                                marginRight: 10,
-                                borderBottom: '1px solid #e8e8e8',
-                              }}
-                            >
-                              <div
-                                style={{
-                                  flex: 1,
-                                  alignSelf: 'center',
-                                  textAlign: 'center',
-                                }}
+                                }
                               >
-                                <Icon type="environment-o" style={{ fontSize: 20 }} />
-                              </div>
-                              <div style={{ flex: 9, paddingRight: 10 }}>
+                                <Table
+                                  className={styles.cakeTable}
+                                  size="small"
+                                  dataSource={order.cakes}
+                                  pagination={false}
+                                  showHeader={false}
+                                  columns={columns}
+                                />
                                 <div
                                   style={{
                                     display: 'flex',
-                                    justifyContent: 'space-between',
+                                    paddingTop: 10,
+                                    paddingBottom: 10,
+                                    marginLeft: 10,
+                                    marginRight: 10,
+                                    borderBottom: '1px solid #e8e8e8',
                                   }}
                                 >
-                                  <span>收货人: {order.consignee}</span>
-                                  <span>{order.phone}</span>
-                                </div>
-                                {order.isSelfPickUp ? null : (
-                                  <div>
-                                    <span>收货地址: {order.deliveryAddress}</span>
+                                  <div
+                                    style={{
+                                      flex: 1,
+                                      alignSelf: 'center',
+                                      textAlign: 'center',
+                                    }}
+                                  >
+                                    <Icon type="environment-o" style={{ fontSize: 20 }} />
                                   </div>
-                                )}
-                              </div>
-                            </div>
-                            {order.remark ? (
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  padding: 10,
-                                  borderBottom: '1px solid #e8e8e8',
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    flex: 1,
-                                    alignSelf: 'center',
-                                    textAlign: 'center',
-                                  }}
-                                >
-                                  <Icon type="info-circle-o" style={{ fontSize: 15 }} />
+                                  <div style={{ flex: 9, paddingRight: 10 }}>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                      }}
+                                    >
+                                      <span>收货人: {order.consignee}</span>
+                                      <span>{order.phone}</span>
+                                    </div>
+                                    {order.isSelfPickUp ? null : (
+                                      <div>
+                                        <span>收货地址: {order.deliveryAddress}</span>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
-                                <div style={{ flex: 9, paddingRight: 10 }}>
-                                  <span>{order.remark}</span>
-                                </div>
-                              </div>
-                            ) : null}
-                          </Card>
-                        </List.Item>
-                      )}
-                    />
+                                {order.remark ? (
+                                  <div
+                                    style={{
+                                      display: 'flex',
+                                      padding: 10,
+                                      borderBottom: '1px solid #e8e8e8',
+                                    }}
+                                  >
+                                    <div
+                                      style={{
+                                        flex: 1,
+                                        alignSelf: 'center',
+                                        textAlign: 'center',
+                                      }}
+                                    >
+                                      <Icon type="info-circle-o" style={{ fontSize: 15 }} />
+                                    </div>
+                                    <div style={{ flex: 9, paddingRight: 10 }}>
+                                      <span>{order.remark}</span>
+                                    </div>
+                                  </div>
+                                ) : null}
+                              </Card>
+                            </List.Item>
+                          )}
+                        />
+                      </Timeline.Item>
+                    );
+                  })}
+                  <Timeline.Item dot={<Icon type="clock-circle-o" style={{ fontSize: '16px' }} />}>
+                    <p style={{ paddingLeft: 16, paddingTop: 8 }}>没有更多了呦~</p>
                   </Timeline.Item>
-                );
-              })}
-              <Timeline.Item dot={<Icon type="clock-circle-o" style={{ fontSize: '16px' }} />}>
-                <p style={{ paddingLeft: 16, paddingTop: 8 }}>没有更多了呦~</p>
-              </Timeline.Item>
-            </Timeline>
-          </Card>
-        </div>
-      </PageHeaderLayout>
+                </Timeline>
+              </Card>
+            </div>
+          </PageHeaderLayout>
+        </>
+      </Switch>
     );
   }
 }

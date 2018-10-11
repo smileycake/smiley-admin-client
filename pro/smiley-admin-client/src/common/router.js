@@ -107,6 +107,11 @@ export const getRouterData = app => {
         import('../routes/Order/OrderTimeline/OrderTimeline')
       ),
     },
+    '/order/timeline/orderDetail': {
+      component: dynamicWrapper(app, ['cakes', 'orders'], () =>
+        import('../routes/Order/OrderDetail')
+      ),
+    },
     '/': {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     },

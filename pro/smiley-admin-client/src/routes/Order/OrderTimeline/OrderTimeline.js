@@ -52,7 +52,7 @@ export default class OrderTimeline extends Component {
 
   showOrderDetail = id => {
     const { dispatch } = this.props;
-    dispatch(routerRedux.push('/order/timeline/orderDetail'));
+    dispatch(routerRedux.push('/order/timeline/newOrder'));
   };
 
   dateChangeHandler = (date, dateString) => {

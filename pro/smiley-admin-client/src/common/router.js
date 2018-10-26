@@ -107,6 +107,23 @@ export const getRouterData = app => {
         import('../routes/Order/OrderTimeline/OrderTimeline')
       ),
     },
+    '/order/timeline/newOrder': {
+      component: dynamicWrapper(app, ['cakes', 'orders'], () =>
+        import('../routes/Order/OrderForm/index')
+      ),
+    },
+    '/order/timeline/newOrder/cake': {
+      name: '分步表单（填写转账信息）',
+      component: dynamicWrapper(app, ['form'], () => import('../routes/Order/OrderForm/Step1')),
+    },
+    '/order/timeline/newOrder/reciver': {
+      name: '分步表单（确认转账信息）',
+      component: dynamicWrapper(app, ['form'], () => import('../routes/Order/OrderForm/Step2')),
+    },
+    '/order/timeline/newOrder/result': {
+      name: '分步表单（完成）',
+      component: dynamicWrapper(app, ['form'], () => import('../routes/Order/OrderForm/Step3')),
+    },
     '/order/timeline/orderDetail': {
       component: dynamicWrapper(app, ['cakes', 'orders'], () =>
         import('../routes/Order/OrderDetail')

@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Button, Select, Divider, Radio } from 'antd';
+import { Form, Table, Input, Button, Select, Divider, Radio } from 'antd';
 import { routerRedux } from 'dva/router';
 import styles from './style.less';
 
@@ -30,9 +30,12 @@ export default class Step1 extends React.PureComponent {
             type: 'form/saveStepFormData',
             payload: values,
           });
-          dispatch(routerRedux.push('/order/timeline/newOrder/reciver'));
+          dispatch(routerRedux.push('/order/timeline/newOrder/confirm'));
         }
       });
+    };
+    const onPrev = () => {
+      dispatch(routerRedux.push('/order/timeline/newOrder'));
     };
     return (
       <Fragment>
@@ -68,19 +71,7 @@ export default class Step1 extends React.PureComponent {
               rules: [{ required: true, message: '请输入收款人姓名' }],
             })(<Input placeholder="请输入收款人姓名" />)}
           </Form.Item>
-          <Form.Item {...formItemLayout} label="转账金额">
-            {getFieldDecorator('amount', {
-              initialValue: data.amount,
-              rules: [
-                { required: true, message: '请输入转账金额' },
-                {
-                  pattern: /^(\d+)((?:\.\d+)?)$/,
-                  message: '请输入合法金额数字',
-                },
-              ],
-            })(<Input prefix="￥" placeholder="请输入金额" />)}
-          </Form.Item>
-          <Form.Item {...formItemLayout} label="目标公开" help="客户、邀评人默认被分享">
+          <Form.Item {...formItemLayout} label="配送方式">
             <div>
               {getFieldDecorator('public', {
                 initialValue: '1',
@@ -106,7 +97,40 @@ export default class Step1 extends React.PureComponent {
                   </Select>
                 )}
               </Form.Item>
+              <Form.Item {...formItemLayout}>
+                {getFieldDecorator('amount', {
+                  initialValue: data.amount,
+                  rules: [
+                    { required: true, message: '请输入转账金额' },
+                    {
+                      pattern: /^(\d+)((?:\.\d+)?)$/,
+                      message: '请输入合法金额数字',
+                    },
+                  ],
+                })(
+                  <Input
+                    prefix="￥"
+                    placeholder="配送费"
+                    style={{
+                      margin: '8px 0',
+                      display: getFieldValue('public') === '2' ? 'block' : 'none',
+                    }}
+                  />
+                )}
+              </Form.Item>
             </div>
+          </Form.Item>
+          <Form.Item {...formItemLayout} label="订单金额">
+            {getFieldDecorator('amount', {
+              initialValue: data.amount,
+              rules: [
+                { required: true, message: '请输入转账金额' },
+                {
+                  pattern: /^(\d+)((?:\.\d+)?)$/,
+                  message: '请输入合法金额数字',
+                },
+              ],
+            })(<Input prefix="￥" placeholder="请输入金额" />)}
           </Form.Item>
           <Form.Item
             wrapperCol={{
@@ -120,6 +144,9 @@ export default class Step1 extends React.PureComponent {
           >
             <Button type="primary" onClick={onValidateForm}>
               下一步
+            </Button>
+            <Button onClick={onPrev} style={{ marginLeft: 8 }}>
+              上一步
             </Button>
           </Form.Item>
         </Form>

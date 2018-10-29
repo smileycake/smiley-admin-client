@@ -14,12 +14,14 @@ export default class OrderForm extends PureComponent {
     const { pathname } = location;
     const pathList = pathname.split('/');
     switch (pathList[pathList.length - 1]) {
-      case 'info':
+      case 'cake':
         return 0;
-      case 'confirm':
+      case 'reciver':
         return 1;
-      case 'result':
+      case 'confirm':
         return 2;
+      case 'result':
+        return 3;
       default:
         return 0;
     }
@@ -33,6 +35,7 @@ export default class OrderForm extends PureComponent {
           <Fragment>
             <Steps current={this.getCurrentStep()} className={styles.steps}>
               <Step title="填写订单信息" />
+              <Step title="填写收货人信息" />
               <Step title="确认订单信息" />
               <Step title="完成" />
             </Steps>

@@ -1,5 +1,78 @@
 import { parse } from 'url';
 
+export function fakeCakeList() {
+  const list = [];
+  list.push({
+    id: 1,
+    name: '爆浆海盐奶盖',
+    type: '奶油蛋糕',
+    tastes: [
+      {
+        id: 1,
+        name: '巧克力',
+        specs: [
+          {
+            id: 1,
+            name: '6寸',
+            price: 98,
+          },
+          {
+            id: 2,
+            name: '6寸 + 装饰',
+            price: 113,
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: '抹茶',
+        specs: [
+          {
+            id: 1,
+            name: '6寸',
+            price: 98,
+          },
+          {
+            id: 2,
+            name: '6寸 + 装饰',
+            price: 113,
+          },
+        ],
+      },
+      {
+        id: 3,
+        name: '酸奶',
+        specs: [
+          {
+            id: 1,
+            name: '6寸',
+            price: 98,
+          },
+        ],
+      },
+    ],
+  });
+  list.push({
+    id: 2,
+    name: '蓝朋友的心',
+    type: '慕斯',
+    tastes: [
+      {
+        id: 1,
+        name: '巧克力',
+        specs: [
+          {
+            id: 1,
+            name: '常规',
+            price: 38,
+          },
+        ],
+      },
+    ],
+  });
+  return list;
+}
+
 export function fakeCakes() {
   const list = [];
   list.push({
@@ -215,6 +288,25 @@ export function fakeCakeType() {
   ];
 }
 
+export function getCakeList(req, res, u) {
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    url = req.url; // eslint-disable-line
+  }
+
+  const params = parse(url, true).query;
+
+  const count = params.count * 1 || 20;
+
+  const result = fakeCakeList(count);
+
+  if (res && res.json) {
+    res.json(result);
+  } else {
+    return result;
+  }
+}
+
 export function getCakes(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
@@ -273,6 +365,7 @@ export function getCakeType(req, res, u) {
 }
 
 export default {
+  getCakeList,
   getCakes,
   getCakeDetail,
   getCakeType,

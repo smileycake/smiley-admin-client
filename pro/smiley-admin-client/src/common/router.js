@@ -114,7 +114,7 @@ export const getRouterData = app => {
     },
     '/order/timeline/newOrder/cake': {
       name: '分步表单（填写转账信息）',
-      component: dynamicWrapper(app, ['form'], () =>
+      component: dynamicWrapper(app, ['form', 'cakes'], () =>
         import('../routes/Order/OrderForm/CakeSelect')
       ),
     },

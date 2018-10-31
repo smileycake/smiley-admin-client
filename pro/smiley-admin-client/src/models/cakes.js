@@ -1,4 +1,4 @@
-import { queryCakes, queryCakeDetail, queryCakeType } from '../services/cake';
+import { queryCakeList, queryCakes, queryCakeDetail, queryCakeType } from '../services/cake';
 
 export default {
   namespace: 'cakes',
@@ -10,6 +10,14 @@ export default {
   },
 
   effects: {
+    *fetchCakeList({ payload }, { call, put }) {
+      const response = yield call(queryCakeList, payload);
+      yield put({
+        type: 'queryCakeList',
+        payload: Array.isArray(response) ? response : [],
+      });
+    },
+
     *fetchCakes({ payload }, { call, put }) {
       const response = yield call(queryCakes, payload);
       yield put({
@@ -36,6 +44,12 @@ export default {
   },
 
   reducers: {
+    queryCakeList(state, action) {
+      return {
+        ...state,
+        cakes: action.payload,
+      };
+    },
     queryCakes(state, action) {
       return {
         ...state,

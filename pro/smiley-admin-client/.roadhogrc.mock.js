@@ -7,7 +7,7 @@ import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
 import { format, delay } from 'roadhog-api-doc';
 import { getOrders } from './mock/order';
-import { getCakes, getCakeDetail, getCakeType } from './mock/cake';
+import { getCakeList, getCakes, getCakeDetail, getCakeType } from './mock/cake';
 import { getMaterials } from './mock/material';
 import { getRecipes } from './mock/recipe';
 
@@ -19,6 +19,7 @@ const proxy = {
   'GET /api/materials': getMaterials,
   'GET /api/recipes': getRecipes,
   'GET /api/cake/list': getCakes,
+  'GET /api/cake/list2': getCakeList,
   'GET /api/cake/detail': getCakeDetail,
   'GET /api/cake/type': getCakeType,
   'GET /api/orders': getOrders,

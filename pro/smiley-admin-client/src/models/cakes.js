@@ -18,14 +18,6 @@ export default {
       });
     },
 
-    *fetchCakes({ payload }, { call, put }) {
-      const response = yield call(queryCakes, payload);
-      yield put({
-        type: 'queryCakes',
-        payload: Array.isArray(response) ? response : [],
-      });
-    },
-
     *fetchCakeDetail({ payload }, { call, put }) {
       const response = yield call(queryCakeDetail, payload);
       yield put({
@@ -45,12 +37,6 @@ export default {
 
   reducers: {
     queryCakeList(state, action) {
-      return {
-        ...state,
-        cakes: action.payload,
-      };
-    },
-    queryCakes(state, action) {
       return {
         ...state,
         cakes: action.payload,

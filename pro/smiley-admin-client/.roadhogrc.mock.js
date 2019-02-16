@@ -18,8 +18,7 @@ const noProxy = process.env.NO_PROXY === 'true';
 const proxy = {
   'GET /api/materials': getMaterials,
   'GET /api/recipes': getRecipes,
-  'GET /api/cake/list': getCakes,
-  'GET /api/cake/list2': getCakeList,
+  'GET /api/cake/list': getCakeList,
   'GET /api/cake/detail': getCakeDetail,
   'GET /api/cake/type': getCakeType,
   'GET /api/orders': getOrders,

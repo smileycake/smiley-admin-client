@@ -9,11 +9,10 @@ import RadioTag from '../../components/CustomComponents/RadioTag';
 
 @connect(({ cakes, loading }) => ({
   cakes: cakes.cakes,
-  loading: loading.effects['cakes/fetchCakes'],
+  loading: loading.effects['cakes/fetchCakeList'],
 }))
 export default class CakeList extends React.Component {
   state = {
-    formValues: {},
     selectedTastes: [],
     selectedSpecs: [],
     showingPrice: [],
@@ -32,7 +31,7 @@ export default class CakeList extends React.Component {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'cakes/fetchCakes',
+      type: 'cakes/fetchCakeList',
       payload: {
         count: 5,
       },
@@ -45,7 +44,7 @@ export default class CakeList extends React.Component {
     if (cakes.length !== 0) {
       for (let i = 0; i < cakes.length; ++i) {
         selectedTastes[i] = cakes[i].tastes[0].id;
-        selectedSpecs[i] = cakes[i].specs[0].id;
+        selectedSpecs[i] = cakes[i].tastes[0].specs[0].id;
       }
       this.setState(
         {
@@ -62,15 +61,12 @@ export default class CakeList extends React.Component {
   }
 
   updateShowingPrice = () => {
-    const { selectedTastes, selectedSpecs, showingPrice } = this.state;
+    const { selectedTastes, selectedSpecs } = this.state;
     const { cakes } = this.props;
-    const newShowingPrice = showingPrice.map(price => price);
-    cakes.forEach((cake, index) => {
-      cake.prices.forEach(price => {
-        if (price.tasteId === selectedTastes[index] && price.specId === selectedSpecs[index]) {
-          newShowingPrice[index] = price.price;
-        }
-      });
+    const newShowingPrice = cakes.map((cake, index) => {
+      return cake.tastes
+        .filter(taste => taste.id === selectedTastes[index])[0]
+        .specs.filter(spec => spec.id === selectedSpecs[index])[0].price;
     });
     this.setState({
       showingPrice: newShowingPrice,
@@ -90,12 +86,18 @@ export default class CakeList extends React.Component {
   };
 
   onTasteChange = (tasteId, index) => {
-    const { selectedTastes } = this.state;
+    const { selectedTastes, selectedSpecs } = this.state;
+    const { cakes } = this.props;
     const newSelectedTastes = selectedTastes.map(taste => taste);
+    const newSelectedSpecs = selectedSpecs.map(spec => spec);
     newSelectedTastes[index] = tasteId;
+    newSelectedSpecs[index] = cakes[index].tastes.filter(
+      taste => taste.id === tasteId
+    )[0].specs[0].id;
     this.setState(
       {
         selectedTastes: newSelectedTastes,
+        selectedSpecs: newSelectedSpecs,
       },
       this.updateShowingPrice
     );
@@ -131,71 +133,6 @@ export default class CakeList extends React.Component {
     const { cakes, loading, match, routerData } = this.props;
     const { selectedTastes, selectedSpecs, showingPrice } = this.state;
 
-    const columns = [
-      {
-        title: '名称',
-        dataIndex: 'name',
-        width: '20%',
-        render: (name, record) => {
-          return <a onClick={e => this.showCakeDetail(record.id)}>{name}</a>;
-        },
-      },
-      {
-        title: '类型',
-        dataIndex: 'type',
-        width: '10%',
-      },
-      {
-        title: '口味',
-        dataIndex: 'tastes',
-        render: (tastes, record, index) => {
-          return (
-            <RadioTag.Group
-              value={selectedTastes[index]}
-              dataSource={tastes}
-              onChange={value => this.onTasteChange(value, index)}
-            />
-          );
-        },
-        width: '25%',
-      },
-      {
-        title: '规格',
-        dataIndex: 'specs',
-        render: (specs, record, index) => {
-          return (
-            <RadioTag.Group
-              value={selectedSpecs[index]}
-              dataSource={specs}
-              onChange={value => this.onSpecChange(value, index)}
-            />
-          );
-        },
-        width: '25%',
-      },
-      {
-        title: '价格',
-        render: (text, record, index) => {
-          return '¥ ' + (showingPrice[index] ? showingPrice[index] : 0);
-        },
-        width: '10%',
-      },
-      {
-        title: '操作',
-        render: (text, record, index) => (
-          <Popconfirm
-            title="确定删除嘛?~"
-            onConfirm={() => {
-              this.onDeleteCake(record.id, index);
-            }}
-          >
-            <a href="">删除</a>
-          </Popconfirm>
-        ),
-        width: '10%',
-      },
-    ];
-
     return (
       <Switch>
         {getRoutes(match.path, routerData).map(item => (
@@ -212,12 +149,68 @@ export default class CakeList extends React.Component {
               }
               extra={<Input.Search placeholder="请输入" />}
             >
-              <Table
-                loading={loading}
-                rowKey={record => record.id}
-                dataSource={cakes}
-                columns={columns}
-              />
+              <Table loading={loading} rowKey={record => record.id} dataSource={cakes}>
+                <Table.Column
+                  title="名称"
+                  dataIndex="name"
+                  width="20%"
+                  render={(name, record) => {
+                    return <a onClick={e => this.showCakeDetail(record.id)}>{name}</a>;
+                  }}
+                />
+                <Table.Column title="类型" dataIndex="type" width="10%" />
+                <Table.Column
+                  title="口味"
+                  dataIndex="tastes"
+                  width="25%"
+                  render={(tastes, record, index) => {
+                    return (
+                      <RadioTag.Group
+                        value={selectedTastes[index]}
+                        dataSource={tastes}
+                        onChange={value => this.onTasteChange(value, index)}
+                      />
+                    );
+                  }}
+                />
+                <Table.Column
+                  title="规格"
+                  dataIndex="tastes"
+                  width="20%"
+                  render={(tastes, record, index) => {
+                    const specs = tastes.filter(taste => taste.id === selectedTastes[index])[0]
+                      .specs;
+                    return (
+                      <RadioTag.Group
+                        value={selectedSpecs[index]}
+                        dataSource={specs}
+                        onChange={value => this.onSpecChange(value, index)}
+                      />
+                    );
+                  }}
+                />
+                <Table.Column
+                  title="价格"
+                  width="10%"
+                  render={(text, record, index) => {
+                    return '¥ ' + (showingPrice[index] ? showingPrice[index] : 0);
+                  }}
+                />
+                <Table.Column
+                  title="操作"
+                  width="10%"
+                  render={(text, record, index) => (
+                    <Popconfirm
+                      title="确定删除嘛?~"
+                      onConfirm={() => {
+                        this.onDeleteCake(record.id, index);
+                      }}
+                    >
+                      <a href="">删除</a>
+                    </Popconfirm>
+                  )}
+                />
+              </Table>
             </Card>
           </PageHeaderLayout>
         </>

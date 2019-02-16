@@ -46,7 +46,7 @@ export function fakeCakeList() {
           {
             id: 1,
             name: '6寸',
-            price: 98,
+            price: 108,
           },
         ],
       },
@@ -73,80 +73,102 @@ export function fakeCakeList() {
   return list;
 }
 
-export function fakeCakes() {
-  const list = [];
-  list.push({
-    id: 1,
-    name: '爆浆海盐奶盖',
-    type: '奶油蛋糕',
-    tastes: [
-      {
-        id: 1,
-        name: '巧克力',
-      },
-      {
-        id: 2,
-        name: '抹茶',
-      },
-    ],
-    specs: [
-      {
-        id: 1,
-        name: '6寸',
-      },
-      {
-        id: 2,
-        name: '6寸 + 装饰',
-      },
-    ],
-    prices: [
-      {
-        tasteId: 1,
-        specId: 1,
-        price: 98,
-      },
-      {
-        tasteId: 1,
-        specId: 2,
-        price: 113,
-      },
-      {
-        tasteId: 2,
-        specId: 1,
-        price: 118,
-      },
-      {
-        tasteId: 2,
-        specId: 2,
-        price: 133,
-      },
-    ],
-  });
-  list.push({
-    id: 2,
-    name: '蓝朋友的心',
-    type: '慕斯',
-    tastes: [
-      {
-        id: 1,
-        name: '巧克力',
-      },
-    ],
-    specs: [
-      {
-        id: 1,
-        name: '常规',
-      },
-    ],
-    prices: [
-      {
-        tasteId: 1,
-        specId: 1,
-        price: 38,
-      },
-    ],
-  });
-  return list;
+export function fakeCakeRecipes() {
+  const recipes = [
+    {
+      tasteId: 1,
+      specId: 1,
+      detail: [
+        {
+          id: 1,
+          name: '蛋糕胚',
+          materials: [
+            {
+              id: 1,
+              name: '糖',
+              price: 10,
+              quantity: 500,
+              unit: '克',
+            },
+            {
+              id: 2,
+              name: '面粉',
+              price: 5,
+              quantity: 600,
+              unit: '克',
+            },
+          ],
+        },
+        {
+          id: 2,
+          name: '流心',
+          materials: [
+            {
+              id: 1,
+              name: '糖',
+              price: 10,
+              quantity: 500,
+              unit: '克',
+            },
+            {
+              id: 3,
+              name: '牛奶',
+              price: 5,
+              quantity: 600,
+              unit: '克',
+            },
+            {
+              id: 4,
+              name: '乳酪',
+              price: 5,
+              quantity: 600,
+              unit: '克',
+            },
+          ],
+        },
+        {
+          id: 3,
+          name: '奶盖',
+          materials: [
+            {
+              id: 1,
+              name: '糖',
+              price: 10,
+              quantity: 500,
+              unit: '克',
+            },
+            {
+              id: 4,
+              name: '乳酪',
+              price: 5,
+              quantity: 600,
+              unit: '克',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      tasteId: 1,
+      specId: 2,
+      detail: [],
+    },
+    {
+      tasteId: 2,
+      specId: 1,
+      detail: [],
+    },
+    {
+      tasteId: 2,
+      specId: 2,
+      detail: [],
+    },
+    {
+      tasteId: 3,
+      specId: 1,
+      detail: [],
+    },
+  ];
 }
 
 export function fakeCakeDetail() {
@@ -307,7 +329,7 @@ export function getCakeList(req, res, u) {
   }
 }
 
-export function getCakes(req, res, u) {
+export function getCakeRecipes(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -317,7 +339,7 @@ export function getCakes(req, res, u) {
 
   const count = params.count * 1 || 20;
 
-  const result = fakeCakes(count);
+  const result = fakeCakeRecipes();
 
   if (res && res.json) {
     res.json(result);
@@ -366,7 +388,7 @@ export function getCakeType(req, res, u) {
 
 export default {
   getCakeList,
-  getCakes,
+  getCakeRecipes,
   getCakeDetail,
   getCakeType,
 };

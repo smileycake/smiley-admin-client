@@ -22,6 +22,13 @@ const formItemLayout = {
 }))
 @Form.create()
 export default class CakeSelect extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedCakes: [],
+    };
+  }
+
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
@@ -38,12 +45,15 @@ export default class CakeSelect extends React.PureComponent {
 
   getCakes() {
     const { cakes } = this.props;
+    const { selectedCakes } = this.state;
     if (cakes === null) {
       return [];
     }
     return cakes.map(cake => {
       const tastes = cake.tastes.map(taste => {
         const specs = taste.specs.map(spec => {
+          if (selectedCakes.length !== 0) {
+          }
           return {
             value: spec.id,
             label: spec.name,

@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'dva';
 import { routerRedux, Route, Switch } from 'dva/router';
 import { Card, Input, Button, Table, Popconfirm, message } from 'antd';

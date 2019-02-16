@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import { routerRedux, Route, Switch } from 'dva/router';
-import { Card, Input, Button, Table, Popconfirm, message } from 'antd';
+import { Card, Input, Button, Table, Popconfirm } from 'antd';
 import shallowEqual from 'shallowequal';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { getRoutes } from '../../utils/utils';
@@ -63,23 +63,22 @@ export default class CakeList extends React.Component {
   updateShowingPrice = () => {
     const { selectedTastes, selectedSpecs } = this.state;
     const { cakes } = this.props;
-    const newShowingPrice = cakes.map((cake, index) => {
+    const showingPrice = cakes.map((cake, index) => {
       return cake.tastes
         .filter(taste => taste.id === selectedTastes[index])[0]
         .specs.filter(spec => spec.id === selectedSpecs[index])[0].price;
     });
     this.setState({
-      showingPrice: newShowingPrice,
+      showingPrice,
     });
   };
 
   onSpecChange = (specId, index) => {
     const { selectedSpecs } = this.state;
-    const newSelectedSpecs = selectedSpecs.map(spec => spec);
-    newSelectedSpecs[index] = specId;
+    selectedSpecs[index] = specId;
     this.setState(
       {
-        selectedSpecs: newSelectedSpecs,
+        selectedSpecs,
       },
       this.updateShowingPrice
     );
@@ -88,16 +87,12 @@ export default class CakeList extends React.Component {
   onTasteChange = (tasteId, index) => {
     const { selectedTastes, selectedSpecs } = this.state;
     const { cakes } = this.props;
-    const newSelectedTastes = selectedTastes.map(taste => taste);
-    const newSelectedSpecs = selectedSpecs.map(spec => spec);
-    newSelectedTastes[index] = tasteId;
-    newSelectedSpecs[index] = cakes[index].tastes.filter(
-      taste => taste.id === tasteId
-    )[0].specs[0].id;
+    selectedTastes[index] = tasteId;
+    selectedSpecs[index] = cakes[index].tastes.filter(taste => taste.id === tasteId)[0].specs[0].id;
     this.setState(
       {
-        selectedTastes: newSelectedTastes,
-        selectedSpecs: newSelectedSpecs,
+        selectedTastes,
+        selectedSpecs,
       },
       this.updateShowingPrice
     );
